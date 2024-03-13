@@ -114,6 +114,7 @@ Team members will strive to create an environment in which all team members feel
 If at any point a team member feels that this Code of Conduct is not being followed, that team member may reach out to the team's Flatiron School Point of Contact, Lindsey Williams.
 
 #### Agreed to by:
+Jim Grimes
 
 
 
