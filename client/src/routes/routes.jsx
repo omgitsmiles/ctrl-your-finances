@@ -2,7 +2,7 @@ import Account from "../components/Account";
 import Budgeting from "../components/Budgeting";
 import Dashboard from "../components/Dashboard";
 import Finances from "../components/Finances";
-import FrontPage from "../components/FrontPage";
+import FrontPage from "../components/FrontPage/FrontPage";
 
 export const routes = [
     {
