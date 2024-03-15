@@ -117,6 +117,7 @@ If at any point a team member feels that this Code of Conduct is not being follo
 Jim Grimes
 Paolo Alberca
 Amanda Vikdal
+Peyton Meredith
 
 
 
