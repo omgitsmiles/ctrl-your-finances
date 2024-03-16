@@ -1,41 +1,138 @@
-import { useState } from "react";
-import { Box, Button, Modal } from "@mui/material";
+// React imports
+import React, {useState} from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 
-import PlaidLink from "../PlaidLink";
+// Firebase imports
+import {  createUserWithEmailAndPassword  } from 'firebase/auth';
+import { auth } from '../../firebase';
+import firebase from 'firebase/compat/app';
+import * as firebaseui from 'firebaseui'
+import 'firebaseui/dist/firebaseui.css'
+// const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(props.auth)
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
+// Material UI imports
+import CssBaseline from "@mui/material/CssBaseline";
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
 
-function SignUp() {
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
 
+    
+const SignUp = () => {
+        const navigate = useNavigate();
+    
+        const [email, setEmail] = useState('')
+        const [password, setPassword] = useState('');
+    
+        const onSubmit = async (e) => {
+        e.preventDefault()
+        
+        await createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                console.log(user);
+                navigate("/")
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+                // ..
+            });
+        }
+    
     return (
-        <Box sx={style}>
-            <h2>Sign Up Form Here</h2>
-            <Button variant="outlined" onClick={handleOpen}>Successful signup would redirect to Plaid Link as a modal or new route</Button>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
+        <main>   
+            <Stack 
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+                sx={{ minWidth: 12 }}
             >
-                <Box sx={{ ...style, width: 200 }}>
-                    <PlaidLink />
-                </Box>
-            </Modal>
-        </Box>
-    )
-}
+                    <h1>Sign up</h1>
+                    <Button 
+                    style={{maxWidth: '250px', maxHeight: '40px', minWidth: '250px', minHeight: '40px'}}
+                    size="large" variant='outlined' startIcon={<AccountCircleIcon />}>
+                        Sign up with email
+                    </Button>
+                    <Button 
+                    style={{maxWidth: '250px', maxHeight: '60px', minWidth: '250px', minHeight: '40px'}}
+                    size="medium" variant='outlined' startIcon={<GoogleIcon/>}>
+                        Continue with Google
+                    </Button>
+                    <Button  
+                    style={{maxWidth: '250px', maxHeight: '60px', minWidth: '250px', minHeight: '40px'}}
+                    size="medium" variant='outlined' startIcon={<FacebookIcon/> }>
+                        Continue with Facebook
+                    </Button>
+                    <p>Already have an account? <a>Login</a></p>
+            </Stack>
 
+             
+            <section>
+                <div>
+                    <div>                                  
+                        <form>                                                                                            
+                            <div>
+                                <label htmlFor="email-address">
+                                    Email address
+                                </label>
+                                <input
+                                    type="email"
+                                    label="Email address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}  
+                                    required                                    
+                                    placeholder="Email address"                                
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="password">
+                                    Password
+                                </label>
+                                <input
+                                    type="password"
+                                    label="Create password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    required                                 
+                                    placeholder="Password"              
+                                />
+                            </div>                                             
+                            
+                            <button
+                                type="submit" 
+                                onClick={onSubmit}                        
+                            >  
+                                Sign up                                
+                            </button>
+                                                                        
+                        </form>
+                    
+                        <p>
+                            Already have an account?{' '}
+                            <NavLink to="/" >
+                                Sign in
+                            </NavLink>
+                        </p>                   
+                    </div>
+                </div>
+            </section>
+        </main>
+    )
+    }
+    
 export default SignUp
+
+
+
+
+
+
+
