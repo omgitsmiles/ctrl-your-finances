@@ -253,8 +253,11 @@ Post to **/accounts/get** retrieves high-level information about all accounts as
 
 
 When using Plaid Link, this is the response from **/api/set_access_token**
+```
 {
   'access_token': 'access-sandbox-secret_token_number',
   'item_id': 'blMRjQBQadH5LKrRA4PGFN4WleyXkZuVPQ9Jq', 
   'request_id': 'CpZcSZGBrzBqQ7J'
 }
+```
+Note that even for the sandbox, a different access token is created every time a user links to an account.

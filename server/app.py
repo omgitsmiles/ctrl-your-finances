@@ -157,8 +157,8 @@ def get_access_token():
         access_token = exchange_response['access_token']
         item_id = exchange_response['item_id']
         response = jsonify(exchange_response.to_dict())
-        # print("RESPONSE FROM /api/set_access_token")
-        # print(exchange_response.to_dict())
+        print("RESPONSE FROM /api/set_access_token")
+        print(exchange_response.to_dict())
         response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return response
     except plaid.ApiException as e:
