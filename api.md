@@ -247,3 +247,14 @@ Post to **/accounts/get** retrieves high-level information about all accounts as
   "request_id": "REgUPvV3EwH0DDO"
 }
 ```
+
+
+
+
+
+When using Plaid Link, this is the response from **/api/set_access_token**
+{
+  'access_token': 'access-sandbox-cdf3f1cf-14dd-42ce-8d47-25a8d6306964', 
+  'item_id': 'blMRjQBQadH5LKrRA4PGFN4WleyXkZuVPQ9Jq', 
+  'request_id': 'CpZcSZGBrzBqQ7J'
+}
