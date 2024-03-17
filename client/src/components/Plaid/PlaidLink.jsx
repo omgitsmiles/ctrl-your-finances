@@ -16,9 +16,10 @@ function PlaidLink() {
           return { paymentInitiation: false };
         }
         const data = await response.json();
-        const paymentInitiation = data.products.includes(
-          "payment_initiation"
-        );
+        const paymentInitiation = false;
+        // const paymentInitiation = data.products.includes(
+        //   "payment_initiation"
+        // );
         dispatch({
           type: "SET_STATE",
           state: {
@@ -30,11 +31,12 @@ function PlaidLink() {
       }, [dispatch]);
     
       const generateToken = useCallback(
-        async (isPaymentInitiation) => {
+        async () => {
           // Link tokens for 'payment_initiation' use a different creation flow in your backend.
-          const path = isPaymentInitiation
-            ? "http://127.0.0.1:5555/api/create_link_token_for_payment"
-            : "http://127.0.0.1:5555/api/create_link_token";
+          const path = "http://127.0.0.1:5555/api/create_link_token"
+          // const path = isPaymentInitiation
+          //   ? "http://127.0.0.1:5555/api/create_link_token_for_payment"
+          //   : "http://127.0.0.1:5555/api/create_link_token";
           const response = await fetch(path, {
             method: "POST",
           });
@@ -117,11 +119,11 @@ function PlaidLink() {
         };
   
         // 'payment_initiation' products do not require the public_token to be exchanged for an access_token.
-        if (isPaymentInitiation){
-          dispatch({ type: "SET_STATE", state: { isItemAccess: false } });
-        } else {
+        // if (isPaymentInitiation){
+        //   dispatch({ type: "SET_STATE", state: { isItemAccess: false } });
+        // } else {
           exchangePublicTokenForAccessToken();
-        }
+        // }
   
         dispatch({ type: "SET_STATE", state: { linkSuccess: true } });
         window.history.pushState("", "", "/");
@@ -135,12 +137,12 @@ function PlaidLink() {
       onSuccess,
     };
   
-    if (window.location.href.includes("?oauth_state_id=")) {
-      // TODO: figure out how to delete this ts-ignore
-      // @ts-ignore
-      config.receivedRedirectUri = window.location.href;
-      isOauth = true;
-    }
+    // if (window.location.href.includes("?oauth_state_id=")) {
+    //   // TODO: figure out how to delete this ts-ignore
+    //   // @ts-ignore
+    //   config.receivedRedirectUri = window.location.href;
+    //   isOauth = true;
+    // }
   
     const { open, ready } = usePlaidLink(config);
   
