@@ -7,6 +7,7 @@ import Context from "../../context/Context";
 
 function PlaidLink() {
     const { linkToken, linkSuccess, isItemAccess, isPaymentInitiation, dispatch } = useContext(Context);
+    const [error, setError] = useState(null)
 
     ///////////////// FROM: Plaid Quickstart App //////////////
     const getInfo = useCallback(async () => {
@@ -17,9 +18,6 @@ function PlaidLink() {
         }
         const data = await response.json();
         const paymentInitiation = false;
-        // const paymentInitiation = data.products.includes(
-        //   "payment_initiation"
-        // );
         dispatch({
           type: "SET_STATE",
           state: {
@@ -32,11 +30,7 @@ function PlaidLink() {
     
       const generateToken = useCallback(
         async () => {
-          // Link tokens for 'payment_initiation' use a different creation flow in your backend.
           const path = "http://127.0.0.1:5555/api/create_link_token"
-          // const path = isPaymentInitiation
-          //   ? "http://127.0.0.1:5555/api/create_link_token_for_payment"
-          //   : "http://127.0.0.1:5555/api/create_link_token";
           const response = await fetch(path, {
             method: "POST",
           });
@@ -116,33 +110,33 @@ function PlaidLink() {
               isItemAccess: true,
             },
           });
+          getTransactionData()
         };
-  
-        // 'payment_initiation' products do not require the public_token to be exchanged for an access_token.
-        // if (isPaymentInitiation){
-        //   dispatch({ type: "SET_STATE", state: { isItemAccess: false } });
-        // } else {
-          exchangePublicTokenForAccessToken();
-        // }
+
+        exchangePublicTokenForAccessToken();
   
         dispatch({ type: "SET_STATE", state: { linkSuccess: true } });
         window.history.pushState("", "", "/");
       },
       [dispatch]
     );
+
+    //////////////// FROM Plaid Quickstart Endpoint ////////////
+    const getTransactionData = async () => {
+      const response = await fetch(`http://127.0.0.1:5555/api/transactions`, { method: "GET" });
+      const data = await response.json();
+      if (data.error != null) {
+        setError(data.error);
+        return;
+      }
+      console.log(data)
+    };
   
     let isOauth = false;
     const config = {
       token: linkToken,
       onSuccess,
     };
-  
-    // if (window.location.href.includes("?oauth_state_id=")) {
-    //   // TODO: figure out how to delete this ts-ignore
-    //   // @ts-ignore
-    //   config.receivedRedirectUri = window.location.href;
-    //   isOauth = true;
-    // }
   
     const { open, ready } = usePlaidLink(config);
   

@@ -32,6 +32,7 @@ from plaid.model.country_code import CountryCode
 from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
 from plaid.model.link_token_create_request import LinkTokenCreateRequest
 from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
+from plaid.model.transactions_sync_request import TransactionsSyncRequest
 from plaid.api import plaid_api
 
 load_dotenv()
@@ -157,15 +158,58 @@ def get_access_token():
         access_token = exchange_response['access_token']
         item_id = exchange_response['item_id']
         response = jsonify(exchange_response.to_dict())
-        print("RESPONSE FROM /api/set_access_token")
-        print(exchange_response.to_dict())
+        # print("RESPONSE FROM /api/set_access_token")
+        # print(exchange_response.to_dict())
         response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return response
     except plaid.ApiException as e:
         return json.loads(e.body)
 
 
+# Retrieve Transactions for an Item
+# https://plaid.com/docs/#transactions
 
+@app.route('/api/transactions', methods=['GET'])
+def get_transactions():
+    # Set cursor to empty to receive all historical updates
+    cursor = ''
+
+    # New transaction updates since "cursor"
+    added = []
+    modified = []
+    removed = [] # Removed transaction ids
+    has_more = True
+    try:
+        # Iterate through each page of new transaction updates for item
+        while has_more:
+            request = TransactionsSyncRequest(
+                access_token=access_token,
+                cursor=cursor,
+            )
+            response = client.transactions_sync(request).to_dict()
+            # Add this page of results
+            added.extend(response['added'])
+            modified.extend(response['modified'])
+            removed.extend(response['removed'])
+            has_more = response['has_more']
+            # Update cursor to the next cursor
+            cursor = response['next_cursor']
+            pretty_print_response(response)
+
+        # Return the 8 most recent transactions
+        latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
+        # print(latest_transactions)
+        response = jsonify({
+            'latest_transactions': latest_transactions})
+        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+        return response
+
+    except plaid.ApiException as e:
+        error_response = format_error(e)
+        return jsonify(error_response)
+
+def pretty_print_response(response):
+    print(json.dumps(response, indent=2, sort_keys=True, default=str))
 
 
 
