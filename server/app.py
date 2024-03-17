@@ -198,7 +198,6 @@ def get_transactions():
 
         # Return the 8 most recent transactions
         latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
-        # print(latest_transactions)
         response = jsonify({
             'latest_transactions': latest_transactions})
         response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
