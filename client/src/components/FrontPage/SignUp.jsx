@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box, Button, Modal } from "@mui/material";
 
-import PlaidLink from "../PlaidLink";
+// import PlaidLink from "../PlaidLink";
 
 const style = {
     position: 'absolute',

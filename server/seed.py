@@ -1,5 +1,5 @@
 from app import app
-from models import db, User
+from models import db, User, PlaidItem, Transaction
 
 with app.app_context():
     print("Starting seed...")
@@ -11,3 +11,8 @@ with app.app_context():
     db.session.add_all([frank])
     db.session.commit()
 
+    PlaidItem.query.delete()
+    db.session.commit()
+
+    Transaction.query.delete()
+    db.session.commit()
