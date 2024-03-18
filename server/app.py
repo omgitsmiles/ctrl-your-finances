@@ -115,7 +115,6 @@ def info():
     })
     # print("RESPONSE FROM: /api/info")
     # print("access_token: ", access_token)
-    response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
     return response
 
 
@@ -135,7 +134,6 @@ def create_link_token():
             request['redirect_uri']=PLAID_REDIRECT_URI
     # create link token
         response = jsonify(client.link_token_create(request).to_dict())
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return response
     except plaid.ApiException as e:
         return json.loads(e.body)
@@ -167,7 +165,6 @@ def get_access_token():
         response = jsonify(exchange_response.to_dict())
         # print("RESPONSE FROM /api/set_access_token")
         # print(exchange_response.to_dict())
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return response
     except plaid.ApiException as e:
         return json.loads(e.body)
@@ -217,7 +214,8 @@ def get_transactions():
                 authorized_date = transaction['authorized_date'],
                 merchant_name = transaction['merchant_name'],
                 name = transaction['name'],
-                personal_finance_category = '',
+                personal_finance_category = json.dumps(transaction['personal_finance_category']),
+                # to retrieve personal_finance_category from transactions table, transform data with json.loads(transaction['personal_finance_category'])
                 transaction_id = transaction['transaction_id']
             )
             new_transactions.append(new_transaction)
@@ -228,7 +226,6 @@ def get_transactions():
         latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
         response = jsonify({
             'latest_transactions': latest_transactions})
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return response
 
     except plaid.ApiException as e:
