@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import {  createUserWithEmailAndPassword  } from 'firebase/auth';
-import { auth } from '../../firebase';
+import { auth } from '../firebase';
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
@@ -14,19 +14,19 @@ import 'firebaseui/dist/firebaseui.css'
 import CssBaseline from "@mui/material/CssBaseline";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-
-
     
 const SignUp = () => {
-        const navigate = useNavigate();
+    const navigate = useNavigate();
     
-        const [email, setEmail] = useState('')
-        const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('');
+
     
-        const onSubmit = async (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault()
         
         await createUserWithEmailAndPassword(auth, email, password)
@@ -57,7 +57,11 @@ const SignUp = () => {
                     <h1>Sign up</h1>
                     <Button 
                     style={{maxWidth: '250px', maxHeight: '40px', minWidth: '250px', minHeight: '40px'}}
-                    size="large" variant='outlined' startIcon={<AccountCircleIcon />}>
+                    size="large" 
+                    variant='outlined' 
+                    startIcon={<AccountCircleIcon />}
+                    // onClick={handleEmailClickOpen}
+                    >
                         Sign up with email
                     </Button>
                     <Button 
@@ -70,14 +74,21 @@ const SignUp = () => {
                     size="medium" variant='outlined' startIcon={<FacebookIcon/> }>
                         Continue with Facebook
                     </Button>
-                    <p>Already have an account? <a>Login</a></p>
+                    <p>Already have an account?{' '}
+                        <Link
+                            component="button"
+                            variant="body2"
+                            href="/" 
+                            >
+                            Log in
+                        </Link>
+                    </p>
             </Stack>
 
-             
             <section>
                 <div>
                     <div>                                  
-                        <form>                                                                                            
+                        <form> 
                             <div>
                                 <label htmlFor="email-address">
                                     Email address
@@ -87,11 +98,10 @@ const SignUp = () => {
                                     label="Email address"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}  
-                                    required                                    
-                                    placeholder="Email address"                                
+                                    required
+                                    placeholder="Email address" 
                                 />
                             </div>
-
                             <div>
                                 <label htmlFor="password">
                                     Password
@@ -101,25 +111,40 @@ const SignUp = () => {
                                     label="Create password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)} 
-                                    required                                 
+                                    required 
                                     placeholder="Password"              
                                 />
-                            </div>                                             
-                            
+                            </div>  
+                            <div>
+                                <label htmlFor="password">
+                                    Password
+                                </label>
+                                <input
+                                    type="password"
+                                    label="Create password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    required 
+                                    placeholder="Password"              
+                                />
+                            </div>      
                             <button
                                 type="submit" 
                                 onClick={onSubmit}                        
                             >  
                                 Sign up                                
                             </button>
-                                                                        
                         </form>
                     
                         <p>
                             Already have an account?{' '}
-                            <NavLink to="/" >
-                                Sign in
-                            </NavLink>
+                            <Link
+                            component="button"
+                            variant="body2"
+                            href="/" 
+                            >
+                            Log in
+                            </Link>
                         </p>                   
                     </div>
                 </div>
