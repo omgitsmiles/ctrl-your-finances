@@ -45,6 +45,7 @@ class Transaction(db.Model, SerializerMixin):
     merchant_name = db.Column(db.Text)
     name = db.Column(db.Text)
     personal_finance_category = db.Column(db.Text)
+    transaction_id = db.Column(db.Text) # used to identify transactions that have been modified or removed
 
     user = db.relationship('User', back_populates='transactions')
     plaid_item = db.relationship('PlaidItem', back_populates='transactions')

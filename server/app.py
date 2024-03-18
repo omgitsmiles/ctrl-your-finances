@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from config import app, db, api
 
 # Model imports
-from models import User
+from models import User, PlaidItem, Transaction
 
 # Views go here:
 
@@ -157,6 +157,13 @@ def get_access_token():
         exchange_response = client.item_public_token_exchange(exchange_request)
         access_token = exchange_response['access_token']
         item_id = exchange_response['item_id']
+
+        # save token and id to database.  MUST ENCRYPT THIS.
+        # CAN THIS BE DONE ASYNC?
+        new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id)
+        db.session.add(new_plaid_item)
+        db.session.commit()
+
         response = jsonify(exchange_response.to_dict())
         # print("RESPONSE FROM /api/set_access_token")
         # print(exchange_response.to_dict())
@@ -195,6 +202,27 @@ def get_transactions():
             # Update cursor to the next cursor
             cursor = response['next_cursor']
             pretty_print_response(response)
+
+            # update plaid_items row cursor based on access token
+            plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
+            plaid_item.cursor = cursor
+
+        # add transactions to database.  CAN THIS BE DONE ASYNC?
+        new_transactions = []
+        for transaction in added:
+            new_transaction = Transaction(
+                user_id = None,
+                plaid_item_id = None,
+                amount = transaction['amount'],
+                authorized_date = transaction['authorized_date'],
+                merchant_name = transaction['merchant_name'],
+                name = transaction['name'],
+                personal_finance_category = '',
+                transaction_id = transaction['transaction_id']
+            )
+            new_transactions.append(new_transaction)
+        db.session.add_all(new_transactions)
+        db.session.commit()
 
         # Return the 8 most recent transactions
         latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
