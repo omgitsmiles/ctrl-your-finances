@@ -30,24 +30,26 @@ const SampleChart = () => {
 
     console.log(transactionData)
 
-    const newData = transactionData.latest_transactions.map(transaction => {
-        return [transaction.name, Math.abs(transaction.amount)]
+    const newData = transactionData.latest_transactions
+    .map(transaction => {
+        return [transaction.name, transaction.amount]
     })
+    .filter(([_, amount]) => amount >= 0)
 
     console.log(newData)
-    console.log(data)
 
     return (
         <div sx={{ alignItems: 'center', justifyContent: 'center' }}
-                onClick={() => console.log(data)}> 
+                onClick={() => console.log(newData)}> 
+                <h1>Transactions</h1>
                         <Chart
                                 chartType="PieChart"
                                 width="100%"
-                                height="400px"
+                                height="500px"
                                 data={[["Task", "Amount"], ...newData]}
                                 options={options}
                         />
-    </div>
+        </div>
     )
 }
 
