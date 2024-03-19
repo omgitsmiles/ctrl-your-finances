@@ -33,7 +33,8 @@ function PlaidLink() {
           const path = "http://127.0.0.1:5555/api/create_link_token"
           const response = await fetch(path, {
             method: "POST",
-          });
+          })
+          console.log('response', response)
           if (!response.ok) {
             dispatch({ type: "SET_STATE", state: { linkToken: null } });
             return;
@@ -41,6 +42,7 @@ function PlaidLink() {
           const data = await response.json();
           if (data) {
             if (data.error != null) {
+              console.log(data.error);
               dispatch({
                 type: "SET_STATE",
                 state: {
