@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import {  createUserWithEmailAndPassword  } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
@@ -21,9 +21,15 @@ import FacebookIcon from '@mui/icons-material/Facebook';
     
 const SignUp = () => {
     const navigate = useNavigate();
+
+    const [openEmailSignUp, setOpenEmailSignUp] = useState(false);
     
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('');
+
+    const handleEmailClickOpen = () => {
+        setOpenEmailSignUp(true);
+    };
 
     
     const onSubmit = async (e) => {
@@ -60,7 +66,7 @@ const SignUp = () => {
                     size="large" 
                     variant='outlined' 
                     startIcon={<AccountCircleIcon />}
-                    // onClick={handleEmailClickOpen}
+                    onClick={handleEmailClickOpen}
                     >
                         Sign up with email
                     </Button>
@@ -78,13 +84,13 @@ const SignUp = () => {
                         <Link
                             component="button"
                             variant="body2"
-                            href="/" 
+                            href="/login" 
                             >
                             Log in
                         </Link>
                     </p>
             </Stack>
-
+            {openEmailSignUp ? (
             <section>
                 <div>
                     <div>                                  
@@ -116,12 +122,12 @@ const SignUp = () => {
                                 />
                             </div>  
                             <div>
-                                <label htmlFor="password">
-                                    Password
+                                <label htmlFor="confirm-password">
+                                   Confirm Password
                                 </label>
                                 <input
                                     type="password"
-                                    label="Create password"
+                                    label="Confirm password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)} 
                                     required 
@@ -135,13 +141,12 @@ const SignUp = () => {
                                 Sign up                                
                             </button>
                         </form>
-                    
                         <p>
                             Already have an account?{' '}
                             <Link
                             component="button"
                             variant="body2"
-                            href="/" 
+                            href="/login" 
                             >
                             Log in
                             </Link>
@@ -149,15 +154,11 @@ const SignUp = () => {
                     </div>
                 </div>
             </section>
-        </main>
-    )
+        
+    ) : (<div></div>)
     }
+    </main>
+    )
+}
     
-export default SignUp
-
-
-
-
-
-
-
+export default SignUp;
