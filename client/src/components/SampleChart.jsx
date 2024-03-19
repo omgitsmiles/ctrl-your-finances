@@ -2,24 +2,6 @@ import React from 'react'
 import { Chart } from "react-google-charts";
 import { useLocation } from 'react-router-dom';
 
-const chartEvents = [
-    {
-        eventName: "select",
-        callback({ chartWrapper }) {
-          console.log("Selected ", chartWrapper.getChart().getSelection());
-        }
-      }
-  ]
-
-const data = [
-    ["Task", "Hours per Day"],
-    ["Starbucks", 11],
-    ["PF Changs", 2],
-    ["Gas", 2],
-    ["Cable", 2],
-    ["Casper", 7], // CSS-style declaration
-  ];
-  
 const options = {
     title: "Your Transactions",
     backgroundColor: "transparent",
@@ -44,6 +26,21 @@ const SampleChart = () => {
         return [transaction.name, transaction.amount]
     })
     .filter(([_, amount]) => amount >= 0)
+
+    const chartEvents = [
+        {
+          eventName: "select",
+          callback({ chartWrapper }) {
+            const selection = chartWrapper.getChart().getSelection();
+            if (selection.length > 0) {
+              const rowIndex = selection[0].row;
+              const transactionName = newData[rowIndex][0];
+              const transactionAmount = newData[rowIndex][1];
+              console.log("Selected Transaction:", transactionName, transactionAmount);
+            }
+          }
+        }
+      ]
 
     console.log(newData)
 
