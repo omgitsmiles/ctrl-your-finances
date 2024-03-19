@@ -8,6 +8,8 @@ import Login from "../components/FrontPage/Login";
 import SignUp from "../components/FrontPage/SignUp";
 import Protected from "../components/Protected";
 import App from "../App";
+import Plaid from "../components/Plaid/Plaid";
+import PlaidLink from "../components/Plaid/PlaidLink";
 
 export const routes = [
     {
@@ -45,6 +47,11 @@ export const routes = [
                 path: "/finances",
                 element: <Finances />,
             },
+            {
+                path: "/link",
+                element: <Plaid />,
+
+            }
         ]
     }
 ]

@@ -9,6 +9,7 @@ import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 // const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(props.auth)
+// import PlaidLink from "../PlaidLink";
 
 // Material UI imports
 import CssBaseline from "@mui/material/CssBaseline";
@@ -123,7 +124,7 @@ const SignUp = () => {
                             </div>  
                             <div>
                                 <label htmlFor="confirm-password">
-                                   Confirm Password
+                                Confirm Password
                                 </label>
                                 <input
                                     type="password"

@@ -24,7 +24,7 @@ function FrontPage() {
                 <Button variant="outlined" onClick={handleOpenLogin}>Log In</Button>
             </Stack>
 
-            <Modal
+            {/* <Modal
                 open={openSignUp}
                 onClose={handleCloseSignUp}
                 aria-labelledby="modal-signup"
@@ -40,7 +40,7 @@ function FrontPage() {
                 aria-describedby="login form"
             >
                 <Login />
-            </Modal>
+            </Modal> */}
         </>
     )
 }
