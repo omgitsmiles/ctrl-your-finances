@@ -97,6 +97,9 @@ products = []
 for product in PLAID_PRODUCTS:
     products.append(Products(product))
 
+
+# TO DO: Remove this variable.  In all routes, refer to access token saved in plaiditems table instead
+
 # We store the access_token in memory - in production, store it in a secure
 # persistent data store.
 access_token = None
@@ -162,6 +165,9 @@ def get_access_token():
         db.session.add(new_plaid_item)
         db.session.commit()
 
+        # TO DO: access token should not be included in response
+        # send PlaidItem.id instead
+
         response = jsonify(exchange_response.to_dict())
         # print("RESPONSE FROM /api/set_access_token")
         # print(exchange_response.to_dict())
@@ -175,6 +181,12 @@ def get_access_token():
 
 @app.route('/api/transactions', methods=['GET'])
 def get_transactions():
+
+    # TO DO: Search for existing PlaidItem
+    # If PlaidItem.cursor exists, set cursor to PlaidItem.cursor
+    # If not, set cursor to empty
+
+
     # Set cursor to empty to receive all historical updates
     cursor = ''
 
@@ -209,7 +221,7 @@ def get_transactions():
         for transaction in added:
             new_transaction = Transaction(
                 user_id = None,
-                plaid_item_id = None,
+                plaid_item_id = None, # set to PlaidItem.id
                 amount = transaction['amount'],
                 authorized_date = transaction['authorized_date'],
                 merchant_name = transaction['merchant_name'],

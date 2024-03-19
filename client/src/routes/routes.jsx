@@ -1,10 +1,9 @@
-import Account from "../components/Account";
+import Account from "../components/Account/Account";
 import Budgeting from "../components/Budgeting";
 import Dashboard from "../components/Dashboard";
 import Finances from "../components/Finances";
 import FrontPage from "../components/FrontPage/FrontPage";
 import Plaid from "../components/Plaid/Plaid";
-import PlaidLink from "../components/Plaid/PlaidLink";
 
 export const routes = [
     {
