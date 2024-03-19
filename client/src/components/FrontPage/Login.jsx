@@ -31,8 +31,9 @@ const Login = () => {
     }
 
     useEffect(() => {
+        console.log('use effect triggered')
         if (user != null) {
-            navigate('/account')
+            navigate('/dashboard')
         }
     }, [user])
 

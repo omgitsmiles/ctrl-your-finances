@@ -1,18 +1,29 @@
 import { useState } from 'react';
 import { Button, Modal, Stack } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; 
 
 import Login from "./Login"
 import SignUp from "./SignUp"
 
 function FrontPage() {
-    const [openSignUp, setOpenSignUp] = useState(false);
-    const [openLogin, setOpenLogin] = useState(false);
+    const navigate = useNavigate();
 
-    const handleOpenSignUp = () => setOpenSignUp(true);
-    const handleCloseSignUp = () => setOpenSignUp(false);
+    // const [openSignUp, setOpenSignUp] = useState(false);
+    // const [openLogin, setOpenLogin] = useState(false);
 
-    const handleOpenLogin = () => setOpenLogin(true);
-    const handleCloseLogin = () => setOpenLogin(false);
+    // const handleOpenSignUp = () => {
+    //     navigate('/signup')
+    // }
+    
+
+    // const handleOpenLogin = () => {
+    //     navigate('/login')
+    // }
+    // const handleCloseLogin = () => setOpenLogin(false);
+
+    
+
+    
 
     return (
         <>
@@ -20,8 +31,8 @@ function FrontPage() {
             <h3>Better Budget Management With Artificial Intelligence</h3>
 
             <Stack spacing={2} direction="row">
-                <Button variant="contained" onClick={handleOpenSignUp}>Sign Up</Button>
-                <Button variant="outlined" onClick={handleOpenLogin}>Log In</Button>
+                <Button variant="contained" onClick={() => navigate('/signup')}>Sign Up</Button>
+                <Button variant="outlined" onClick={() => navigate('/login')}>Log In</Button>
             </Stack>
 
             {/* <Modal

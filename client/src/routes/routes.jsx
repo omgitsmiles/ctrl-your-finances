@@ -21,15 +21,14 @@ export const routes = [
                 path: "/",
                 element: <FrontPage />,
                 
-                children: [
-                    {
-                        path: "/login",
-                        element: <Login />,
-                    },
-                    {
-                        path: "/signup",
-                        element: <SignUp />,
-                    }]
+            },
+            {
+                path: "/login",
+                element: <Login />,
+            },
+            {
+                path: "/signup",
+                element: <SignUp />,
             },
             {
                 path: "/account",
@@ -37,19 +36,19 @@ export const routes = [
             },
             {
                 path: "/budgeting",
-                element: <Budgeting />,
+                element: <Protected><Budgeting /></Protected>,
             },
             {
                 path: "/dashboard",
-                element: <Dashboard />,
+                element: <Protected><Dashboard /></Protected>,
             },
             {
                 path: "/finances",
-                element: <Finances />,
+                element: <Protected><Finances /></Protected>,
             },
             {
                 path: "/link",
-                element: <Plaid />,
+                element: <Protected><Plaid /></Protected>,
 
             }
         ]

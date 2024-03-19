@@ -14,6 +14,8 @@ function Account() {
         }
     }
 
+    console.log(user)
+
     return (
         <div>
             <h1>Account Management</h1>

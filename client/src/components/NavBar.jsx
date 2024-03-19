@@ -36,7 +36,8 @@ function NavBar() {
                 <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                CTRL Your Finances
+                <Link style={{color: 'white', textDecoration: 'none'}} to='/'>Money Magnet</Link>
+                
             </Typography>
             {user?.displayName ? <Button color='info' onClick={handleSignOut}>Sign Out</Button> : <Button color='info'><Link style={{color: 'white'}} to='/login'>Login</Link></Button>}
             </Toolbar>
