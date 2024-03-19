@@ -2,7 +2,16 @@ import React from 'react'
 import { Chart } from "react-google-charts";
 import { useLocation } from 'react-router-dom';
 
-export const data = [
+const chartEvents = [
+    {
+        eventName: "select",
+        callback({ chartWrapper }) {
+          console.log("Selected ", chartWrapper.getChart().getSelection());
+        }
+      }
+  ]
+
+const data = [
     ["Task", "Hours per Day"],
     ["Starbucks", 11],
     ["PF Changs", 2],
@@ -11,8 +20,8 @@ export const data = [
     ["Casper", 7], // CSS-style declaration
   ];
   
-export const options = {
-    title: "Capital One Transactions",
+const options = {
+    title: "Your Transactions",
     backgroundColor: "transparent",
     titleTextStyle: {
         color: '#B2BEB5'
@@ -39,8 +48,7 @@ const SampleChart = () => {
     console.log(newData)
 
     return (
-        <div sx={{ alignItems: 'center', justifyContent: 'center' }}
-                onClick={() => console.log(newData)}> 
+        <div sx={{ alignItems: 'center', justifyContent: 'center' }}> 
                 <h1>Transactions</h1>
                         <Chart
                                 chartType="PieChart"
@@ -48,6 +56,7 @@ const SampleChart = () => {
                                 height="500px"
                                 data={[["Task", "Amount"], ...newData]}
                                 options={options}
+                                chartEvents={chartEvents}
                         />
         </div>
     )
