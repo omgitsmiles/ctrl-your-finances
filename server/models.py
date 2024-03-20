@@ -23,7 +23,7 @@ class User(db.Model, SerializerMixin):
     accounts = db.relationship('Account', secondary=account_users, back_populates='users')
     household = db.relationship('Household', back_populates='users')
 
-    serialize_rules = ('-accounts.users', '-households.users')
+    serialize_rules = ('-accounts.users', '-household')
 
     def __repr__(self):
         return f"<User {self.id}: {self.name}>"

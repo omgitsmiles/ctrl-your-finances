@@ -21,10 +21,8 @@ from models import account_users, User, Account, PlaidItem, Transaction, Househo
 def index():
     return '<h1>Project Server</h1>'
 
-
-
-
-# PLAID:
+################################################
+##### ROUTES BASED ON PLAID QUICKSTART #########
 
 import plaid
 from plaid.model.products import Products
@@ -246,6 +244,46 @@ def get_transactions():
 
 def pretty_print_response(response):
     print(json.dumps(response, indent=2, sort_keys=True, default=str))
+
+
+
+################################################
+###### FETCHING USER AND ACCOUNT INFO ##########
+
+class AccountsByUser(Resource):
+
+    def get(self, user_id):
+        try:
+            user = User.query.filter_by(id=user_id).first()
+            # print('user:',user.to_dict())
+            if user:
+                accounts = [account.to_dict() for account in user.accounts]
+                print('account list:',accounts)
+                return make_response(accounts, 200)
+            else:
+                return make_response({'error': 'Unable to retrieve user accounts'}, 404)
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+
+api.add_resource(AccountsByUser, '/api/accounts/<int:user_id>')
+
+
+class HouseholdMembers(Resource):
+
+    def get(self, user_id):
+        try:
+            user = User.query.filter_by(id=user_id).first()
+            house_members = User.query.filter_by(id=user.household_id).all()
+            if house_members:
+                house_members_list = [member.to_dict() for member in house_members]
+                return make_response(house_members_list, 200)
+            else:
+                return make_response({'error': 'Unable to retrieve household member information'})
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+
+api.add_resource(HouseholdMembers, '/api/household/<int:user_id>')
+
 
 
 

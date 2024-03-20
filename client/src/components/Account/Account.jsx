@@ -5,7 +5,11 @@ import { Box, List } from "@mui/material"
 import BankItem from "./BankItem";
 
 function Account() {
-    const { bankAccounts, household } = useOutletContext();
+    const { bankAccounts, household, error } = useOutletContext();
+
+    console.log('Bank Accounts:', bankAccounts)
+    console.log('Household:', household)
+    console.log('error:', error.error)
 
     const accountList = bankAccounts ? bankAccounts.map((account) => {
         return <BankItem key={account.id}/>
