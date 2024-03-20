@@ -18,10 +18,12 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False)
+    household_id = db.Column(db.Integer, db.ForeignKey='households.id')
 
     accounts = db.relationship('Account', secondary=account_users, back_populates='users', cascade='all, delete-orphan')
+    household = db.relationship('Household', back_populates='users')
 
-    serialize_rules('-accounts.users',)
+    serialize_rules('-accounts.users', '-households.users')
 
     def __repr__(self):
         return f"<User {self.id}: {self.name}>"
@@ -34,11 +36,15 @@ class Account(db.Model, SerializerMixin):
     account_id = db.Column(db.Text)
     name = db.Column(db.Text)
     institution_name = db.Column(db.Text)
+    household_id = db.Column(db.Integer, db.ForeignKey='households.id')
+    plaid_item_id = db.Column(db.Integer, db.ForeignKey='plaid_items.id')
 
     users = db.relationship('User', secondary=account_users, back_populates='accounts', cascade='all, delete-orphan')
     transactions = db.relationship('Transaction', back_populates='account', cascade='all, delete-orphan')
+    household = db.relationship('Household', back_populates='accounts')
+    plaid_item = db.relationship('PlaidItem', back_populates='accounts')
 
-    serialize_rules=('-users.accounts',)
+    serialize_rules=('-users.accounts', '-transactions.account', '-households.accounts', '-plaid_item.accounts')
 
 
 class PlaidItem(db.Model, SerializerMixin):
@@ -49,7 +55,9 @@ class PlaidItem(db.Model, SerializerMixin):
     item_id = db.Column(db.Text)
     cursor = db.Column(db.Text) # received from transactions/get, used to set the starting point for the next transactions update
 
-    account = db.relationship('Account')
+    accounts = db.relationship('Account', back_populates='plaid_item')
+
+    serialize_rules = ('-accounts.plaid_item',)
 
 
 class Transaction(db.Model, SerializerMixin):
@@ -67,4 +75,16 @@ class Transaction(db.Model, SerializerMixin):
     account = db.relationship('Account', back_populates='transactions')
 
     serialize_rules = ('-accounts.transactions',)
+
+
+class Household(db.Model, SerializerMixin):
+    __tablename__ = 'households'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+
+    users = db.relationship('User', back_populates='household')
+    accounts = db.relationship('Account', back_populates='household')
+
+    serialize_rules = ('-users.household', '-accounts.household')
 
