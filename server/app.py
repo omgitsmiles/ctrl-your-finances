@@ -115,7 +115,7 @@ def info():
     })
     # print("RESPONSE FROM: /api/info")
     # print("access_token: ", access_token)
-    response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+    # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
     return response
 
 
@@ -135,7 +135,7 @@ def create_link_token():
             request['redirect_uri']=PLAID_REDIRECT_URI
     # create link token
         response = jsonify(client.link_token_create(request).to_dict())
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+        # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return response
     except plaid.ApiException as e:
         return json.loads(e.body)
