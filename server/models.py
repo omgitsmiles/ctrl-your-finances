@@ -1,7 +1,16 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from config import db
+from config import db, metadata
+
+
+account_users = db.Table(
+    'account_users',
+    metadata,
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('account_id', db.Integer, db.ForeignKey('accounts.id'), primary_key=True)
+)
+
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -9,15 +18,27 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False)
-    password = db.Column(db.Text, nullable=False)
 
-    transactions = db.relationship('Transaction', back_populates='user', cascade='all, delete-orphan')
-    plaid_items = association_proxy('transactions', 'plaid_item')
+    accounts = db.relationship('Account', secondary=account_users, back_populates='users', cascade='all, delete-orphan')
 
-    serialize_rules = ('-transactions.user',)
+    serialize_rules('-accounts.users',)
 
     def __repr__(self):
         return f"<User {self.id}: {self.name}>"
+
+
+class Account(db.Model, SerializerMixin):
+    __tablename__ = 'accounts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    account_id = db.Column(db.Text)
+    name = db.Column(db.Text)
+    institution_name = db.Column(db.Text)
+
+    users = db.relationship('User', secondary=account_users, back_populates='accounts', cascade='all, delete-orphan')
+    transactions = db.relationship('Transaction', back_populates='account', cascade='all, delete-orphan')
+
+    serialize_rules=('-users.accounts',)
 
 
 class PlaidItem(db.Model, SerializerMixin):
@@ -28,18 +49,14 @@ class PlaidItem(db.Model, SerializerMixin):
     item_id = db.Column(db.Text)
     cursor = db.Column(db.Text) # received from transactions/get, used to set the starting point for the next transactions update
 
-    transactions = db.relationship('Transaction', back_populates='plaid_item', cascade='all, delete-orphan')
-    user = association_proxy('transactions', 'user')
-
-    serialize_rules = ('-transactions.plaid_item',)
+    account = db.relationship('Account')
 
 
 class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transactions'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    plaid_item_id = db.Column(db.Integer, db.ForeignKey('plaid_items.id'))
+    account_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     amount = db.Column(db.Integer)
     authorized_date = db.Column(db.Text)
     merchant_name = db.Column(db.Text)
@@ -47,8 +64,7 @@ class Transaction(db.Model, SerializerMixin):
     personal_finance_category = db.Column(db.Text)
     transaction_id = db.Column(db.Text) # used to identify transactions that have been modified or removed
 
-    user = db.relationship('User', back_populates='transactions')
-    plaid_item = db.relationship('PlaidItem', back_populates='transactions')
+    account = db.relationship('Account', back_populates='transactions')
 
-    serialize_rules = ('-users.transactions', '-plaid_items.transactions')
+    serialize_rules = ('-accounts.transactions',)
 

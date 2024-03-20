@@ -1,13 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [household, setHousehold] = useState([]);
+
+  useEffect(() => {
+    // retrieve user account info
+    // retrieve household member info
+  }, [])
+
+  context = {
+    bankAccounts,
+    household,
+  }
 
   return (
     <>
-      <Outlet />
+      <Outlet context={context} />
     </>
   )
 }

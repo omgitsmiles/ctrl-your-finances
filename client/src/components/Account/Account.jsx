@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react"
+import { useOutletContext } from "react-router-dom";
 import { Box, List } from "@mui/material"
 
 import BankItem from "./BankItem";
 
 function Account() {
-    const [bankAccounts, setBankAccounts] = useState([]);
-    const [household, setHousehold] = useState([]);
-
-    useEffect(() => {
-        // retrieve user account info
-        // retrieve household member info
-    })
+    const { bankAccounts, household } = useOutletContext();
 
     const accountList = bankAccounts ? bankAccounts.map((account) => {
         return <BankItem key={account.id}/>
