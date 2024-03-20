@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Button, Modal, Stack } from '@mui/material';
-
+import { Button,  Modal, Stack, Box, styled, Typography } from '@mui/material';
 import Login from "./Login"
 import SignUp from "./SignUp"
+import Philosophy from './Philosophy';
+import Header from './Header';
+import Footer from '../Footer';
 
 function FrontPage() {
     const [openSignUp, setOpenSignUp] = useState(false);
@@ -14,15 +16,16 @@ function FrontPage() {
     const handleOpenLogin = () => setOpenLogin(true);
     const handleCloseLogin = () => setOpenLogin(false);
 
+
     return (
         <>
-            <h1>Money Magnet</h1>
+            {/* <h1>Welcome to Money Magnet!</h1>
             <h3>Better Budget Management With Artificial Intelligence</h3>
 
             <Stack spacing={2} direction="row">
                 <Button variant="contained" onClick={handleOpenSignUp}>Sign Up</Button>
                 <Button variant="outlined" onClick={handleOpenLogin}>Log In</Button>
-            </Stack>
+            </Stack> */}
 
             {/* <Modal
                 open={openSignUp}
@@ -41,6 +44,10 @@ function FrontPage() {
             >
                 <Login />
             </Modal> */}
+
+             <Header />
+             <Philosophy />
+             <Footer />
         </>
     )
 }
