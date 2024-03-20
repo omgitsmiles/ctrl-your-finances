@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from config import app, db, api
 
 # Model imports
-from models import account_users, User, Account, PlaidItem, Transaction
+from models import account_users, User, Account, PlaidItem, Transaction, Household
 
 # Views go here:
 

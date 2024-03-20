@@ -18,12 +18,12 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False)
-    household_id = db.Column(db.Integer, db.ForeignKey='households.id')
+    household_id = db.Column(db.Integer, db.ForeignKey('households.id'))
 
-    accounts = db.relationship('Account', secondary=account_users, back_populates='users', cascade='all, delete-orphan')
+    accounts = db.relationship('Account', secondary=account_users, back_populates='users')
     household = db.relationship('Household', back_populates='users')
 
-    serialize_rules('-accounts.users', '-households.users')
+    serialize_rules = ('-accounts.users', '-households.users')
 
     def __repr__(self):
         return f"<User {self.id}: {self.name}>"
@@ -36,15 +36,15 @@ class Account(db.Model, SerializerMixin):
     account_id = db.Column(db.Text)
     name = db.Column(db.Text)
     institution_name = db.Column(db.Text)
-    household_id = db.Column(db.Integer, db.ForeignKey='households.id')
-    plaid_item_id = db.Column(db.Integer, db.ForeignKey='plaid_items.id')
+    household_id = db.Column(db.Integer, db.ForeignKey('households.id'))
+    plaid_item_id = db.Column(db.Integer, db.ForeignKey('plaid_items.id'))
 
-    users = db.relationship('User', secondary=account_users, back_populates='accounts', cascade='all, delete-orphan')
+    users = db.relationship('User', secondary=account_users, back_populates='accounts')
     transactions = db.relationship('Transaction', back_populates='account', cascade='all, delete-orphan')
     household = db.relationship('Household', back_populates='accounts')
     plaid_item = db.relationship('PlaidItem', back_populates='accounts')
 
-    serialize_rules=('-users.accounts', '-transactions.account', '-households.accounts', '-plaid_item.accounts')
+    serialize_rules = ('-users.accounts', '-transactions.account', '-households.accounts', '-plaid_item.accounts')
 
 
 class PlaidItem(db.Model, SerializerMixin):
@@ -64,7 +64,7 @@ class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transactions'
 
     id = db.Column(db.Integer, primary_key=True)
-    account_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
     amount = db.Column(db.Integer)
     authorized_date = db.Column(db.Text)
     merchant_name = db.Column(db.Text)
