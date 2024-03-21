@@ -5,7 +5,7 @@ import Finances from "../components/Finances";
 import FrontPage from "../components/FrontPage/FrontPage";
 import Plaid from "../components/Plaid/Plaid";
 import PlaidLink from "../components/Plaid/PlaidLink";
-import SampleChart from "../components/SampleChart";
+import SampleChart from "../components/TransactionChart";
 
 export const routes = [
     {
