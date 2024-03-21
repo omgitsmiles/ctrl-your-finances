@@ -3,6 +3,7 @@
 import os
 import json
 import time
+import ipdb
 
 # Remote library imports
 from flask import request, jsonify, make_response
@@ -181,7 +182,13 @@ def get_access_token():
             )
             new_accounts.append(new_account)
         db.session.add_all(new_accounts)
+        db.session.commit()
 
+        new_account_users = []
+        for account in new_accounts:
+            new_account_user = AccountUser(user_id=USER_ID, account_id=account.id)
+            new_account_users.append(new_account_user)
+        db.session.add_all(new_account_users)
         db.session.commit()
 
         # TO DO: access token should not be included in response
@@ -207,6 +214,7 @@ def get_transactions():
 
     for item in plaid_items:
         cursor = item.cursor
+        access_token = item.access_token
 
         # New transaction updates since "cursor"
         added = []
@@ -234,6 +242,8 @@ def get_transactions():
                 plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
                 plaid_item.cursor = cursor
             
+            new_transactions = []
+            for transaction in added:
                 new_transaction = Transaction(
                     account_id = transaction['account_id'],
                     amount = transaction['amount'],
@@ -245,7 +255,8 @@ def get_transactions():
                     transaction_id = transaction['transaction_id']
                 )
                 new_transactions.append(new_transaction)
-            all_transactions += added
+            all_transactions.extend(new_transactions)
+            
             db.session.add_all(new_transactions)
             db.session.commit()
 
@@ -254,10 +265,11 @@ def get_transactions():
             return jsonify(error_response)
     
     # Return the 8 most recent transactions
-    latest_transactions = sorted(all_transactions, key=lambda t: t['date'])[-8:]
-    response = jsonify({
-        'latest_transactions': latest_transactions})
-    return response
+    # latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
+    # response = jsonify({
+    #     'latest_transactions': latest_transactions})
+    response = [transaction.to_dict() for transaction in all_transactions]
+    return make_response(response, 200)
 
 
 def pretty_print_response(response):
