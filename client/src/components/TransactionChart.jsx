@@ -1,6 +1,8 @@
 import React from 'react'
 import { Chart } from "react-google-charts";
 import { useLocation } from 'react-router-dom';
+import CustomCard from './CustomCard';
+import Navbar from './Navbar';
 
 const options = {
     title: "Your Transactions",
@@ -45,7 +47,9 @@ const SampleChart = () => {
     console.log(newData)
 
     return (
-        <div sx={{ alignItems: 'center', justifyContent: 'center' }}> 
+        <>
+        <Navbar />
+        <CustomCard sx={{ alignItems: 'center', justifyContent: 'center' }}> 
                 <h1>Transactions</h1>
                         <Chart
                                 chartType="PieChart"
@@ -55,7 +59,8 @@ const SampleChart = () => {
                                 options={options}
                                 chartEvents={chartEvents}
                         />
-        </div>
+        </CustomCard>
+        </>
     )
 }
 
