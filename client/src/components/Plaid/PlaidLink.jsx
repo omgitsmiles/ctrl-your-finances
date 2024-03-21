@@ -135,7 +135,7 @@ function PlaidLink() {
         return;
       }
       console.log(data)
-      return navigate("/samplechart", { state: { transactionData: data } })
+      return navigate("/dashboard", { state: { transactionData: data } })
     };
   
     let isOauth = false;

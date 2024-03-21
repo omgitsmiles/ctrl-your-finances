@@ -1,8 +1,14 @@
+import React from 'react'
+import TransactionChart from './TransactionChart'
+
 
 function Dashboard() {
 
     return (
-        <h1>Nice Visuals Here</h1>
+        <>
+        
+            <TransactionChart />
+        </>
     )
 }
 
