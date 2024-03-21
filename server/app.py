@@ -235,6 +235,37 @@ def get_transactions():
         error_response = format_error(e)
         return jsonify(error_response)
 
+
+
+
+# Get & Add Budget Goals
+
+# Dummy data to simulate user goals stored in memory
+user_goals = [
+    {"id": 1, "name": "Car", "saved": 370, "target": 1250},
+    {"id": 2, "name": "House", "saved": 800, "target": 5000}
+]
+#fetch user goals
+@app.route('/api/goals', methods =['GET'])
+def get_user_goals():
+    return jsonify({"goals": user_goals})
+# Route to add a new goal
+@app.route('/api/user/goals', methods=['POST'])
+def add_user_goal():  
+    data = request.json
+    new_goal = {
+        "id": len(user_goals) + 1,
+        "name": data.get("name"),
+        "saved": data.get("saved"),
+        "target": data.get("target")
+    }
+    user_goals.append(new_goal)
+    return jsonify({"message": "new goal added", "goal": new_goal})
+
+
+
+
+
 def pretty_print_response(response):
     print(json.dumps(response, indent=2, sort_keys=True, default=str))
 
