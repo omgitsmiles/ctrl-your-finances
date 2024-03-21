@@ -35,6 +35,7 @@ from plaid.model.country_code import CountryCode
 from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
 from plaid.model.link_token_create_request import LinkTokenCreateRequest
 from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
+from plaid.model.accounts_get_request import AccountsGetRequest
 from plaid.model.transactions_sync_request import TransactionsSyncRequest
 from plaid.api import plaid_api
 
@@ -168,6 +169,21 @@ def get_access_token():
         db.session.add(new_plaid_item)
         db.session.commit()
 
+        accounts_request = AccountsGetRequest(access_token=access_token)
+        accounts_response = client.accounts_get(accounts_request)
+        accounts = accounts_response['accounts']
+        new_accounts = []
+        for account in accounts:
+            new_account = Account(
+                account_id = account['account_id'],
+                name = account['name'],
+                plaid_item_id = new_plaid_item.id
+            )
+            new_accounts.append(new_account)
+        db.session.add_all(new_accounts)
+
+        db.session.commit()
+
         # TO DO: access token should not be included in response
         # send PlaidItem.id instead
 
@@ -186,7 +202,7 @@ def get_access_token():
 def get_transactions():
 
     plaid_items = PlaidItem.query.filter_by(user_id = USER_ID).all()
-    
+
     all_transactions = []
 
     for item in plaid_items:
@@ -217,10 +233,7 @@ def get_transactions():
                 # update plaid_items row cursor based on access token
                 plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
                 plaid_item.cursor = cursor
-
-            # add transactions to database.  CAN THIS BE DONE ASYNC?
-            new_transactions = []
-            for transaction in added:
+            
                 new_transaction = Transaction(
                     account_id = transaction['account_id'],
                     amount = transaction['amount'],
@@ -247,33 +260,14 @@ def get_transactions():
     return response
 
 
-# Retrieve Identity data for an Item
-# https://plaid.com/docs/#identity
-
-
-@app.route('/api/identity', methods=['GET'])
-def get_identity():
-
-    user_plaid_items = PlaidItem.query.filter_by(user_id = USER_ID).all()
-
-
-    try:
-        request = IdentityGetRequest(
-            access_token=access_token
-        )
-        response = client.identity_get(request)
-        pretty_print_response(response.to_dict())
-        return jsonify(
-            {'error': None, 'identity': response.to_dict()['accounts']})
-    except plaid.ApiException as e:
-        error_response = format_error(e)
-        return jsonify(error_response)
-
-
-
-
 def pretty_print_response(response):
     print(json.dumps(response, indent=2, sort_keys=True, default=str))
+
+def format_error(e):
+    response = json.loads(e.body)
+    return {'error': {'status_code': e.status, 'display_message':
+                      response['error_message'], 'error_code': response['error_code'], 'error_type': response['error_type']}}
+
 
 
 
