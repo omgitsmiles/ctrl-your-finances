@@ -1,7 +1,16 @@
 
-function BankItem() {
+import { IconButton, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 
-    return <p>Bank Name</p>
+function BankItem({account}) {
+
+    return (
+        <ListItem disablePadding >
+            <ListItemButton>
+                <ListItemText primary={account.name} />
+            </ListItemButton>
+        </ListItem>
+    )
 }
 
 export default BankItem

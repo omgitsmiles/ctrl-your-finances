@@ -4,6 +4,7 @@ import './App.css'
 
 function App() {
   const [bankAccounts, setBankAccounts] = useState([]);
+  const [houseMembers, setHouseMembers] = useState([]);
   const [household, setHousehold] = useState([]);
   const [error, setError] = useState('');
 
@@ -29,7 +30,10 @@ function App() {
     .then(resp => {
       if (resp.ok) {
         resp.json()
-        .then(household_members => setHousehold(household_members))
+        .then(houseData => {
+          setHouseMembers(houseData['members'])
+          setHousehold(houseData['household'])
+        })
       }
       else {
         resp.json()
@@ -40,6 +44,7 @@ function App() {
 
   const context = {
     bankAccounts,
+    houseMembers,
     household,
     error,
   }

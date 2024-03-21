@@ -1,7 +1,16 @@
 
-function HouseMember() {
+import { ListItem, ListItemButton, ListItemText } from '@mui/material';
 
-    return <p>House member</p>
+function HouseMember({houseMember}) {
+
+    return (
+        <ListItem disablePadding>
+            <ListItemButton>
+                <ListItemText primary={houseMember.name} />
+                <ListItemText primary='status' />
+            </ListItemButton>
+        </ListItem>
+    )
 }
 
 export default HouseMember

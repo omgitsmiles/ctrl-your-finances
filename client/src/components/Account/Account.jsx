@@ -3,20 +3,21 @@ import { useOutletContext } from "react-router-dom";
 import { Box, List } from "@mui/material"
 
 import BankItem from "./BankItem";
+import HouseMember from "./HouseMember";
 
 function Account() {
-    const { bankAccounts, household, error } = useOutletContext();
+    const { bankAccounts, houseMembers, household, error } = useOutletContext();
 
     console.log('Bank Accounts:', bankAccounts)
     console.log('Household:', household)
-    console.log('error:', error.error)
+    console.log('Household members:', houseMembers)
 
     const accountList = bankAccounts ? bankAccounts.map((account) => {
-        return <BankItem key={account.id}/>
+        return <BankItem key={account.id} account={account} />
     }) : null;
 
-    const householdList = household ? household.map((member) => {
-        return <HouseMember key={member.id}/>
+    const householdList = houseMembers ? houseMembers.map((member) => {
+        return <HouseMember key={member.id} houseMember={member} />
     }) : null;
 
     return (
