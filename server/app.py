@@ -164,7 +164,7 @@ def get_access_token():
 
         # save token and id to database.  MUST ENCRYPT THIS.
         # CAN THIS BE DONE ASYNC?
-        new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id)
+        new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id, cursor='', user_id=USER_ID)
         db.session.add(new_plaid_item)
         db.session.commit()
 
@@ -185,69 +185,92 @@ def get_access_token():
 @app.route('/api/transactions', methods=['GET'])
 def get_transactions():
 
-    # Set cursor to empty to receive all historical updates
-    cursor = ''
+    plaid_items = PlaidItem.query.filter_by(user_id = USER_ID).all()
+    
+    all_transactions = []
 
-    # TO DO: Search for existing PlaidItem
-    # If PlaidItem.cursor exists, set cursor to PlaidItem.cursor
-    # If not, set cursor to empty
-    plaid_item = PlaidItem.query.filter_by(user_id = USER_ID).first()
-    if plaid_item:
-        cursor = plaid_item.cursor
+    for item in plaid_items:
+        cursor = item.cursor
 
-    # New transaction updates since "cursor"
-    added = []
-    modified = []
-    removed = [] # Removed transaction ids
-    has_more = True
+        # New transaction updates since "cursor"
+        added = []
+        modified = []
+        removed = [] # Removed transaction ids
+        has_more = True
+        try:
+            # Iterate through each page of new transaction updates for item
+            while has_more:
+                request = TransactionsSyncRequest(
+                    access_token=access_token,
+                    cursor=cursor,
+                )
+                response = client.transactions_sync(request).to_dict()
+                # Add this page of results
+                added.extend(response['added'])
+                modified.extend(response['modified'])
+                removed.extend(response['removed'])
+                has_more = response['has_more']
+                # Update cursor to the next cursor
+                cursor = response['next_cursor']
+                # pretty_print_response(response)
+
+                # update plaid_items row cursor based on access token
+                plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
+                plaid_item.cursor = cursor
+
+            # add transactions to database.  CAN THIS BE DONE ASYNC?
+            new_transactions = []
+            for transaction in added:
+                new_transaction = Transaction(
+                    account_id = transaction['account_id'],
+                    amount = transaction['amount'],
+                    authorized_date = transaction['authorized_date'],
+                    merchant_name = transaction['merchant_name'],
+                    name = transaction['name'],
+                    personal_finance_category = json.dumps(transaction['personal_finance_category']),
+                    # to retrieve personal_finance_category from transactions table, transform data with json.loads(transaction['personal_finance_category'])
+                    transaction_id = transaction['transaction_id']
+                )
+                new_transactions.append(new_transaction)
+            all_transactions += added
+            db.session.add_all(new_transactions)
+            db.session.commit()
+
+        except plaid.ApiException as e:
+            error_response = format_error(e)
+            return jsonify(error_response)
+    
+    # Return the 8 most recent transactions
+    latest_transactions = sorted(all_transactions, key=lambda t: t['date'])[-8:]
+    response = jsonify({
+        'latest_transactions': latest_transactions})
+    return response
+
+
+# Retrieve Identity data for an Item
+# https://plaid.com/docs/#identity
+
+
+@app.route('/api/identity', methods=['GET'])
+def get_identity():
+
+    user_plaid_items = PlaidItem.query.filter_by(user_id = USER_ID).all()
+
+
     try:
-        # Iterate through each page of new transaction updates for item
-        while has_more:
-            request = TransactionsSyncRequest(
-                access_token=access_token,
-                cursor=cursor,
-            )
-            response = client.transactions_sync(request).to_dict()
-            # Add this page of results
-            added.extend(response['added'])
-            modified.extend(response['modified'])
-            removed.extend(response['removed'])
-            has_more = response['has_more']
-            # Update cursor to the next cursor
-            cursor = response['next_cursor']
-            # pretty_print_response(response)
-
-            # update plaid_items row cursor based on access token
-            plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
-            plaid_item.cursor = cursor
-
-        # add transactions to database.  CAN THIS BE DONE ASYNC?
-        new_transactions = []
-        for transaction in added:
-            new_transaction = Transaction(
-                user_id = None,
-                plaid_item_id = None, # set to PlaidItem.id
-                amount = transaction['amount'],
-                authorized_date = transaction['authorized_date'],
-                merchant_name = transaction['merchant_name'],
-                name = transaction['name'],
-                personal_finance_category = json.dumps(transaction['personal_finance_category']),
-                # to retrieve personal_finance_category from transactions table, transform data with json.loads(transaction['personal_finance_category'])
-                transaction_id = transaction['transaction_id']
-            )
-            new_transactions.append(new_transaction)
-        db.session.add_all(new_transactions)
-        db.session.commit()
-
-        # Return the 8 most recent transactions
-        latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
-        response = jsonify({
-            'latest_transactions': latest_transactions})
-        return response
-
+        request = IdentityGetRequest(
+            access_token=access_token
+        )
+        response = client.identity_get(request)
+        pretty_print_response(response.to_dict())
+        return jsonify(
+            {'error': None, 'identity': response.to_dict()['accounts']})
     except plaid.ApiException as e:
         error_response = format_error(e)
         return jsonify(error_response)
+
+
+
 
 def pretty_print_response(response):
     print(json.dumps(response, indent=2, sort_keys=True, default=str))

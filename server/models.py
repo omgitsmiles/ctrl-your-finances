@@ -14,10 +14,9 @@ class User(db.Model, SerializerMixin):
 
     account_user = db.relationship('AccountUser', back_populates='users')
     household = db.relationship('Household', back_populates='users')
-    plaid_items = db.relationship('PlaidItem', back_populates='user')
     accounts = association_proxy('account_users', 'accounts')
 
-    serialize_rules = ('-account_user.users', '-accounts.users', '-plaid_items.user', '-household')
+    serialize_rules = ('-account_user.users', '-accounts.users', '-household')
 
     def __repr__(self):
         return f"<User {self.id}: {self.name}>"
@@ -51,6 +50,7 @@ class AccountUser(db.Model, SerializerMixin):
 
     users = db.relationship('User', back_populates='account_user')
     accounts = db.relationship('Account', back_populates='account_user')
+    plaid_items = db.relationship('PlaidItem', back_populates='account_user')
 
     serialize_rules = ('-users.account_user', '-accounts.account_user')
 
@@ -62,10 +62,10 @@ class PlaidItem(db.Model, SerializerMixin):
     access_token = db.Column(db.Text)
     item_id = db.Column(db.Text)
     cursor = db.Column(db.Text) # received from transactions/get, used to set the starting point for the next transactions update
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('account_users.user_id'))
 
     accounts = db.relationship('Account', back_populates='plaid_item')
-    user = db.relationship('User', back_populates='plaid_items')
+    account_user = db.relationship('AccountUser', back_populates='plaid_items')
 
     serialize_rules = ('-accounts.plaid_item', '-user.plaid_items')
 

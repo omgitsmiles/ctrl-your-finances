@@ -110,7 +110,8 @@ function PlaidLink() {
               isItemAccess: true,
             },
           });
-          getTransactionData()
+          plaidEndpoint('transactions')
+          // plaidEndpoint('identity')
         };
 
         exchangePublicTokenForAccessToken();
@@ -122,8 +123,8 @@ function PlaidLink() {
     );
 
     //////////////// FROM Plaid Quickstart Endpoint ////////////
-    const getTransactionData = async () => {
-      const response = await fetch(`http://127.0.0.1:5555/api/transactions`, { method: "GET" });
+    const plaidEndpoint = async (endpoint) => {
+      const response = await fetch(`http://127.0.0.1:5555/api/${endpoint}`, { method: "GET" });
       const data = await response.json();
       if (data.error != null) {
         setError(data.error);
@@ -132,6 +133,7 @@ function PlaidLink() {
       console.log(data)
     };
   
+
     let isOauth = false;
     const config = {
       token: linkToken,
