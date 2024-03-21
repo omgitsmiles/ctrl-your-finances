@@ -5,6 +5,7 @@ import Finances from "../components/Finances";
 import FrontPage from "../components/FrontPage/FrontPage";
 import Plaid from "../components/Plaid/Plaid";
 import PlaidLink from "../components/Plaid/PlaidLink";
+import SampleChart from "../components/SampleChart";
 
 export const routes = [
     {
@@ -30,5 +31,9 @@ export const routes = [
     {
         path: "/link",
         element: <Plaid />,
+    },
+    {
+        path: "/samplechart",
+        element: <SampleChart />,
     }
 ]

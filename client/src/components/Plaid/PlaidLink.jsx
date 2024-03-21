@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect, useCallback } from "react";
 import Button from "plaid-threads/Button";
+import { useNavigate } from "react-router-dom";
 
 import { usePlaidLink } from "react-plaid-link";
 
@@ -8,6 +9,7 @@ import Context from "../../context/Context";
 function PlaidLink() {
     const { linkToken, linkSuccess, isItemAccess, isPaymentInitiation, dispatch } = useContext(Context);
     const [error, setError] = useState(null)
+    const navigate = useNavigate()
 
     ///////////////// FROM: Plaid Quickstart App //////////////
     const getInfo = useCallback(async () => {
@@ -35,10 +37,12 @@ function PlaidLink() {
             method: "POST",
           });
           if (!response.ok) {
+            console.error("Failed to fetch token:", response.status);
             dispatch({ type: "SET_STATE", state: { linkToken: null } });
             return;
           }
           const data = await response.json();
+          console.log("Token response:", data);
           if (data) {
             if (data.error != null) {
               dispatch({
@@ -50,6 +54,7 @@ function PlaidLink() {
               });
               return;
             }
+            console.log("Token generated successfully:", data.link_token);
             dispatch({ type: "SET_STATE", state: { linkToken: data.link_token } });
           }
           // Save the link_token to be used later in the Oauth flow.
@@ -130,6 +135,7 @@ function PlaidLink() {
         return;
       }
       console.log(data)
+      return navigate("/samplechart", { state: { transactionData: data } })
     };
   
     let isOauth = false;
