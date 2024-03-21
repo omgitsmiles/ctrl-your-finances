@@ -290,11 +290,9 @@ class AccountsByUser(Resource):
 
     def get(self, user_id):
         try:
-            user = User.query.filter_by(id=user_id).first()
-            # print('user:',user.to_dict())
-            if user:
-                accounts = [account.to_dict() for account in user.accounts]
-                # print('account list:',accounts)
+            user_accounts = db.session.query(Account).join(AccountUser, Account.id == AccountUser.account_id).filter(AccountUser.user_id == USER_ID).all()
+            if user_accounts:
+                accounts = [account.to_dict() for account in user_accounts]
                 return make_response(accounts, 200)
             else:
                 return make_response({'error': 'Unable to retrieve user accounts'}, 404)
@@ -309,10 +307,16 @@ class HouseholdMembers(Resource):
     def get(self, user_id):
         try:
             user = User.query.filter_by(id=user_id).first()
-            house_members = User.query.filter_by(id=user.household_id).all()
+            user_household = user.household_id
+            household = Household.query.filter_by(id = user_household).first()
+            house_members = User.query.filter_by(id=user_household).all()
             if house_members:
                 house_members_list = [member.to_dict() for member in house_members]
-                return make_response(house_members_list, 200)
+                response = {
+                    'household': household.name,
+                    'members': house_members_list
+                }
+                return make_response(response, 200)
             else:
                 return make_response({'error': 'Unable to retrieve household member information'})
         except Exception as e:

@@ -16,7 +16,7 @@ class User(db.Model, SerializerMixin):
     household = db.relationship('Household', back_populates='users')
     accounts = association_proxy('account_users', 'accounts')
 
-    serialize_rules = ('-account_user.users', '-accounts.users', '-household')
+    serialize_rules = ('-account_user', '-accounts', '-household')
 
     def __repr__(self):
         return f"<User {self.id}: {self.name}>"
@@ -38,7 +38,7 @@ class Account(db.Model, SerializerMixin):
     account_user = db.relationship('AccountUser', back_populates='accounts')
     users = association_proxy('account_users', 'users')
 
-    serialize_rules = ('-transactions.account', '-households.accounts', '-plaid_item.accounts', '-account_user.accounts')
+    serialize_rules = ('-transactions', '-household', '-plaid_item', '-account_user', '-users')
 
 
 class AccountUser(db.Model, SerializerMixin):
@@ -52,7 +52,7 @@ class AccountUser(db.Model, SerializerMixin):
     accounts = db.relationship('Account', back_populates='account_user')
     plaid_items = db.relationship('PlaidItem', back_populates='account_user')
 
-    serialize_rules = ('-users.account_user', '-accounts.account_user')
+    serialize_rules = ('-users', '-accounts')
 
 
 class PlaidItem(db.Model, SerializerMixin):
@@ -96,5 +96,5 @@ class Household(db.Model, SerializerMixin):
     users = db.relationship('User', back_populates='household')
     accounts = db.relationship('Account', back_populates='household')
 
-    serialize_rules = ('-users.household', '-accounts.household')
+    serialize_rules = ('-users', '-accounts')
 
