@@ -73,19 +73,7 @@ const Header = () => {
                 >
                     Together, we’re going to make some amazing things!
                 </Typography>
-                <Typography
-                variant='p'
-                component='p'
-                sx={{
-                    py: 3,
-                    lineHeight: 1.6,
-                    color: '#fff',
-                }}
-                >
-                    At Money Magnet, we firmly believe that exceptional financial planning and budgeting go beyond numbers; it's a reflection of purpose, strategy, and the ability to leave a lasting impact on your financial future. Our brand guidelines serve as your compass as we navigate through our creative philosophy, principles, and visual identity.
-                </Typography>
-
-                <Box>
+                <Box sx={{ py: 2 }}>
                     <Button 
                     variant='contained'
                     sx={{
@@ -134,6 +122,17 @@ const Header = () => {
                         Log In
                     </Button>
                 </Box>
+                <Typography
+                variant='p'
+                component='p'
+                sx={{
+                    py: 3,
+                    lineHeight: 1.6,
+                    color: '#fff',
+                }}
+                >
+                    At Money Magnet, we firmly believe that exceptional financial planning and budgeting go beyond numbers; it's a reflection of purpose, strategy, and the ability to leave a lasting impact on your financial future. Our brand guidelines serve as your compass as we navigate through our creative philosophy, principles, and visual identity.
+                </Typography>
             </BoxText>
         </CustomBox>
         </>
