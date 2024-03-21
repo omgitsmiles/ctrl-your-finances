@@ -55,6 +55,7 @@ const Header = () => {
                     font: 'Staaliches-Regular',
                     fontWeight: 700,
                     color: '#fff',
+                    paddingTop: 10,
                 }}
                 >
                     Welcome to Money Magnet!
