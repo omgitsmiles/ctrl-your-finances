@@ -5,6 +5,7 @@ import SignUp from "./SignUp"
 import Philosophy from './Philosophy';
 import Header from './Header';
 import Footer from '../Footer';
+import Navbar from '../Navbar';
 
 function FrontPage() {
     const [openSignUp, setOpenSignUp] = useState(false);
@@ -44,7 +45,7 @@ function FrontPage() {
             >
                 <Login />
             </Modal> */}
-
+             <Navbar />
              <Header />
              <Philosophy />
              <Footer />
