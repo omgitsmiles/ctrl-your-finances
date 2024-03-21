@@ -6,6 +6,7 @@ function Dashboard() {
 
     return (
         <>
+        
             <TransactionChart />
         </>
     )
