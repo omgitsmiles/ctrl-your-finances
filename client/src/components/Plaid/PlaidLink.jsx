@@ -153,7 +153,8 @@ function PlaidLink() {
     }, [ready, open, isOauth]);
   
     return (
-      <Button 
+      <Button
+        backGroundColor="primary"
         type="button" 
         large onClick={() => open()} 
         disabled={!ready}
