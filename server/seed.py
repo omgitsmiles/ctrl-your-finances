@@ -1,5 +1,5 @@
 from app import app
-from models import db, account_users, User, Account, PlaidItem, Transaction, Household
+from models import db, User, Account, AccountUser, PlaidItem, Transaction, Household
 
 with app.app_context():
     print("Starting seed...")
@@ -9,6 +9,7 @@ with app.app_context():
     PlaidItem.query.delete()
     Transaction.query.delete()
     Household.query.delete()
+    AccountUser.query.delete()
 
     household_1 = Household(name="Frank Furter's household")
     db.session.add_all([household_1])

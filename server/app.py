@@ -13,7 +13,12 @@ from dotenv import load_dotenv
 from config import app, db, api
 
 # Model imports
-from models import account_users, User, Account, PlaidItem, Transaction, Household
+from models import User, Account, AccountUser, PlaidItem, Transaction, Household
+
+
+# TO DO: Remove user variable, get id from session
+USER_ID = 1
+
 
 # Views go here:
 
@@ -180,13 +185,15 @@ def get_access_token():
 @app.route('/api/transactions', methods=['GET'])
 def get_transactions():
 
+    # Set cursor to empty to receive all historical updates
+    cursor = ''
+
     # TO DO: Search for existing PlaidItem
     # If PlaidItem.cursor exists, set cursor to PlaidItem.cursor
     # If not, set cursor to empty
-
-
-    # Set cursor to empty to receive all historical updates
-    cursor = ''
+    plaid_item = PlaidItem.query.filter_by(user_id = USER_ID).first()
+    if plaid_item:
+        cursor = plaid_item.cursor
 
     # New transaction updates since "cursor"
     added = []
@@ -208,7 +215,7 @@ def get_transactions():
             has_more = response['has_more']
             # Update cursor to the next cursor
             cursor = response['next_cursor']
-            pretty_print_response(response)
+            # pretty_print_response(response)
 
             # update plaid_items row cursor based on access token
             plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
@@ -248,7 +255,7 @@ def pretty_print_response(response):
 
 
 ################################################
-###### FETCHING USER AND ACCOUNT INFO ##########
+### FETCHING ACCOUNTS AND HOUSEHOLD INFO #######
 
 class AccountsByUser(Resource):
 
@@ -258,7 +265,7 @@ class AccountsByUser(Resource):
             # print('user:',user.to_dict())
             if user:
                 accounts = [account.to_dict() for account in user.accounts]
-                print('account list:',accounts)
+                # print('account list:',accounts)
                 return make_response(accounts, 200)
             else:
                 return make_response({'error': 'Unable to retrieve user accounts'}, 404)
