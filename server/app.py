@@ -5,8 +5,6 @@ import json
 import time
 import ipdb
 
-
-
 # Remote library imports
 from flask import request, jsonify, make_response
 from flask_restful import Resource
@@ -144,19 +142,9 @@ def create_link_token():
             request['redirect_uri']=PLAID_REDIRECT_URI
     # create link token
         response = jsonify(client.link_token_create(request).to_dict())
-        # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return response
-    except Exception as e:
-        error_dict = {
-            "error_type": "API_ERROR",
-            "error_code": "INTERNAL_SERVER_ERROR",
-            "error_message": str(e),
-            "display_message": None,
-            "request_id": "HNTDNrA8F1shFEW"
-        }
-        response = jsonify(error_dict)
-        response.status_code = 500  # HTTP status code 500 for Internal Server Error
-        return response
+    except plaid.ApiException as e:
+        return json.loads(e.body)
 
 
 # Exchange token flow - exchange a Link public_token for
@@ -342,6 +330,15 @@ class HouseholdMembers(Resource):
 
 api.add_resource(HouseholdMembers, '/api/household/<int:user_id>')
 
+
+class TransactionsByUser(Resource):
+
+    def get(self, user_id):
+        transactions = db.session.query(Transaction).join(Account).join(User).filter_by(id=user_id).all()
+        response = [transaction.to_dict() for transaction in transactions]
+        return make_response(response, 200)
+
+api.add_resource(TransactionsByUser, '/api/transactions/<int:user_id>')
 
 ################################################
 # MANAGING ACCOUNTS AND HOUSEHOLD PERMISSIONS ##

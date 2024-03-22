@@ -17,17 +17,15 @@ const options = {
     is3D: false,
   };
 
-const SampleChart = () => {
+const TransactionChart = () => {
     const location = useLocation()
     const { transactionData } = location.state
 
     console.log(transactionData)
 
-    const newData = transactionData.latest_transactions
-    .map(transaction => {
-        return [transaction.name, transaction.amount]
-    })
-    .filter(([_, amount]) => amount >= 0)
+    const newData = transactionData?.latest_transactions.map((transaction) => {
+        return [transaction?.name, transaction?.amount]
+    }).filter(([_, amount]) => amount >= 0)
 
     const chartEvents = [
         {
@@ -64,4 +62,4 @@ const SampleChart = () => {
     )
 }
 
-export default SampleChart
+export default TransactionChart

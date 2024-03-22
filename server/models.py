@@ -97,4 +97,3 @@ class Household(db.Model, SerializerMixin):
     accounts = db.relationship('Account', back_populates='household')
 
     serialize_rules = ('-users', '-accounts')
-
