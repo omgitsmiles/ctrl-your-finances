@@ -1,3 +1,4 @@
+import { useOutletContext } from "react-router"
 import { UserAuth } from "../context/AuthContext" 
 import Button from '@mui/material/Button'
 import React, { useEffect } from 'react'
@@ -5,7 +6,10 @@ import TransactionChart from './TransactionChart'
 
 
 function Dashboard() {
-    const { logOut, user } = UserAuth()
+    const { logOut, user } = UserAuth();
+    const { transactions } = useOutletContext();
+
+    console.log("dashboard transactions:",transactions)
 
     const handleSignOut = async () => {
         try {
@@ -22,7 +26,7 @@ function Dashboard() {
             <div>
                 <h2>Welcome, {user?.displayName}</h2>
             </div>
-            <TransactionChart />
+            <TransactionChart transactionData={transactions} />
             <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
         </main>
     )

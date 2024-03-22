@@ -178,7 +178,6 @@ def get_access_token():
             new_account = Account(
                 account_id = account['account_id'],
                 name = account['name'],
-                plaid_item_id = new_plaid_item.id
             )
             new_accounts.append(new_account)
         db.session.add_all(new_accounts)
@@ -244,14 +243,15 @@ def get_transactions():
             
             new_transactions = []
             for transaction in added:
+                account = Account.query.filter_by(account_id=transaction['account_id']).first()
                 new_transaction = Transaction(
-                    account_id = transaction['account_id'],
+                    account_id = account.id,
+                    plaid_account_id = transaction['account_id'],
                     amount = transaction['amount'],
                     authorized_date = transaction['authorized_date'],
-                    merchant_name = transaction['merchant_name'],
                     name = transaction['name'],
-                    personal_finance_category = json.dumps(transaction['personal_finance_category']),
-                    # to retrieve personal_finance_category from transactions table, transform data with json.loads(transaction['personal_finance_category'])
+                    personal_finance_category_primary = transaction['personal_finance_category']['primary'],
+                    personal_finance_category_detail = transaction['personal_finance_category']['detailed'],
                     transaction_id = transaction['transaction_id']
                 )
                 new_transactions.append(new_transaction)
@@ -291,6 +291,7 @@ class AccountsByUser(Resource):
     def get(self, user_id):
         try:
             user_accounts = db.session.query(Account).join(AccountUser, Account.id == AccountUser.account_id).filter(AccountUser.user_id == USER_ID).all()
+            # print("user accounts:", user_accounts)
             if user_accounts:
                 accounts = []
                 for account in user_accounts:
@@ -299,6 +300,7 @@ class AccountsByUser(Resource):
                         'name': account.name,
                         'plaid_item_id': account.plaid_item_id
                     }
+                    # print(response_object)
                     accounts.append(response_object)
                 return make_response(accounts, 200)
             else:
@@ -333,14 +335,34 @@ api.add_resource(HouseholdMembers, '/api/household/<int:user_id>')
 
 class TransactionsByUser(Resource):
 
-    def get(self, user_id):
-        transactions = db.session.query(Transaction).join(Account, Account.id == Transaction.account_id).join(AccountUser, AccountUser.account_id == Account.id).filter(AccountUser.user_id == user_id).all()
-        response = [transaction.to_dict() for transaction in transactions]
-        return make_response(response, 200)
+    def get(self, id):
+        try:
+            transactions = db.session.query(Transaction).join(
+                Account, Transaction.account_id == Account.id
+                ).join(
+                    AccountUser, Account.id == AccountUser.account_id
+                ).filter(AccountUser.user_id == id).all()
+            
+            if transactions:
+                transaction_list = []
+                for t in transactions:
+                    response_object = {
+                        'id': t.id,
+                        'account_id': t.account_id,
+                        'amount': t.amount,
+                        'name': t.name,
+                        'category_primary': t.personal_finance_category_primary,
+                        'category_detail': t.personal_finance_category_detail,
+                    }
+                    transaction_list.append(response_object)
 
-api.add_resource(TransactionsByUser, '/api/transactions/<int:user_id>')
+                return make_response(transaction_list, 200)
+            else:
+                return make_response({'error': 'No transactions found'}, 404)
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
 
-# projects = db.session.query(Project).join(Role, Project.id == Role.project_id).join(User, Role.user_id == User.id).filter(User.id == id).all()
+api.add_resource(TransactionsByUser, '/api/transactions/<int:id>')
 
 
 ################################################

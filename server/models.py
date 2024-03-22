@@ -14,9 +14,10 @@ class User(db.Model, SerializerMixin):
 
     account_user = db.relationship('AccountUser', back_populates='users')
     household = db.relationship('Household', back_populates='users')
+    plaid_items = db.relationship('PlaidItem', back_populates='user')
     accounts = association_proxy('account_users', 'accounts')
 
-    serialize_rules = ('-account_user', '-accounts', '-household')
+    serialize_rules = ('-account_user', '-accounts', '-plaid_itesm', '-household')
 
     def __repr__(self):
         return f"<User {self.id}: {self.name}>"
@@ -50,7 +51,6 @@ class AccountUser(db.Model, SerializerMixin):
 
     users = db.relationship('User', back_populates='account_user')
     accounts = db.relationship('Account', back_populates='account_user')
-    plaid_items = db.relationship('PlaidItem', back_populates='account_user')
 
     serialize_rules = ('-users', '-accounts')
 
@@ -62,12 +62,12 @@ class PlaidItem(db.Model, SerializerMixin):
     access_token = db.Column(db.Text)
     item_id = db.Column(db.Text)
     cursor = db.Column(db.Text) # received from transactions/get, used to set the starting point for the next transactions update
-    user_id = db.Column(db.Integer, db.ForeignKey('account_users.user_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     accounts = db.relationship('Account', back_populates='plaid_item', cascade='all, delete-orphan')
-    account_user = db.relationship('AccountUser', back_populates='plaid_items')
+    user = db.relationship('User', back_populates='plaid_items')
 
-    serialize_rules = ('-accounts.plaid_item', '-user.plaid_items')
+    serialize_rules = ('-accounts', '-user')
 
 
 class Transaction(db.Model, SerializerMixin):
@@ -75,11 +75,12 @@ class Transaction(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
+    plaid_account_id = db.Column(db.Text)
     amount = db.Column(db.Integer)
     authorized_date = db.Column(db.Text)
-    merchant_name = db.Column(db.Text)
     name = db.Column(db.Text)
-    personal_finance_category = db.Column(db.Text)
+    personal_finance_category_primary = db.Column(db.Text)
+    personal_finance_category_detail = db.Column(db.Text)
     transaction_id = db.Column(db.Text) # used to identify transactions that have been modified or removed
 
     account = db.relationship('Account', back_populates='transactions')

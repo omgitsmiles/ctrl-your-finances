@@ -22,8 +22,7 @@ function App() {
       if (resp.ok) {
         resp.json()
         .then(accounts => setBankAccounts(accounts))
-      }
-      else {
+      } else {
         resp.json()
         .then(message => setError(message.error))
       }
@@ -38,8 +37,7 @@ function App() {
           setHouseMembers(houseData['members'])
           setHousehold(houseData['household'])
         })
-      }
-      else {
+      } else {
         resp.json()
         .then(message => setError(message.error))
       }
@@ -51,6 +49,9 @@ function App() {
       if (resp.ok) {
         resp.json()
         .then(data => setTransactions(data))
+      } else {
+        resp.json()
+        .then(message => setError(message.error))
       }
     })
   }, [])
