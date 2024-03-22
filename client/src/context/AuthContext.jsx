@@ -5,6 +5,9 @@ import {
     signInWithPopup,
     signOut,
     onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    updateProfile
 } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -19,6 +22,21 @@ export const AuthContextProvider = ({ children }) => {
         signInWithRedirect(auth, provider);
     }
 
+    const createUserWithEmail = async (name, email, password) => {
+        try{
+            await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(auth.currentUser, {
+                displayName: name
+            })
+        
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const signInWithEmail = (email, password) => {
+        signInWithEmailAndPassword(auth, email, password)
+    }
 
     const logOut = () => {
         signOut(auth)
@@ -34,7 +52,7 @@ export const AuthContextProvider = ({ children }) => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ googleSignIn, logOut, user }}>
+        <AuthContext.Provider value={{ googleSignIn, logOut, user, createUserWithEmail, signInWithEmail }}>
             {children}
         </AuthContext.Provider>
     )

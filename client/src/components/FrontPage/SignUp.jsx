@@ -3,13 +3,7 @@ import React, {useState} from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 // Firebase imports
-import {  createUserWithEmailAndPassword  } from 'firebase/auth';
-import { auth } from '../../firebase';
-import firebase from 'firebase/compat/app';
-import * as firebaseui from 'firebaseui'
-import 'firebaseui/dist/firebaseui.css'
-// const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(props.auth)
-// import PlaidLink from "../PlaidLink";
+import { UserAuth } from '../../context/AuthContext';
 
 // Material UI imports
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,39 +12,36 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GoogleIcon from '@mui/icons-material/Google';
-import FacebookIcon from '@mui/icons-material/Facebook';
+
     
 const SignUp = () => {
     const navigate = useNavigate();
 
     const [openEmailSignUp, setOpenEmailSignUp] = useState(false);
     
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const { createUserWithEmail } = UserAuth();
 
     const handleEmailClickOpen = () => {
         setOpenEmailSignUp(true);
     };
 
     
-    const onSubmit = async (e) => {
-        e.preventDefault()
-        
-        await createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in
-                const user = userCredential.user;
-                console.log(user);
-                navigate("/")
-                // ...
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage);
-                // ..
-            });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await createUserWithEmail(name, email, password);
+            navigate('/dashboard');
+        } catch (error) {
+            setError(error.message);
+            console.log(error.message);
         }
+    }
     
     return (
         <main>   
@@ -76,11 +67,7 @@ const SignUp = () => {
                     size="medium" variant='outlined' startIcon={<GoogleIcon/>}>
                         Continue with Google
                     </Button>
-                    <Button  
-                    style={{maxWidth: '250px', maxHeight: '60px', minWidth: '250px', minHeight: '40px'}}
-                    size="medium" variant='outlined' startIcon={<FacebookIcon/> }>
-                        Continue with Facebook
-                    </Button>
+                    
                     <p>Already have an account?{' '}
                         <Link
                             component="button"
@@ -94,12 +81,25 @@ const SignUp = () => {
             {openEmailSignUp ? (
             <section>
                 <div>
-                    <div>                                  
-                        <form> 
+                    <div>
+                        <form onSubmit={handleSubmit}> 
                             <div>
+                                <label htmlFor="name">
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    label="Name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                    placeholder="Name"
+                                />
                                 <label htmlFor="email-address">
                                     Email address
                                 </label>
+                            </div>
+                            <div>
                                 <input
                                     type="email"
                                     label="Email address"
@@ -129,17 +129,14 @@ const SignUp = () => {
                                 <input
                                     type="password"
                                     label="Confirm password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)} 
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)} 
                                     required 
-                                    placeholder="Password"              
+                                    placeholder="Confirm Password"              
                                 />
                             </div>      
-                            <button
-                                type="submit" 
-                                onClick={onSubmit}                        
-                            >  
-                                Sign up                                
+                            <button>  
+                                Sign up
                             </button>
                         </form>
                         <p>
