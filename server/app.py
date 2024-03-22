@@ -284,7 +284,7 @@ def format_error(e):
 
 
 ################################################
-### FETCHING ACCOUNTS AND HOUSEHOLD INFO #######
+### RETRIEVING ACCOUNTS AND HOUSEHOLD INFO #####
 
 class AccountsByUser(Resource):
 
@@ -292,7 +292,14 @@ class AccountsByUser(Resource):
         try:
             user_accounts = db.session.query(Account).join(AccountUser, Account.id == AccountUser.account_id).filter(AccountUser.user_id == USER_ID).all()
             if user_accounts:
-                accounts = [account.to_dict() for account in user_accounts]
+                accounts = []
+                for account in user_accounts:
+                    response_object = {
+                        'id': account.id,
+                        'name': account.name,
+                        'plaid_item_id': account.plaid_item_id
+                    }
+                    accounts.append(response_object)
                 return make_response(accounts, 200)
             else:
                 return make_response({'error': 'Unable to retrieve user accounts'}, 404)
@@ -325,6 +332,24 @@ class HouseholdMembers(Resource):
 api.add_resource(HouseholdMembers, '/api/household/<int:user_id>')
 
 
+################################################
+# MANAGING ACCOUNTS AND HOUSEHOLD PERMISSIONS ##
+
+class PlaidItemById(Resource):
+
+    def delete(self, id):
+        plaid_item = PlaidItem.query.filter_by(id=id).first()
+        if plaid_item:
+            try:
+                db.session.delete(plaid_item)
+                db.session.commit()
+                return make_response({'message': f'Plaid link item {id} deleted'}, 200)
+            except Exception as e:
+                return make_response({'error': str(e)}, 500)
+        else:
+            return make_response({'error': f'Plaid link item {id} not found'}, 404)
+
+api.add_resource(PlaidItemById, '/api/plaiditem/<int:id>')
 
 
 if __name__ == '__main__':

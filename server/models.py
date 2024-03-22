@@ -64,7 +64,7 @@ class PlaidItem(db.Model, SerializerMixin):
     cursor = db.Column(db.Text) # received from transactions/get, used to set the starting point for the next transactions update
     user_id = db.Column(db.Integer, db.ForeignKey('account_users.user_id'))
 
-    accounts = db.relationship('Account', back_populates='plaid_item')
+    accounts = db.relationship('Account', back_populates='plaid_item', cascade='all, delete-orphan')
     account_user = db.relationship('AccountUser', back_populates='plaid_items')
 
     serialize_rules = ('-accounts.plaid_item', '-user.plaid_items')

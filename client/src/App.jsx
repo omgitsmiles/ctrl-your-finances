@@ -44,9 +44,11 @@ function App() {
 
   const context = {
     bankAccounts,
+    setBankAccounts,
     houseMembers,
     household,
     error,
+    setError,
   }
 
   return (

@@ -6,14 +6,14 @@ import BankItem from "./BankItem";
 import HouseMember from "./HouseMember";
 
 function Account() {
-    const { bankAccounts, houseMembers, household, error } = useOutletContext();
+    const { bankAccounts, setBankAccounts, houseMembers, household, error, setError } = useOutletContext();
 
     // console.log('Bank Accounts:', bankAccounts)
     // console.log('Household:', household)
     // console.log('Household members:', houseMembers)
 
     const accountList = bankAccounts ? bankAccounts.map((account) => {
-        return <BankItem key={account.id} account={account} />
+        return <BankItem key={account.id} account={account} setBankAccounts={setBankAccounts} setError={setError} />
     }) : null;
 
     const householdList = houseMembers ? houseMembers.map((member) => {
