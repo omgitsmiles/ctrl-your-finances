@@ -1,8 +1,24 @@
+import { UserAuth } from "../context/AuthContext" 
+import Button from '@mui/material/Button'
 
 function Dashboard() {
+    const { logOut, user } = UserAuth()
+
+    const handleSignOut = async () => {
+        try {
+            await logOut()
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
-        <h1>Nice Visuals Here</h1>
+        <main>
+            <div>
+                <h2>Welcome, {user?.displayName}</h2>
+            </div>
+            <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
+        </main>
     )
 }
 
