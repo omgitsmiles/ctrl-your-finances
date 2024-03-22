@@ -9,7 +9,7 @@ function Dashboard() {
     const { logOut, user } = UserAuth();
     const { transactions } = useOutletContext();
 
-    console.log("dashboard transactions:",transactions)
+    // console.log("dashboard transactions:",transactions)
 
     const handleSignOut = async () => {
         try {
@@ -19,7 +19,7 @@ function Dashboard() {
         }
     }
 
-    console.log('user: ' ,user)
+    // console.log('user: ' ,user)
 
     return (
         <main>

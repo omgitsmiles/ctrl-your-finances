@@ -78,12 +78,6 @@ if PLAID_ENV == 'production':
     host = plaid.Environment.Production
 
 # Parameters used for the OAuth redirect Link flow.
-#
-# Set PLAID_REDIRECT_URI to 'http://localhost:3000/'
-# The OAuth redirect flow requires an endpoint on the developer's website
-# that the bank website should redirect to. You will need to configure
-# this redirect URI for your client ID through the Plaid developer dashboard
-# at https://dashboard.plaid.com/team/api.
 PLAID_REDIRECT_URI = empty_to_none('PLAID_REDIRECT_URI')
 
 configuration = plaid.Configuration(
@@ -102,13 +96,6 @@ products = []
 for product in PLAID_PRODUCTS:
     products.append(Products(product))
 
-
-# TO DO: Remove this variable.  In all routes, refer to access token saved in plaiditems table instead
-
-# We store the access_token in memory - in production, store it in a secure
-# persistent data store.
-access_token = None
-
 item_id = None
 
 
@@ -118,7 +105,7 @@ def info():
     global item_id 
     response = jsonify({
         'item_id': item_id,
-        'access_token': access_token,
+        # 'access_token': access_token,
         'products': PLAID_PRODUCTS
     })
     # print("RESPONSE FROM: /api/info")
@@ -154,7 +141,9 @@ def create_link_token():
 
 @app.route('/api/set_access_token', methods=['POST'])
 def get_access_token():
-    global access_token
+    user = User.query.filter_by(id=USER_ID).first()
+    access_token = ''
+
     global item_id
     public_token = request.form['public_token']
     try:
@@ -190,13 +179,7 @@ def get_access_token():
         db.session.add_all(new_account_users)
         db.session.commit()
 
-        # TO DO: access token should not be included in response
-        # send PlaidItem.id instead
-
-        response = jsonify(exchange_response.to_dict())
-        # print("RESPONSE FROM /api/set_access_token")
-        # print(exchange_response.to_dict())
-        return response
+        return make_response({'message': 'account linked successfully'}, 200)
     except plaid.ApiException as e:
         return json.loads(e.body)
 

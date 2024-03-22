@@ -21,6 +21,7 @@ function PlaidLink() {
         }
         const data = await response.json();
         const paymentInitiation = false;
+        // console.log(data)
         dispatch({
           type: "SET_STATE",
           state: {
@@ -37,14 +38,14 @@ function PlaidLink() {
           const response = await fetch(path, {
             method: "POST",
           })
-          console.log('response', response)
+          // console.log('response', response)
           if (!response.ok) {
-            console.error("Failed to fetch token:", response.status);
+            // console.error("Failed to fetch token:", response.status);
             dispatch({ type: "SET_STATE", state: { linkToken: null } });
             return;
           }
           const data = await response.json();
-          console.log("Token response:", data);
+          // console.log("Token response:", data);
           if (data) {
             if (data.error != null) {
               console.log(data.error);
@@ -57,7 +58,7 @@ function PlaidLink() {
               });
               return;
             }
-            console.log("Token generated successfully:", data.link_token);
+            // console.log("Token generated successfully:", data.link_token);
             dispatch({ type: "SET_STATE", state: { linkToken: data.link_token } });
           }
           // Save the link_token to be used later in the Oauth flow.
@@ -87,7 +88,7 @@ function PlaidLink() {
 
 
     ///////////////// FROM: Plaid Quickstart Link/index ///////////
-    const onSuccess = React.useCallback(
+    const onSuccess = useCallback(
       (public_token) => {
         // If the access_token is needed, send public_token to server
         const exchangePublicTokenForAccessToken = async () => {
@@ -113,11 +114,12 @@ function PlaidLink() {
           dispatch({
             type: "SET_STATE",
             state: {
-              itemId: data.item_id,
-              accessToken: data.access_token,
+              // itemId: data.item_id,
+              // accessToken: data.access_token,
               isItemAccess: true,
             },
           });
+          console.log(data.message)
           plaidEndpoint('transactions')
           // plaidEndpoint('identity')
         };
@@ -138,7 +140,7 @@ function PlaidLink() {
         setError(data.error);
         return;
       }
-      console.log(data)
+      // console.log(data)
       return navigate("/dashboard", { state: { transactionData: data } })
     };
   
