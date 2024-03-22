@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 
 
 
-// grab user data and have house account toggle for different 
+// grab user data and have house account toggle for different access to goal charts
 
 function Budgeting() {
     const [userGoals, setUserGoals] = useState([]);
@@ -34,10 +34,12 @@ function Budgeting() {
       fetchUserGoals();
     },[])
 
+// console.log("goal info", goalName, savedMoney, targetAmount)
+
     const fetchUserGoals = async () => {
       try {
         // Make API call to fetch users goals
-        const response = await fetch("http://127.0.0.1:5555/api/goals", {
+        const response = await fetch("http://127.0.0.1:5555/api/goals/1", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -47,9 +49,7 @@ function Budgeting() {
         });
         if (response.ok) {
           const data = await response.json()
-          console.log("data from fetch in budget goals", data)
-          setUserGoals(data.goals)
-          console.log("userGoals", userGoals)
+          setUserGoals(data)
         } else {
           console.error("failed fetch error", error)
         }
@@ -58,11 +58,14 @@ function Budgeting() {
       }
     };
 
+
+
+
     //add new goals to user db
     const addGoal = async () => {
       try {
         // Make API call to users goals
-        const response = await fetch("http://127.0.0.1:5555/api/goals", {
+        const response = await fetch("http://127.0.0.1:5555/api/goals/1", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -88,7 +91,6 @@ function Budgeting() {
       console.error("Error adding goal:", error);
       }
     };
-
 
   
     // const handleSubmit = (e) => {
