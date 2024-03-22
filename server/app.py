@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from config import app, db, api
 
 # Model imports
-from models import User, PlaidItem, Transaction
+from models import User, PlaidItem, Transaction, Goal
 
 # Views go here:
 
@@ -241,26 +241,37 @@ def get_transactions():
 # Get & Add Budget Goals
 
 # Dummy data to simulate user goals stored in memory
-user_goals = [
-    {"id": 1, "name": "Car", "saved": 370, "target": 1250},
-    {"id": 2, "name": "House", "saved": 800, "target": 5000}
-]
+# user_goals = [
+#     {"id": 1, "name": "Car", "saved": 370, "target": 1250},
+#     {"id": 2, "name": "House", "saved": 800, "target": 5000}
+# ]
 #fetch user goals
-@app.route('/api/goals', methods =['GET'])
-def get_user_goals():
-    return jsonify({"goals": user_goals})
-# Route to add a new goal
-@app.route('/api/user/goals', methods=['POST'])
-def add_user_goal():  
-    data = request.json
-    new_goal = {
-        "id": len(user_goals) + 1,
-        "name": data.get("name"),
-        "saved": data.get("saved"),
-        "target": data.get("target")
-    }
-    user_goals.append(new_goal)
-    return jsonify({"message": "new goal added", "goal": new_goal})
+@app.route('/api/goals/<int:user_id>', methods =['GET', 'POST'])
+def goals:
+    # Get goals
+    if request.method == 'GET':
+        goals = Goal.query.filter_by(id = user_id).all()
+        response = [goal.to_dict() for goal in goals] # makes new list  from goals and for eaach goal in that list, it adds it to this new list
+        return make_response(response, 200)
+
+    # Route to add a new goal
+    if request.method == 'POST':
+        data = request.json
+        new_goal = (
+            "user_id": user_id
+            "name": data.get("name"),
+            "saved": data.get("saved"),
+            "target": data.get("target")
+        )
+        db.session.add(new_goal)
+        db.session.commit()
+        # get all goals including new one
+        goals = Goal.query.filter_by(id = user_id).all()
+        response = [goal.to_dict() for goal in goals]
+        return make_response(response, 200)
+        #return jsonify({"message": "new goal added", "goal": new_goal})
+
+
 
 
 

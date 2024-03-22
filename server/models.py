@@ -13,8 +13,9 @@ class User(db.Model, SerializerMixin):
 
     transactions = db.relationship('Transaction', back_populates='user', cascade='all, delete-orphan')
     plaid_items = association_proxy('transactions', 'plaid_item')
+    goals = db.relationship('Goal', back_populates='user')
 
-    serialize_rules = ('-transactions.user',)
+    serialize_rules = ('-transactions.user', '-goals.user')
 
     def __repr__(self):
         return f"<User {self.id}: {self.name}>"
@@ -52,3 +53,16 @@ class Transaction(db.Model, SerializerMixin):
 
     serialize_rules = ('-users.transactions', '-plaid_items.transactions')
 
+class Goal(db.Model,SerializerMixin):
+    __tablename__ = 'goals'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # add a household column 
+    name = db.Column(db.Text)
+    saved = db.Column(db.Integer)
+    target = db.Column(db.Integer)
+
+    user = db.relationship('User', back_populates='goals')
+
+    serialize_rules = ('-users.goals',)
