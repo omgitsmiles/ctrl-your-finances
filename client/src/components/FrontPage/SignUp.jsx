@@ -1,12 +1,11 @@
 // React imports
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { UserAuth } from '../../context/AuthContext';
 
 // Material UI imports
-import CssBaseline from "@mui/material/CssBaseline";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -24,7 +23,7 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    const { createUserWithEmail, googleSignIn } = UserAuth();
+    const { createUserWithEmail, googleSignIn, user } = UserAuth();
 
     const handleGoogleSignIn = async () => {
         try {
@@ -50,9 +49,17 @@ const SignUp = () => {
             console.log(error.message);
         }
     }
+
+    useEffect(() => {
+        if (user != null) {
+            navigate('/dashboard')
+        }
+    }, [user])
     
     return (
         <main>   
+            {!openEmailSignUp ? (
+
             <Stack 
                 direction="column"
                 justifyContent="center"
@@ -88,8 +95,11 @@ const SignUp = () => {
                         </Link>
                     </p>
             </Stack>
-            {openEmailSignUp ? (
+            ) : (
             <section>
+                <Button onClick={() => {setOpenEmailSignUp(false)}}>
+                    {'<- Back'}
+                </Button>
                 <div>
                     <form onSubmit={handleSubmit}> 
                         <div>
@@ -141,7 +151,7 @@ const SignUp = () => {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)} 
                                 required 
-                                placeholder="Confirm Password"              
+                                placeholder="Confirm Password"
                             />
                         </div>      
                         <button>  
@@ -160,9 +170,7 @@ const SignUp = () => {
                     </p>
                 </div>
             </section>
-        
-    ) : (<div></div>)
-    }
+            )}
     </main>
     )
 }

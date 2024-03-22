@@ -15,11 +15,6 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const activeStyle = {
-        textDecoration: 'underline'
-    }
-    const activeClassName = 'underline'
-
     const handleGoogleSignIn = async () => {
         try {
             await googleSignIn()
@@ -31,7 +26,7 @@ const Login = () => {
     const handleEmailClickOpen = () => {
         setOpenEmailLogIn(true);
     };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('')
@@ -42,7 +37,6 @@ const Login = () => {
             setError(error.message)
         }
     }
-
     useEffect(() => {
         if (user != null) {
             navigate('/dashboard')
@@ -51,6 +45,7 @@ const Login = () => {
 
     return (
         <main>
+            {!openEmailLogIn ? (
             <Stack 
                 direction="column"
                 justifyContent="center"
@@ -91,8 +86,11 @@ const Login = () => {
                     </Link>
                 </p> 
             </Stack>
-            {openEmailLogIn ? (
+            ) : (
             <section>
+                <Button onClick={() => {setOpenEmailLogIn(false)}}>
+                    {'<- Back'}
+                </Button>
                 <div>            
                     <form onSubmit={handleSubmit}> 
                         <div>
@@ -136,7 +134,7 @@ const Login = () => {
                         </Link>
                     </p>                   
                 </div>
-            </section>) : (<div></div>)
+            </section>) 
             }
         </main>
     )
