@@ -1,6 +1,6 @@
 // React imports
 import React, {useState} from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { UserAuth } from '../../context/AuthContext';
@@ -9,7 +9,6 @@ import { UserAuth } from '../../context/AuthContext';
 import CssBaseline from "@mui/material/CssBaseline";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GoogleIcon from '@mui/icons-material/Google';
 
@@ -25,7 +24,16 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    const { createUserWithEmail } = UserAuth();
+    const { createUserWithEmail, googleSignIn } = UserAuth();
+
+    const handleGoogleSignIn = async () => {
+        try {
+            await googleSignIn()
+            navigate('/dashboard');
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const handleEmailClickOpen = () => {
         setOpenEmailSignUp(true);
@@ -64,92 +72,92 @@ const SignUp = () => {
                     </Button>
                     <Button 
                     style={{maxWidth: '250px', maxHeight: '60px', minWidth: '250px', minHeight: '40px'}}
-                    size="medium" variant='outlined' startIcon={<GoogleIcon/>}>
+                    size="medium" variant='outlined' startIcon={<GoogleIcon/>}
+                    onClick={handleGoogleSignIn}
+                    >
                         Continue with Google
                     </Button>
                     
                     <p>Already have an account?{' '}
                         <Link
-                            component="button"
-                            variant="body2"
-                            href="/login" 
-                            >
-                            Log in
+                        component="button"
+                        variant="body2"
+                        to="/login" 
+                        >
+                        Log in
                         </Link>
                     </p>
             </Stack>
             {openEmailSignUp ? (
             <section>
                 <div>
-                    <div>
-                        <form onSubmit={handleSubmit}> 
-                            <div>
-                                <label htmlFor="name">
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    label="Name"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                    placeholder="Name"
-                                />
-                                <label htmlFor="email-address">
-                                    Email address
-                                </label>
-                            </div>
-                            <div>
-                                <input
-                                    type="email"
-                                    label="Email address"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}  
-                                    required
-                                    placeholder="Email address" 
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="password">
-                                    Password
-                                </label>
-                                <input
-                                    type="password"
-                                    label="Create password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)} 
-                                    required 
-                                    placeholder="Password"              
-                                />
-                            </div>  
-                            <div>
-                                <label htmlFor="confirm-password">
-                                Confirm Password
-                                </label>
-                                <input
-                                    type="password"
-                                    label="Confirm password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)} 
-                                    required 
-                                    placeholder="Confirm Password"              
-                                />
-                            </div>      
-                            <button>  
-                                Sign up
-                            </button>
-                        </form>
-                        <p>
-                            Already have an account?{' '}
-                            <Link
-                            component="button"
-                            variant="body2"
-                            href="/login" 
-                            >
-                            Log in
-                            </Link>
-                        </p>                   
-                    </div>
+                    <form onSubmit={handleSubmit}> 
+                        <div>
+                            <label htmlFor="name">
+                                Name
+                            </label>
+                            <input
+                                type="text"
+                                label="Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                placeholder="Name"
+                            />
+                            <label htmlFor="email-address">
+                                Email address
+                            </label>
+                        </div>
+                        <div>
+                            <input
+                                type="email"
+                                label="Email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}  
+                                required
+                                placeholder="Email address" 
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                label="Create password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)} 
+                                required 
+                                placeholder="Password"              
+                            />
+                        </div>  
+                        <div>
+                            <label htmlFor="confirm-password">
+                            Confirm Password
+                            </label>
+                            <input
+                                type="password"
+                                label="Confirm password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)} 
+                                required 
+                                placeholder="Confirm Password"              
+                            />
+                        </div>      
+                        <button>  
+                            Sign up
+                        </button>
+                    </form>
+                    <p>
+                        Already have an account?{' '}
+                        <Link
+                        component="button"
+                        variant="body2"
+                        to="/login" 
+                        >
+                        Log in
+                        </Link>
+                    </p>
                 </div>
             </section>
         

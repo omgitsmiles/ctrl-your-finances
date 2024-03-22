@@ -1,28 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { GoogleButton } from 'react-google-button';
-import { Box, Button } from "@mui/material";
-import Link from '@mui/material/Link';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { UserAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-
-// const style = {
-//     position: 'absolute',
-//     top: '50%',
-//     left: '50%',
-//     transform: 'translate(-50%, -50%)',
-//     width: 400,
-//     bgcolor: 'background.paper',
-//     border: '2px solid #000',
-//     boxShadow: 24,
-//     p: 4,
-// };
+import { useNavigate, Link } from 'react-router-dom';
+// mui imports
+import GoogleIcon from '@mui/icons-material/Google';
+import { Box, Button, Stack } from "@mui/material";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Login = () => {
-
-    const { googleSignIn, user } = UserAuth();
-    const [openEmailSignUp, setOpenEmailSignUp] = useState(false);
+    const { googleSignIn, user, signInWithEmail } = UserAuth();
     const navigate = useNavigate();
+
+    const [openEmailLogIn, setOpenEmailLogIn] = useState(false);
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const activeStyle = {
+        textDecoration: 'underline'
+    }
+    const activeClassName = 'underline'
 
     const handleGoogleSignIn = async () => {
         try {
@@ -33,8 +29,19 @@ const Login = () => {
         }
     }
     const handleEmailClickOpen = () => {
-        setOpenEmailSignUp(true);
+        setOpenEmailLogIn(true);
     };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('')
+        try {
+            await signInWithEmail(email, password)
+            navigate('/dashboard')
+        } catch (error) {
+            setError(error.message)
+        }
+    }
 
     useEffect(() => {
         if (user != null) {
@@ -44,87 +51,93 @@ const Login = () => {
 
     return (
         <main>
-        <Box>
-            <h2>Sign In</h2>
-            <GoogleButton onClick={handleGoogleSignIn} />
-            <Button 
-                style={{maxWidth: '250px', maxHeight: '40px', minWidth: '250px', minHeight: '40px'}}
-                size="large" 
-                variant='outlined' 
-                startIcon={<AccountCircleIcon />}
-                onClick={handleEmailClickOpen}
+            <Stack 
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+                sx={{ minWidth: 12 }}
             >
-                    Sign up with email
-            </Button>
-        </Box>
-        {openEmailSignUp ? (
+                <h2>Welcome Back</h2>
+                <Button 
+                    style={{maxWidth: '250px', maxHeight: '40px', minWidth: '250px', minHeight: '40px'}}
+                    size="large" 
+                    variant='outlined' 
+                    startIcon={<AccountCircleIcon />}
+                    onClick={handleEmailClickOpen}
+                >
+                        Sign in with email
+                </Button>
+                <Button 
+                style={{
+                    maxWidth: '250px', maxHeight: '60px', 
+                    minWidth: '250px', 
+                    minHeight: '40px'
+                }}
+                size="medium" variant='outlined' 
+                startIcon={<GoogleIcon/>}
+                onClick={handleGoogleSignIn}
+                >
+                Continue with Google
+                </Button>
+                <p>
+                    Don't have an account yet?{' '}
+                    <Link
+                    component="button"
+                    variant="body2"
+                    to="/signup" 
+                    >
+                    Sign up
+                    </Link>
+                </p> 
+            </Stack>
+            {openEmailLogIn ? (
             <section>
-                <div>
-                    <div>                                  
-                        <form> 
-                            <div>
-                                <label htmlFor="email-address">
-                                    Email address
-                                </label>
-                                {/* <input
-                                    type="email"
-                                    label="Email address"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}  
-                                    required
-                                    placeholder="Email address" 
-                                /> */}
-                            </div>
-                            <div>
-                                <label htmlFor="password">
-                                    Password
-                                </label>
-                                {/* <input
-                                    type="password"
-                                    label="Create password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)} 
-                                    required 
-                                    placeholder="Password"              
-                                /> */}
-                            </div>  
-                            <div>
-                                <label htmlFor="confirm-password">
-                                Confirm Password
-                                </label>
-                                {/* <input
-                                    type="password"
-                                    label="Confirm password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)} 
-                                    required 
-                                    placeholder="Password"              
-                                /> */}
-                            </div>      
-                            <button
-                                type="submit" 
-                                onClick={console.log('clicked')}                        
-                            >  
-                                Sign up                                
-                            </button>
-                        </form>
-                        <p>
-                            Don't have an account yet?{' '}
-                            <Link
-                            component="button"
-                            variant="body2"
-                            href="/signup" 
-                            >
+                <div>            
+                    <form onSubmit={handleSubmit}> 
+                        <div>
+                            <label htmlFor="email-address">
+                                Email address
+                            </label>
+                            <input
+                                type="email"
+                                label="Email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}  
+                                required
+                                placeholder="Email address" 
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                label="Create password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)} 
+                                required 
+                                placeholder="Password"
+                            />
+                        </div>      
+                        <button type="submit">  
                             Sign up
-                            </Link>
-                        </p>                   
-                    </div>
+                        </button>
+                    </form>
+                    <p>
+                        Don't have an account yet?{' '}
+                        <Link
+                        component="button"
+                        variant="body2"
+                        to="/signup" 
+                        >
+                        Sign up
+                        </Link>
+                    </p>                   
                 </div>
-            </section>
-        
-    ) : (<div></div>)
-    }
-        
+            </section>) : (<div></div>)
+            }
         </main>
     )
 }
