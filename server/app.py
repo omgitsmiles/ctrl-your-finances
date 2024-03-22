@@ -314,9 +314,8 @@ class HouseholdMembers(Resource):
     def get(self, user_id):
         try:
             user = User.query.filter_by(id=user_id).first()
-            user_household = user.household_id
-            household = Household.query.filter_by(id = user_household).first()
-            house_members = User.query.filter_by(id=user_household).all()
+            household = Household.query.filter_by(id=user.household_id).first()
+            house_members = User.query.filter_by(household_id=household.id).all()
             if house_members:
                 house_members_list = [member.to_dict() for member in house_members]
                 response = {
@@ -350,6 +349,17 @@ class PlaidItemById(Resource):
             return make_response({'error': f'Plaid link item {id} not found'}, 404)
 
 api.add_resource(PlaidItemById, '/api/plaiditem/<int:id>')
+
+
+class HouseholdAccounts(Resource):
+
+    def post(self, id):
+        pass
+
+    def delete(self, id):
+        pass
+
+api.add_resource(HouseholdAccounts, '/api/household/accounts/<int:id>')
 
 
 if __name__ == '__main__':

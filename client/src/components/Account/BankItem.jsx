@@ -15,12 +15,18 @@ const style = {
     p: 4,
   };
 
-function BankItem({account, setBankAccounts, setError}) {
-    const [checked, setChecked] = useState(true);
+function BankItem({account, householdId, setBankAccounts, setError}) {
+    const [checked, setChecked] = useState(false);
 
     const [openModal, setOpenModal] = useState(false);
     const handleOpenModal = () => setOpenModal(true);
-    const handleCloseModal = () => setOpenModal(false);
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        requestMethod = checked ? 'POST' : 'DELETE';
+        fetch(`http://127.0.0.1:5555/api/household/accounts/${account.id}/${householdId}`, {
+            method: requestMethod
+        })
+    };
 
     const [openConfirmation, setOpenConfirmation] = useState(false);
     const handleOpenConfirmation = () => {setOpenConfirmation(true)}

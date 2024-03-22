@@ -13,7 +13,7 @@ function Account() {
     // console.log('Household members:', houseMembers)
 
     const accountList = bankAccounts ? bankAccounts.map((account) => {
-        return <BankItem key={account.id} account={account} setBankAccounts={setBankAccounts} setError={setError} />
+        return <BankItem key={account.id} account={account} householdId={user.household_id} setBankAccounts={setBankAccounts} setError={setError} />
     }) : null;
 
     const householdList = houseMembers ? houseMembers.map((member) => {

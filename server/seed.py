@@ -15,6 +15,8 @@ with app.app_context():
     db.session.add_all([household_1])
 
     frank = User(name="Frank Furter", email="frank@example.com", household=household_1)
-    db.session.add_all([frank])
+    sam = User(name="Sam Witch", email="sam@example.com", household=household_1)
+    db.session.add_all([frank, sam])
+
 
     db.session.commit()
