@@ -23,10 +23,10 @@ function BankItem({account, setBankAccounts, setError}) {
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => {
         setOpenModal(false);
-        requestMethod = checked ? 'POST' : 'DELETE';
-        fetch(`http://127.0.0.1:5555/api/household/accounts/${account.id}`, {
-            method: requestMethod
-        })
+        // requestMethod = checked ? 'POST' : 'DELETE';
+        // fetch(`http://127.0.0.1:5555/api/household/accounts/${account.id}`, {
+        //     method: requestMethod
+        // })
     };
 
     const [openConfirmation, setOpenConfirmation] = useState(false);

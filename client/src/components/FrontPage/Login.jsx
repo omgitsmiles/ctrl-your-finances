@@ -31,8 +31,18 @@ const Login = () => {
         e.preventDefault();
         setError('')
         try {
-            await signInWithEmail(email, password)
-            navigate('/dashboard')
+            await signInWithEmail(email, password, (error) => {
+                if (error) {
+                    let errorMessage = error.message;
+                    if (errorMessage.includes('(auth/invalid-credential)')) {
+                        errorMessage = "Incorrect email or password. Please try again.";
+                    }
+                    setError(errorMessage);
+                    console.log("Sign in error:", errorMessage)
+                } else {
+                    navigate('/dashboard');
+                }  
+            })
         } catch (error) {
             setError(error.message)
         }
@@ -123,7 +133,8 @@ const Login = () => {
                             Sign up
                         </button>
                     </form>
-                    <p>
+                    {error && <p style={{color: 'red'}}>{error}</p>}
+                    <p style={{color: 'green'}}>
                         Don't have an account yet?{' '}
                         <Link
                         component="button"

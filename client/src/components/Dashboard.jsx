@@ -22,7 +22,7 @@ function Dashboard() {
             <div>
                 <h2>Welcome, {user?.displayName}</h2>
             </div>
-            <TransactionChart />
+            {/* <TransactionChart /> */}
             <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
         </main>
     )

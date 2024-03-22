@@ -1,4 +1,4 @@
-import Account from "../components/Account";
+import Account from "../components/Account/Account";
 import Budgeting from "../components/Budgeting";
 import Dashboard from "../components/Dashboard";
 import Finances from "../components/Finances";

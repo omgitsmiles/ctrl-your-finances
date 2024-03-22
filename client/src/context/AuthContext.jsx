@@ -22,20 +22,28 @@ export const AuthContextProvider = ({ children }) => {
         signInWithRedirect(auth, provider);
     }
 
-    const createUserWithEmail = async (name, email, password) => {
+    const createUserWithEmail = async (name, email, password, callback) => {
         try{
             await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(auth.currentUser, {
                 displayName: name
             })
-        
+            setUser(auth.currentUser)
+            callback(null, user)
         } catch (error) {
-            console.log(error);
+            console.log("Firebase error:", error);
+            callback(error, null)
         }
     }
 
-    const signInWithEmail = (email, password) => {
-        signInWithEmailAndPassword(auth, email, password)
+    const signInWithEmail = async (email, password, callback) => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password)
+            callback(null)
+        } catch (error) {
+            console.log("Firebase error:", error);
+            callback(error)
+        }
     }
 
     const logOut = () => {
@@ -52,7 +60,7 @@ export const AuthContextProvider = ({ children }) => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ googleSignIn, logOut, user, createUserWithEmail, signInWithEmail }}>
+        <AuthContext.Provider value={{ googleSignIn, logOut, user, setUser, createUserWithEmail, signInWithEmail }}>
             {children}
         </AuthContext.Provider>
     )

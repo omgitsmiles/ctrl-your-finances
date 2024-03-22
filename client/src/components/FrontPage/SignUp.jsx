@@ -23,7 +23,7 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    const { createUserWithEmail, googleSignIn, user } = UserAuth();
+    const { createUserWithEmail, googleSignIn, user, setUser } = UserAuth();
 
     const handleGoogleSignIn = async () => {
         try {
@@ -41,12 +41,28 @@ const SignUp = () => {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // setError('')
         try {
-            await createUserWithEmail(name, email, password);
-            navigate('/dashboard');
+            if (password !== confirmPassword) {
+                setError("Passwords do not match.")
+                return;
+            }
+            await createUserWithEmail(name, email, password, (error) => {
+                if (error) {
+                    let errorMessage = error.message;
+                    if (errorMessage.includes('(auth/weak-password)')) {
+                        errorMessage = "Password should be at least 6 characters.";
+                }
+                setError(errorMessage);
+                console.log("Sign up error:", errorMessage)
+            }
+                else {
+                    navigate('/dashboard');
+                }
+            });
         } catch (error) {
             setError(error.message);
-            console.log(error.message);
+            console.log("Unexpected Error:", error);
         }
     }
 
@@ -59,7 +75,6 @@ const SignUp = () => {
     return (
         <main>   
             {!openEmailSignUp ? (
-
             <Stack 
                 direction="column"
                 justifyContent="center"
@@ -67,33 +82,32 @@ const SignUp = () => {
                 spacing={2}
                 sx={{ minWidth: 12 }}
             >
-                    <h1>Sign up</h1>
-                    <Button 
-                    style={{maxWidth: '250px', maxHeight: '40px', minWidth: '250px', minHeight: '40px'}}
-                    size="large" 
-                    variant='outlined' 
-                    startIcon={<AccountCircleIcon />}
-                    onClick={handleEmailClickOpen}
+                <h1>Sign up</h1>
+                <Button 
+                style={{maxWidth: '250px', maxHeight: '40px', minWidth: '250px', minHeight: '40px'}}
+                size="large" 
+                variant='outlined' 
+                startIcon={<AccountCircleIcon />}
+                onClick={handleEmailClickOpen}
+                >
+                    Sign up with email
+                </Button>
+                <Button 
+                style={{maxWidth: '250px', maxHeight: '60px', minWidth: '250px', minHeight: '40px'}}
+                size="medium" variant='outlined' startIcon={<GoogleIcon/>}
+                onClick={handleGoogleSignIn}
+                >
+                    Continue with Google
+                </Button>
+                <p>Already have an account?{' '}
+                    <Link
+                    component="button"
+                    variant="body2"
+                    to="/login" 
                     >
-                        Sign up with email
-                    </Button>
-                    <Button 
-                    style={{maxWidth: '250px', maxHeight: '60px', minWidth: '250px', minHeight: '40px'}}
-                    size="medium" variant='outlined' startIcon={<GoogleIcon/>}
-                    onClick={handleGoogleSignIn}
-                    >
-                        Continue with Google
-                    </Button>
-                    
-                    <p>Already have an account?{' '}
-                        <Link
-                        component="button"
-                        variant="body2"
-                        to="/login" 
-                        >
-                        Log in
-                        </Link>
-                    </p>
+                    Log in
+                    </Link>
+                </p>
             </Stack>
             ) : (
             <section>
@@ -158,7 +172,8 @@ const SignUp = () => {
                             Sign up
                         </button>
                     </form>
-                    <p>
+                    {error && <p style={{color: 'red'}}>{error}</p>}
+                    <p style={{color: 'green'}}>
                         Already have an account?{' '}
                         <Link
                         component="button"
