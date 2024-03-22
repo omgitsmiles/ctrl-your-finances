@@ -9,6 +9,7 @@ import Login from "../components/FrontPage/Login";
 import SignUp from "../components/FrontPage/SignUp";
 import Protected from "../components/Protected";
 import Plaid from "../components/Plaid/Plaid";
+import SampleChart from "../components/TransactionChart";
 
 export const routes = [
     {
@@ -49,6 +50,10 @@ export const routes = [
                 path: "/link",
                 element: <Protected><Plaid /></Protected>,
 
+            },
+            {
+                path: "/samplechart",
+                element: <SampleChart />,
             }
         ]
     }

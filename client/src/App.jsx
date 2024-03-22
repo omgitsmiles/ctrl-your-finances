@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { AuthContextProvider } from './context/AuthContext';
+import { AuthContextProvider } from './context/AuthContext'
 import './App.css'
-import NavBar from './components/NavBar';
+import ResponsiveAppBar from './components/Navbar'
+import Footer from './components/Footer'
 
 function App() {
   const [bankAccounts, setBankAccounts] = useState([]);
@@ -56,8 +57,9 @@ function App() {
   return (
     <div>
       <AuthContextProvider>
-        <NavBar></NavBar>
+        <ResponsiveAppBar />
         <Outlet context={context}/>
+        <Footer />
       </AuthContextProvider>
     </div>
   )

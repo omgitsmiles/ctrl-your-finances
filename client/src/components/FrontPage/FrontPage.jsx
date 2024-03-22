@@ -1,19 +1,23 @@
 import { useState } from 'react';
-import { Button, Modal, Stack } from '@mui/material';
+import { Button,  Modal, Stack, Box, styled, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; 
 import { UserAuth } from '../../context/AuthContext';
-
 import Login from "./Login"
 import SignUp from "./SignUp"
+import Philosophy from './Philosophy';
+import Header from './Header';
+import Footer from '../Footer';
+import Navbar from '../Navbar';
 
 function FrontPage() {
     const navigate = useNavigate();
     const { user } = UserAuth()
 
+
     return (
         <>
-            <h1>Money Magnet</h1>
-            <h3>Better Budget Management With Artificial Intelligence</h3>
+            {/* <h1>Welcome to Money Magnet!</h1> */}
+            {/* <h3>Better Budget Management With Artificial Intelligence</h3> */}
 
             {!user ? (
             <Stack spacing={2} direction="row">
@@ -24,6 +28,10 @@ function FrontPage() {
                 <Button variant="outlined" onClick={() => navigate('/dashboard')}>Dashboard</Button>
             )
             }
+             {/* <Navbar /> */}
+             <Header />
+             <Philosophy />
+             <Footer />
         </>
     )
 }
