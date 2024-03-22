@@ -34,7 +34,6 @@ function Budgeting() {
       fetchUserGoals();
     },[])
 
-// console.log("goal info", goalName, savedMoney, targetAmount)
 
     const fetchUserGoals = async () => {
       try {
@@ -84,6 +83,7 @@ function Budgeting() {
           setGoalName("");
           setSavedMoney(0);
           setTargetAmount(0);
+          fetchUserGoals();
         }else {
           console.error("Failed to add goal");
         }
@@ -93,26 +93,10 @@ function Budgeting() {
     };
 
   
-    // const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //     const newGoal = [goalName, targetAmount];
-    //     const newSaved = [goalName, savedMoney];
-    //     const newDataOld = [...data.old, newGoal]
-    //     const newDataNew = [...data.new, newSaved]
-    // //   const newDataOld = [...data.old, [goalName, targetAmount]];
-    // //   const newDataNew = [...data.new, [goalName, savedMoney]];
-    //   setData({ old: newDataOld, new: newDataNew });
-    //     // const newGoal = { name: goalName, goal: targetAmount};
-    //     // setGoals([...goals, newGoal])
-    //     setGoalName("");
-    //     setSavedMoney(0);
-    //     setTargetAmount(0);
-    // };
-  
     const options = {
       title: "Your Financial Goals",
       legend: { position: "none" },
-      colors: ["#009933"], // Adjust color as needed
+      colors: ["#009933"], 
     };
 
 
@@ -215,7 +199,6 @@ function Budgeting() {
               chartType="BarChart"
               width="100%"
               height="400px"
-              // diffdata={data}
               diffdata={chartData}
               options={options}
           />

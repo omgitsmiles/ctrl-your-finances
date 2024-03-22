@@ -240,11 +240,7 @@ def get_transactions():
 
 # Get & Add Budget Goals
 
-# Dummy data to simulate user goals stored in memory
-# user_goals = [
-#     {"id": 1, "name": "Car", "saved": 370, "target": 1250},
-#     {"id": 2, "name": "House", "saved": 800, "target": 5000}
-# ]
+
 #fetch user goals
 @app.route('/api/goals/<int:user_id>', methods =['GET', 'POST'])
 def goals(user_id):
@@ -255,39 +251,21 @@ def goals(user_id):
         # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return make_response(response, 200)
 
-    # Route to add a new goal
-    # if request.method == 'POST':
-    #     new_goals = []
-    #     for goal in goals:
-    #         new_goal = Goal(
-    #             user_id= [user_id],
-    #             name= goal['name'],
-    #             saved= goal['saved'],
-    #             target= goal['target']
-    #         )
-    #         new_goals.append(new_goal)
-    #     db.session.add_all(new_goals)
-    #     db.session.commit()
-    #     # get all goals including new one
-    #     goals = Goal.query.filter_by(id = user_id).all()
-    #     response = [goal.to_dict() for goal in goals]
-    #     # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
-    #     return make_response(response, 200)
+    # add a new goal
+    if request.method == 'POST':
+        data = request.json  # Assuming you're sending JSON data
+        new_goal = Goal(
+            user_id=user_id,
+            name=data['name'],
+            saved=data['saved'],
+            target=data['target']
+        )
+        db.session.add(new_goal)
+        db.session.commit()
+        response = new_goal.to_dict()
+        return make_response(response, 200)
 
-        if request.method == 'POST':
-            data = request.json  # Assuming you're sending JSON data
-            new_goal = Goal(
-                user_id=user_id,
-                name=data['name'],
-                saved=data['saved'],
-                target=data['target']
-            )
-            db.session.add(new_goal)
-            db.session.commit()
-            response = new_goal.to_dict()
-            return make_response(response, 200)
 
-        #return jsonify({"message": "new goal added", "goal": new_goal})
 
 
 
