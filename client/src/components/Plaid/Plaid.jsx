@@ -1,5 +1,5 @@
 import PlaidLink from "./PlaidLink"
-import { QuickstartProvider } from "../../context/Context"
+import { QuickstartProvider } from "../../context/PlaidContext"
 
 function Plaid() {
     return (

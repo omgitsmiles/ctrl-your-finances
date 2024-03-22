@@ -334,11 +334,14 @@ api.add_resource(HouseholdMembers, '/api/household/<int:user_id>')
 class TransactionsByUser(Resource):
 
     def get(self, user_id):
-        transactions = db.session.query(Transaction).join(Account).join(User).filter_by(id=user_id).all()
+        transactions = db.session.query(Transaction).join(Account, Account.id == Transaction.account_id).join(AccountUser, AccountUser.account_id == Account.id).filter(AccountUser.user_id == user_id).all()
         response = [transaction.to_dict() for transaction in transactions]
         return make_response(response, 200)
 
 api.add_resource(TransactionsByUser, '/api/transactions/<int:user_id>')
+
+# projects = db.session.query(Project).join(Role, Project.id == Role.project_id).join(User, Role.user_id == User.id).filter(User.id == id).all()
+
 
 ################################################
 # MANAGING ACCOUNTS AND HOUSEHOLD PERMISSIONS ##

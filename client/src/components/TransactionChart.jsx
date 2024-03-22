@@ -21,11 +21,12 @@ const TransactionChart = () => {
     const location = useLocation()
     const { transactionData } = location.state
 
-    console.log(transactionData)
+    console.log("TransactionData:", transactionData)
+    // console.log(transactionData.latest_transactions)
 
-    const newData = transactionData?.latest_transactions.map((transaction) => {
-        return [transaction?.name, transaction?.amount]
-    }).filter(([_, amount]) => amount >= 0)
+    const newData = transactionData ? transactionData.map((transaction) => {
+        return [transaction.name, transaction.amount]
+    }).filter(([_, amount]) => amount >= 0) : null;
 
     const chartEvents = [
         {
@@ -42,11 +43,10 @@ const TransactionChart = () => {
         }
       ]
 
-    console.log(newData)
+    console.log("New Data:", newData)
 
     return (
         <>
-        <Navbar />
         <CustomCard sx={{ alignItems: 'center', justifyContent: 'center' }}> 
                 <h1>Transactions</h1>
                         <Chart

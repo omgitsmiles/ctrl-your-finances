@@ -28,7 +28,7 @@ function Account() {
             <h1>Account Management</h1>
             <Typography>Linked Accounts</Typography>
             <Box
-                sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', color: 'primary.main' }}
                 aria-label="linked accounts"
             >
                 <List>
@@ -38,7 +38,7 @@ function Account() {
 
             <Typography>Household Members</Typography>
             <Box
-                sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', color: 'primary.main' }}
                 aria-label="household members"
             >
                 <List>

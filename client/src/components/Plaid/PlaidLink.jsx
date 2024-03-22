@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import { usePlaidLink } from "react-plaid-link";
 
-import Context from "../../context/Context";
+import Context from "../../context/PlaidContext";
 
 function PlaidLink() {
     const { linkToken, linkSuccess, isItemAccess, isPaymentInitiation, dispatch } = useContext(Context);

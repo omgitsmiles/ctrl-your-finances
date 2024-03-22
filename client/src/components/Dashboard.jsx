@@ -1,6 +1,6 @@
 import { UserAuth } from "../context/AuthContext" 
 import Button from '@mui/material/Button'
-import React from 'react'
+import React, { useEffect } from 'react'
 import TransactionChart from './TransactionChart'
 
 
@@ -14,6 +14,8 @@ function Dashboard() {
             console.log(error);
         }
     }
+
+    console.log('user: ' ,user)
 
     return (
         <main>

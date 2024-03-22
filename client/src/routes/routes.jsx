@@ -1,5 +1,4 @@
-import Account from "../components/Account/Account";
-import App from "../App";
+import Account from "../components/Account";
 import Budgeting from "../components/Budgeting";
 import Dashboard from "../components/Dashboard";
 import Finances from "../components/Finances";
@@ -8,8 +7,9 @@ import ErrorPage from "../components/ErrorPage";
 import Login from "../components/FrontPage/Login";
 import SignUp from "../components/FrontPage/SignUp";
 import Protected from "../components/Protected";
+import App from "../App";
 import Plaid from "../components/Plaid/Plaid";
-import SampleChart from "../components/TransactionChart";
+import PlaidLink from "../components/Plaid/PlaidLink";
 
 export const routes = [
     {
@@ -50,10 +50,6 @@ export const routes = [
                 path: "/link",
                 element: <Protected><Plaid /></Protected>,
 
-            },
-            {
-                path: "/samplechart",
-                element: <SampleChart />,
             }
         ]
     }
