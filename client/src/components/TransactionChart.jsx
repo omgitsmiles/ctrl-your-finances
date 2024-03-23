@@ -5,7 +5,7 @@ import CustomCard from './CustomCard';
 import Navbar from './Navbar';
 
 const options = {
-  title: "Your Transactions",
+  title: "Your Spending",
   backgroundColor: "transparent",
   titleTextStyle: {
       color: '#B2BEB5'
@@ -18,14 +18,20 @@ const options = {
 };
 
 const TransactionChart = ({transactionData}) => {
-  const location = useLocation()
+  // const location = useLocation()
   // const { transactionData } = location.state
 
-  // console.log("TransactionData:", transactionData)
+  console.log("TransactionData:", transactionData)
   // console.log(transactionData.latest_transactions)
 
-  const newData = transactionData ? transactionData.map((transaction) => {
-      return [transaction.name, transaction.amount]
+  const newData = transactionData ? transactionData.map((categoryGroup) => {
+      const category = categoryGroup.category
+      const formated_category = category.replace(/_/g, " ").replace(/\w\S*/g,
+        function (txt) {
+            return txt.charAt(0).toUpperCase() +
+                txt.substr(1).toLowerCase();
+        })
+      return [formated_category, Number.parseFloat(categoryGroup.amount)]
   }).filter(([_, amount]) => amount >= 0) : null;
 
   const chartEvents = [
@@ -35,15 +41,15 @@ const TransactionChart = ({transactionData}) => {
         const selection = chartWrapper.getChart().getSelection();
         if (selection.length > 0) {
           const rowIndex = selection[0].row;
-          const transactionName = newData[rowIndex][0];
+          const transactionCategory = newData[rowIndex][0];
           const transactionAmount = newData[rowIndex][1];
-          console.log("Selected Transaction:", transactionName, transactionAmount);
+          console.log("Selected Transaction:", transactionCategory, transactionAmount);
         }
       }
     }
   ]
 
-  // console.log("New Data:", newData)
+  console.log("New Data:", newData)
 
   return (
     <>
@@ -53,7 +59,7 @@ const TransactionChart = ({transactionData}) => {
             chartType="PieChart"
             width="100%"
             height="500px"
-            data={[["Task", "Amount"], ...newData]}
+            data={[["Category", "Amount"], ...newData]}
             options={options}
             chartEvents={chartEvents}
           />

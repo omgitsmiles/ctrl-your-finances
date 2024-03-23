@@ -329,23 +329,49 @@ class TransactionsByUser(Resource):
             if transactions:
                 transaction_list = []
                 for t in transactions:
-                    response_object = {
+                    transaction_object = {
                         'id': t.id,
                         'account_id': t.account_id,
                         'amount': t.amount,
                         'name': t.name,
-                        'category_primary': t.personal_finance_category_primary,
-                        'category_detail': t.personal_finance_category_detail,
+                        'primary_category': t.personal_finance_category_primary,
+                        'detail_category': t.personal_finance_category_detail,
                     }
-                    transaction_list.append(response_object)
+                    transaction_list.append(transaction_object)
 
-                return make_response(transaction_list, 200)
+                response = sort_by_primary_category(transaction_list)
+                return make_response(response, 200)
             else:
                 return make_response({'error': 'No transactions found'}, 404)
         except Exception as e:
             return make_response({'error': str(e)}, 500)
 
 api.add_resource(TransactionsByUser, '/api/transactions/<int:id>')
+
+
+def sort_by_primary_category(transactions):
+
+    grouped_by_primary = {}
+
+    for transaction in transactions:
+        category = transaction['primary_category']
+        if category in grouped_by_primary:
+            grouped_by_primary[category]['transactions'].append(transaction)
+            grouped_by_primary[category]['amount'] += transaction['amount']
+        else:
+            grouped_by_primary[category] = {
+                'category': category,
+                'amount': transaction['amount'],
+                'transactions': [transaction]                
+            }
+
+    for category in grouped_by_primary:
+        grouped_by_primary[category]['amount'] = "%0.2f" % (grouped_by_primary[category]['amount'],)
+
+    return [v for k, v in grouped_by_primary.items()]
+
+
+# f'{pi:.2f}'
 
 
 ################################################
