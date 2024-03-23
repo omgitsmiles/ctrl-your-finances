@@ -21,12 +21,12 @@ const TransactionChart = ({transactionData}) => {
   // const location = useLocation()
   // const { transactionData } = location.state
 
-  console.log("TransactionData:", transactionData)
+  // console.log("TransactionData:", transactionData)
   // console.log(transactionData.latest_transactions)
 
   const newData = transactionData ? transactionData.map((categoryGroup) => {
       const category = categoryGroup.category
-      const formated_category = category.replace(/_/g, " ").replace(/\w\S*/g,
+      const formated_category = category?.replace(/_/g, " ").replace(/\w\S*/g,
         function (txt) {
             return txt.charAt(0).toUpperCase() +
                 txt.substr(1).toLowerCase();
@@ -49,7 +49,7 @@ const TransactionChart = ({transactionData}) => {
     }
   ]
 
-  console.log("New Data:", newData)
+  // console.log("New Data:", newData)
 
   return (
     <>

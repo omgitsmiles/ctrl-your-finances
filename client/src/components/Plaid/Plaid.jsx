@@ -1,14 +1,12 @@
-import { useOutletContext } from "react-router-dom"
-import PlaidLink from "./PlaidLink"
-import { QuickstartProvider } from "../../context/PlaidContext"
+import PlaidButton from "./PlaidButton";
 
 function Plaid() {
-    const {transactions, setTransactions} = useOutletContext();
 
     return (
-        <QuickstartProvider>
-            <PlaidLink transactions={transactions} setTransactions={setTransactions} />
-        </QuickstartProvider>
+        <div>
+            <h3>New Link Button</h3>
+            <PlaidButton />
+        </div>
     )
 }
 

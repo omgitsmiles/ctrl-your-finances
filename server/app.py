@@ -132,7 +132,7 @@ def get_access_token():
     access_token = ''
 
     global item_id
-    public_token = request.form['public_token']
+    public_token = request.json['public_token']
     try:
         exchange_request = ItemPublicTokenExchangeRequest(
             public_token=public_token)

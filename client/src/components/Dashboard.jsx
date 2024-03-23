@@ -1,13 +1,16 @@
 import { useOutletContext } from "react-router"
-import { UserAuth } from "../context/AuthContext" 
 import Button from '@mui/material/Button'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
+
 import TransactionChart from './TransactionChart'
+import { UserAuth } from "../context/AuthContext" 
+// import { StateContext } from "../context/AuthContext"
 
 
 function Dashboard() {
-    const { logOut, user } = UserAuth();
-    const { transactions } = useOutletContext();
+    const { logOut, user, transactions } = UserAuth();
+    // const { transactions } = useOutletContext();
+    // const { transactions } = useContext();
 
     // console.log("dashboard transactions:",transactions)
 

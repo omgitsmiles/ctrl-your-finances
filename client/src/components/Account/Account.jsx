@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useOutletContext } from "react-router-dom";
 import { Box, List, Typography } from "@mui/material"
 
@@ -6,10 +6,10 @@ import BankItem from "./BankItem";
 import HouseMember from "./HouseMember";
 
 import { UserAuth } from "../../context/AuthContext";
+// import { StateContext } from "../../context/AuthContext";
 
 function Account() {
-    const { bankAccounts, setBankAccounts, houseMembers, household, error, setError } = useOutletContext();
-    const { user } = UserAuth
+    const { user, bankAccounts, setBankAccounts, houseMembers, setHouseMembers, error, setError } = UserAuth();
 
     // console.log('Bank Accounts:', bankAccounts)
     // console.log('Household:', household)
