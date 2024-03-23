@@ -20,7 +20,10 @@ function BankItem({account, setBankAccounts, setError}) {
     const [checked, setChecked] = useState(false);
 
     const [openModal, setOpenModal] = useState(false);
-    const handleOpenModal = () => setOpenModal(true);
+    const handleOpenModal = () => {
+        setOpenModal(true);
+        console.log(account)
+    };
     const handleCloseModal = () => {
         setOpenModal(false);
         // requestMethod = checked ? 'POST' : 'DELETE';

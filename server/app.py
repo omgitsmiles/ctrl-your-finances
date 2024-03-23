@@ -167,6 +167,7 @@ def get_access_token():
             new_account = Account(
                 account_id = account['account_id'],
                 name = account['name'],
+                plaid_item_id = new_plaid_item.id
             )
             new_accounts.append(new_account)
         db.session.add_all(new_accounts)
