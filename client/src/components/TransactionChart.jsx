@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 
 import CustomCard from './CustomCard';
 import Navbar from './Navbar';
-import { UserAuth } from '../context/AuthContext';
+import { AppContext } from '../context/Context';
 
 const options = {
   title: "Your Spending",
@@ -26,7 +26,7 @@ const TransactionChart = () => {
   // console.log("TransactionData:", transactionData)
   // console.log(transactionData.latest_transactions)
 
-  const { transactions } = UserAuth();
+  const { transactions } = AppContext();
 
   const newData = transactions ? transactions.map((categoryGroup) => {
       const category = categoryGroup.category

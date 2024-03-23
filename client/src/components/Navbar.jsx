@@ -11,12 +11,12 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import moneyMagnetIcon from '../assets/moneymagneticon.png'
-import { UserAuth } from '../context/AuthContext';
+import { AppContext } from '../context/Context';
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
-  const {user, logOut} = UserAuth()
+  const {user, logOut} = AppContext()
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 

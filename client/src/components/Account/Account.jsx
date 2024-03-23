@@ -5,14 +5,10 @@ import { Box, List, Typography } from "@mui/material"
 import BankItem from "./BankItem";
 import HouseMember from "./HouseMember";
 
-import { UserAuth } from "../../context/AuthContext";
+import { AppContext } from "../../context/Context";
 
 function Account() {
-    const { user, bankAccounts, setBankAccounts, houseMembers, setHouseMembers, error, setError } = UserAuth();
-
-    // console.log('Bank Accounts:', bankAccounts)
-    // console.log('Household:', household)
-    // console.log('Household members:', houseMembers)
+    const { user, bankAccounts, setBankAccounts, houseMembers, setHouseMembers, error, setError } = AppContext();
 
     const accountList = bankAccounts ? bankAccounts.map((account) => {
         return <BankItem key={account.id} account={account} setBankAccounts={setBankAccounts} setError={setError} />

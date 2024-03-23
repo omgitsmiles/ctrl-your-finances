@@ -2,11 +2,11 @@ import { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePlaidLink } from "react-plaid-link";
 
-import { UserAuth } from "../../context/AuthContext" 
+import { AppContext } from "../../context/Context";
 
 function PlaidButton() {
     const navigate = useNavigate();
-    const {transactions, setTransactions} = UserAuth();
+    const {transactions, setTransactions} = AppContext();
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
     const [newTransactions, setNewTransactions] = useState([])

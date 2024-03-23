@@ -3,12 +3,11 @@ import Button from '@mui/material/Button'
 import React, { useContext, useEffect } from 'react'
 
 import TransactionChart from './TransactionChart'
-import { UserAuth } from "../context/AuthContext" 
-// import { StateContext } from "../context/AuthContext"
+import { AppContext } from "../context/Context"
 
 
 function Dashboard() {
-    const { logOut, user, transactions } = UserAuth();
+    const { logOut, user, transactions } = AppContext();
 
     const handleSignOut = async () => {
         try {
@@ -17,8 +16,6 @@ function Dashboard() {
             console.log(error);
         }
     }
-
-    // console.log('user: ' ,user)
 
     return (
         <main>

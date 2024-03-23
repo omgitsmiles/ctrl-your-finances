@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 // Firebase imports
-import { UserAuth } from '../../context/AuthContext';
+import { AppContext } from '../../context/Context';
 
 // Material UI imports
 import Stack from '@mui/material/Stack';
@@ -23,7 +23,7 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    const { createUserWithEmail, googleSignIn, user } = UserAuth();
+    const { createUserWithEmail, googleSignIn, user } = AppContext();
 
     const handleGoogleSignIn = async () => {
         try {

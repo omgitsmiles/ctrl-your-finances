@@ -11,9 +11,9 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 
-const AuthContext = createContext();
+const Context = createContext();
 
-export const AuthContextProvider = ({ children }) => {
+export const ContextProvider = ({ children }) => {
     const [user, setUser] = useState({});
 
     const googleSignIn = () => {
@@ -125,12 +125,12 @@ export const AuthContextProvider = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={context}>
+        <Context.Provider value={context}>
             {children}
-        </AuthContext.Provider>
+        </Context.Provider>
     )
 }
 
-export const UserAuth = () => {
-    return useContext(AuthContext);
+export const AppContext = () => {
+    return useContext(Context);
 }
