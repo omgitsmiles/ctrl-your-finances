@@ -27,6 +27,8 @@ USER_ID = 1
 def index():
     return '<h1>Project Server</h1>'
 
+
+
 ################################################
 ##### ROUTES BASED ON PLAID QUICKSTART #########
 
@@ -42,21 +44,10 @@ from plaid.api import plaid_api
 
 load_dotenv()
 
-# Fill in your Plaid API keys - https://dashboard.plaid.com/account/keys
 PLAID_CLIENT_ID = os.getenv('PLAID_CLIENT_ID')
 PLAID_SECRET = os.getenv('PLAID_SECRET')
-# Use 'sandbox' to test with Plaid's Sandbox environment (username: user_good,
-# password: pass_good)
-# Use `development` to test with live users and credentials and `production`
-# to go live
 PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')
-# PLAID_PRODUCTS is a comma-separated list of products to use when initializing
-# Link. Note that this list must contain 'assets' in order for the app to be
-# able to create and retrieve asset reports.
 PLAID_PRODUCTS = os.getenv('PLAID_PRODUCTS', 'transactions').split(',')
-
-# PLAID_COUNTRY_CODES is a comma-separated list of countries for which users
-# will be able to select institutions from.
 PLAID_COUNTRY_CODES = os.getenv('PLAID_COUNTRY_CODES', 'US').split(',')
 
 
@@ -77,7 +68,6 @@ if PLAID_ENV == 'development':
 if PLAID_ENV == 'production':
     host = plaid.Environment.Production
 
-# Parameters used for the OAuth redirect Link flow.
 PLAID_REDIRECT_URI = empty_to_none('PLAID_REDIRECT_URI')
 
 configuration = plaid.Configuration(
@@ -105,11 +95,8 @@ def info():
     global item_id 
     response = jsonify({
         'item_id': item_id,
-        # 'access_token': access_token,
         'products': PLAID_PRODUCTS
     })
-    # print("RESPONSE FROM: /api/info")
-    # print("access_token: ", access_token)
     return response
 
 
@@ -154,7 +141,6 @@ def get_access_token():
         item_id = exchange_response['item_id']
 
         # save token and id to database.  MUST ENCRYPT THIS.
-        # CAN THIS BE DONE ASYNC?
         new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id, cursor='', user_id=USER_ID)
         db.session.add(new_plaid_item)
         db.session.commit()
@@ -248,10 +234,6 @@ def get_transactions():
             error_response = format_error(e)
             return jsonify(error_response)
     
-    # Return the 8 most recent transactions
-    # latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
-    # response = jsonify({
-    #     'latest_transactions': latest_transactions})
     response = [transaction.to_dict() for transaction in all_transactions]
     return make_response(response, 200)
 
@@ -275,7 +257,6 @@ class AccountsByUser(Resource):
     def get(self, user_id):
         try:
             user_accounts = db.session.query(Account).join(AccountUser, Account.id == AccountUser.account_id).filter(AccountUser.user_id == USER_ID).all()
-            # print("user accounts:", user_accounts)
             if user_accounts:
                 accounts = []
                 for account in user_accounts:
@@ -284,7 +265,6 @@ class AccountsByUser(Resource):
                         'name': account.name,
                         'plaid_item_id': account.plaid_item_id
                     }
-                    # print(response_object)
                     accounts.append(response_object)
                 return make_response(accounts, 200)
             else:
@@ -371,8 +351,6 @@ def sort_by_primary_category(transactions):
 
     return [v for k, v in grouped_by_primary.items()]
 
-
-# f'{pi:.2f}'
 
 
 ################################################

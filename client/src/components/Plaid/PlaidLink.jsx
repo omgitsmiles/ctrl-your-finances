@@ -7,7 +7,7 @@ import { usePlaidLink } from "react-plaid-link";
 
 import Context from "../../context/PlaidContext";
 
-function PlaidLink() {
+function PlaidLink({transactions, setTransactions}) {
     const { linkToken, linkSuccess, isItemAccess, isPaymentInitiation, dispatch } = useContext(Context);
     const [error, setError] = useState(null)
     const navigate = useNavigate()
@@ -121,7 +121,6 @@ function PlaidLink() {
           });
           console.log(data.message)
           plaidEndpoint('transactions')
-          // plaidEndpoint('identity')
         };
 
         exchangePublicTokenForAccessToken();
@@ -140,9 +139,43 @@ function PlaidLink() {
         setError(data.error);
         return;
       }
-      // console.log(data)
+      console.log(data)
+      updateTransactions(data)
       return navigate("/dashboard", { state: { transactionData: data } })
     };
+
+
+    ////////// Add newly linked account transactions to transactions stored in state /////////
+    function updateTransactions(data) {
+      const transactionCategories = {}
+      for (let i = 0; i < transactions.length; i++) {
+        transactionCategories[group.category] = i;
+        transactions[i].amount = Number.parseFloat(transactions[i].amount)
+      }
+
+      for (let transaction of data) {
+        const category = transaction.personal_finance_category_perimary
+        const categoryIndex = transactionCategories[category]
+        const transactionObj = {
+          'id': transaction.id,
+          'account_id': transaction.account_id,
+          'amount': transaction.amount,
+          'name': transaction.name,
+          'primary_category': transaction.personal_finance_category_primary,
+          'detail_category': transaction.personal_finance_category_detail,
+        }
+        if (transactionCategories.hasOwnProperty(category)) {
+          transactions[categoryIndex].transactions.push(transactionObj);
+          transactions[categoryIndex].amount += transactionObj.amount
+        } else {
+          transactions.push({
+            category: category,
+            amount: transactionObj.amount,
+            transactions: [transactionObj]
+          })
+        }
+      }
+    }
   
 
     let isOauth = false;

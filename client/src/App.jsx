@@ -12,6 +12,8 @@ function App() {
   const [transactions, setTransactions] = useState([]);
   const [error, setError] = useState('');
 
+  console.log(transactions)
+
   //// CHANGE THIS WHEN USER SESSION COOKIES ESTABLISHED /////
   const userID = 1
 
