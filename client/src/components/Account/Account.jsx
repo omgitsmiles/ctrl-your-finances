@@ -6,7 +6,6 @@ import BankItem from "./BankItem";
 import HouseMember from "./HouseMember";
 
 import { UserAuth } from "../../context/AuthContext";
-// import { StateContext } from "../../context/AuthContext";
 
 function Account() {
     const { user, bankAccounts, setBankAccounts, houseMembers, setHouseMembers, error, setError } = UserAuth();

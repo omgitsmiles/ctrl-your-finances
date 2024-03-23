@@ -1,8 +1,10 @@
 import React from 'react'
 import { Chart } from "react-google-charts";
 import { useLocation } from 'react-router-dom';
+
 import CustomCard from './CustomCard';
 import Navbar from './Navbar';
+import { UserAuth } from '../context/AuthContext';
 
 const options = {
   title: "Your Spending",
@@ -17,14 +19,16 @@ const options = {
   is3D: false,
 };
 
-const TransactionChart = ({transactionData}) => {
+const TransactionChart = () => {
   // const location = useLocation()
   // const { transactionData } = location.state
 
   // console.log("TransactionData:", transactionData)
   // console.log(transactionData.latest_transactions)
 
-  const newData = transactionData ? transactionData.map((categoryGroup) => {
+  const { transactions } = UserAuth();
+
+  const newData = transactions ? transactions.map((categoryGroup) => {
       const category = categoryGroup.category
       const formated_category = category?.replace(/_/g, " ").replace(/\w\S*/g,
         function (txt) {

@@ -9,10 +9,6 @@ import { UserAuth } from "../context/AuthContext"
 
 function Dashboard() {
     const { logOut, user, transactions } = UserAuth();
-    // const { transactions } = useOutletContext();
-    // const { transactions } = useContext();
-
-    // console.log("dashboard transactions:",transactions)
 
     const handleSignOut = async () => {
         try {

@@ -5,10 +5,11 @@ import { usePlaidLink } from "react-plaid-link";
 import { UserAuth } from "../../context/AuthContext" 
 
 function PlaidButton() {
+    const navigate = useNavigate();
     const {transactions, setTransactions} = UserAuth();
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+    const [newTransactions, setNewTransactions] = useState([])
 
     const onSuccess = useCallback(async (publicToken) => {
         setLoading(true);
@@ -51,14 +52,13 @@ function PlaidButton() {
             setError(data.error);
             return;
         }
-        // console.log(data)
-        updateTransactions(data)
+        setNewTransactions(data)
     };
   
   
     ////////// Add newly linked account transactions to transactions stored in state /////////
-    function updateTransactions(data) {
-        let updatedTransactions = transactions ? transactions : [];
+    useEffect(() => {           
+        let updatedTransactions = transactions;
 
         const transactionCategories = {}
         if (updatedTransactions) {
@@ -68,7 +68,7 @@ function PlaidButton() {
             }
         }
 
-        for (let transaction of data) {
+        for (let transaction of newTransactions) {
             const category = transaction.personal_finance_category_primary
             const categoryIndex = transactionCategories[category]
             const transactionObj = {
@@ -91,9 +91,8 @@ function PlaidButton() {
                 })
             }
         }
-        console.log(updatedTransactions)
         setTransactions(updatedTransactions)
-    }
+    }, [newTransactions])
 
 
     let isOauth = false;
