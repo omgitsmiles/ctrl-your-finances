@@ -98,7 +98,7 @@ const Header = () => {
                 </Typography>
                 <Box sx={{ py: 2 }}>
                     {!user ? (
-                        <Stack spacing={2} direction="row">
+                        <Stack spacing={2} direction="row" justifyContent="center">
                             <Button 
                                 variant="contained" 
                                 onClick={() => navigate('/signup')}

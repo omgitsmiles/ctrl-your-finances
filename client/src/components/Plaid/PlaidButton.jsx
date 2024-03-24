@@ -1,8 +1,27 @@
 import { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePlaidLink } from "react-plaid-link";
+import { Button } from "@mui/material";
 
 import { AppContext } from "../../context/Context";
+
+const buttonStyle = {
+    mr: 2,
+    px: 4, 
+    py: 1,
+    fontSize: '0.9rem',
+    textTransform: 'capitalize',
+    borderRadius: 0,
+    borderColor: '#14192d',
+    color: '#fff',
+    backgroundColor: '#14192d',
+    "&&:hover": {
+        backgroundColor: "#343a55"
+    },
+    "&&:focus": {
+        backgroundColor: "#343a55"
+    }
+}
 
 function PlaidButton() {
     const navigate = useNavigate();
@@ -21,7 +40,7 @@ function PlaidButton() {
             body: JSON.stringify({ public_token: publicToken }),
         });
         await plaidEndpoint('transactions');
-        navigate('/dashboard')
+        // navigate('/dashboard')
     }, []);
 
     // Creates a Link token
@@ -53,21 +72,21 @@ function PlaidButton() {
             return;
         }
         setNewTransactions(data)
+        navigate('/dashboard')
     };
   
   
     ////////// Add newly linked account transactions to transactions stored in state /////////
     useEffect(() => {           
-        let updatedTransactions = transactions;
-
+        let updatedTransactions = transactions ? [...transactions] : [];
         const transactionCategories = {}
         if (updatedTransactions) {
             for (let i = 0; i < updatedTransactions.length; i++) {
-                transactionCategories[group.category] = i;
+                const category = updatedTransactions[i].category
+                transactionCategories[category] = i;
                 updatedTransactions[i].amount = Number.parseFloat(updatedTransactions[i].amount)
             }
         }
-
         for (let transaction of newTransactions) {
             const category = transaction.personal_finance_category_primary
             const categoryIndex = transactionCategories[category]
@@ -120,9 +139,14 @@ function PlaidButton() {
 
     return (
     <div>
-        <button onClick={() => open()} disabled={!ready}>
+        <Button 
+            onClick={() => open()} 
+            disabled={!ready}
+            // variant="contained"
+            sx={buttonStyle}
+        >
             <strong>Link account</strong>
-        </button>
+        </Button>
     </div>
   );
 }
