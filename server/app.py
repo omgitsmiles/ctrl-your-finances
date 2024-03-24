@@ -252,6 +252,38 @@ def format_error(e):
 ################################################
 ### RETRIEVING ACCOUNTS AND HOUSEHOLD INFO #####
 
+class UserByUID(Resource):
+
+    def post(self, uid):
+        user = User.query.filter_by(uid=uid).first()
+        ipdb.set_trace()
+        if user:
+            response = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                household_id: user.household_id
+            }
+            return make_response(response, 200)
+        else:
+            data = request.json
+            try:
+                new_user = User(name=data['name'], email=data['email'], uid=data['uid'], household=f"{data['name']}'s Household'")
+                db.session.add(new_user)
+                db.session.commit()
+                response = {
+                    id: new_user.id,
+                    name: new_user.name,
+                    email: new_user.email,
+                    household_id: new_user.household_id
+                }
+                return make_response(response, 200)
+            except Exception as e:
+                return make_response({'error': str(e)}, 500)
+
+api.add_resource(UserByUID, '/api/users/<uid>')
+
+
 class AccountsByUser(Resource):
 
     def get(self, user_id):

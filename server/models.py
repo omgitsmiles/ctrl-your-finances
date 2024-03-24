@@ -10,6 +10,7 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False)
+    uid = db.Column(db.Text)
     household_id = db.Column(db.Integer, db.ForeignKey('households.id'))
 
     account_user = db.relationship('AccountUser', back_populates='users')

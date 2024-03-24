@@ -15,6 +15,7 @@ const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
     const [user, setUser] = useState({});
+    console.log('user',user)
 
     const googleSignIn = () => {
         const provider = new GoogleAuthProvider();
@@ -44,14 +45,42 @@ export const ContextProvider = ({ children }) => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser)
+            console.log('currentUser:',currentUser)
+            if (currentUser) {
+                const userObj = {
+                    name: currentUser.displayName,
+                    email: currentUser.email,
+                    uid: currentUser.uid,
+                };
+                // const user = getUserWithID(userObj)
+                setUser(currentUser)
+            } else {
+                setUser(null)
+            }
         })
         return () => {
             unsubscribe()
         }
     }, [])
 
-
+    function getUserWithID(userObj) {
+        fetch(`http://127.0.0.1:5555/api/users/${userObj.uid}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userObj)
+        })
+        .then(resp => {
+            if (resp.ok) {
+                resp.json()
+                .then((user) => {return user})
+            } else {
+                resp.json()
+                .then(message => setError(message.error))
+            }
+        })
+    }
 
     //// STATE FOR USER ACCOUNTS, HOUSEHOLD MEMBERS, AND TRANSACTIONS ////
     

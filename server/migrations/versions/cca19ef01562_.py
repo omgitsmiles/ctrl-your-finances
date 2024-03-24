@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 36aab94fa6f7
+Revision ID: cca19ef01562
 Revises: 
-Create Date: 2024-03-22 17:17:09.859755
+Create Date: 2024-03-24 15:59:02.234009
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '36aab94fa6f7'
+revision = 'cca19ef01562'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,6 +27,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.Text(), nullable=False),
     sa.Column('email', sa.Text(), nullable=False),
+    sa.Column('uid', sa.Text(), nullable=True),
     sa.Column('household_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['household_id'], ['households.id'], name=op.f('fk_users_household_id_households')),
     sa.PrimaryKeyConstraint('id')
@@ -65,9 +66,9 @@ def upgrade():
     sa.Column('plaid_account_id', sa.Text(), nullable=True),
     sa.Column('amount', sa.Integer(), nullable=True),
     sa.Column('authorized_date', sa.Text(), nullable=True),
-    sa.Column('merchant_name', sa.Text(), nullable=True),
     sa.Column('name', sa.Text(), nullable=True),
-    sa.Column('personal_finance_category', sa.Text(), nullable=True),
+    sa.Column('personal_finance_category_primary', sa.Text(), nullable=True),
+    sa.Column('personal_finance_category_detail', sa.Text(), nullable=True),
     sa.Column('transaction_id', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['account_id'], ['accounts.id'], name=op.f('fk_transactions_account_id_accounts')),
     sa.PrimaryKeyConstraint('id')
