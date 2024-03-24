@@ -36,6 +36,9 @@ function Budgeting() {
     },[])
 
 
+    // TO DO: change fetch URLs to accept user id from state
+
+
     const fetchUserGoals = async () => {
       try {
         // Make API call to fetch users goals
