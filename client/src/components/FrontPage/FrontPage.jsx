@@ -11,24 +11,14 @@ import Navbar from '../Navbar';
 
 function FrontPage() {
     const navigate = useNavigate();
-    const { user } = AppContext()
+    const { user } = AppContext();
 
 
     return (
         <>
-
-            {!user ? (
-            <Stack spacing={2} direction="row">
-                <Button variant="contained" onClick={() => navigate('/signup')}>Sign Up</Button>
-                <Button variant="outlined" onClick={() => navigate('/login')}>Log In</Button>
-            </Stack>
-            ) : (
-                <Button variant="outlined" onClick={() => navigate('/dashboard')}>Dashboard</Button>
-            )
-            }
              <Header />
              <Philosophy />
-             <Footer />
+             {/* <Footer /> */}
         </>
     )
 }
