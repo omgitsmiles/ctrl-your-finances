@@ -1,9 +1,9 @@
 import React from 'react'
-import { UserAuth } from '../context/AuthContext'
+import { AppContext } from '../context/Context'
 
 
 function Budgeting() {
-    const { user } = UserAuth()
+    const { user } = AppContext()
     console.log(user)
 
 

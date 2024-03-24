@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 // Firebase imports
-import { UserAuth } from '../../context/AuthContext';
+import { AppContext } from '../../context/Context';
 
 // Material UI imports
 import Stack from '@mui/material/Stack';

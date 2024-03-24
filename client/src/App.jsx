@@ -1,78 +1,21 @@
-import { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import { AuthContextProvider } from './context/AuthContext'
+import { Outlet, useLocation } from 'react-router-dom'
+import { ContextProvider } from './context/Context'
 import './App.css'
 import ResponsiveAppBar from './components/Navbar'
 import Footer from './components/Footer'
 
 function App() {
-  const [bankAccounts, setBankAccounts] = useState([]);
-  const [houseMembers, setHouseMembers] = useState([]);
-  const [household, setHousehold] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [error, setError] = useState('');
+  const location = useLocation();
 
-  //// CHANGE THIS WHEN USER SESSION COOKIES ESTABLISHED /////
-  const userID = 1
-
-  useEffect(() => {
-    // retrieve user accounts info
-    fetch(`http://127.0.0.1:5555/api/accounts/${userID}`)
-    .then(resp => {
-      if (resp.ok) {
-        resp.json()
-        .then(accounts => setBankAccounts(accounts))
-      }
-      else {
-        resp.json()
-        .then(message => setError(message.error))
-      }
-    })
-
-    // retrieve household member info
-    fetch(`http://127.0.0.1:5555/api/household/${userID}`)
-    .then(resp => {
-      if (resp.ok) {
-        resp.json()
-        .then(houseData => {
-          setHouseMembers(houseData['members'])
-          setHousehold(houseData['household'])
-        })
-      }
-      else {
-        resp.json()
-        .then(message => setError(message.error))
-      }
-    })
-
-    // retrieve transactions
-    fetch(`http://127.0.0.1:5555/api/transactions/${userID}`)
-    .then(resp => {
-      if (resp.ok) {
-        resp.json()
-        .then(data => setTransactions(data))
-      }
-    })
-  }, [])
-
-  const context = {
-    bankAccounts,
-    setBankAccounts,
-    houseMembers,
-    household,
-    transactions,
-    setTransactions,
-    error,
-    setError,
-  }
+  // location.pathname === `/projects/${params.id}/edit`
 
   return (
     <div>
-      <AuthContextProvider>
-        <ResponsiveAppBar />
-        <Outlet context={context}/>
+      <ContextProvider>
+        {(location.pathname !== '/') && <ResponsiveAppBar />}
+        <Outlet />
         <Footer />
-      </AuthContextProvider>
+      </ContextProvider>
     </div>
   )
 }

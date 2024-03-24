@@ -1,11 +1,14 @@
-import { UserAuth } from "../context/AuthContext" 
+import { useOutletContext } from "react-router"
 import Button from '@mui/material/Button'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
+
 import TransactionChart from './TransactionChart'
+import PlaidButton from "./Plaid/PlaidButton"
+import { AppContext } from "../context/Context"
 
 
 function Dashboard() {
-    const { logOut, user } = UserAuth()
+    const { logOut, user, transactions } = AppContext();
 
     const handleSignOut = async () => {
         try {
@@ -15,14 +18,13 @@ function Dashboard() {
         }
     }
 
-    console.log('user: ' ,user)
-
     return (
         <main>
             <div>
                 <h2>Welcome, {user?.displayName}</h2>
             </div>
-            {/* <TransactionChart /> */}
+            <PlaidButton />
+            <TransactionChart transactionData={transactions} />
             <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
         </main>
     )

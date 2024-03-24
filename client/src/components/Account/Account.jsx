@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { Box, List, Typography, Button } from "@mui/material"
 import AddIcon from '@mui/icons-material/Add';
@@ -6,17 +6,11 @@ import AddIcon from '@mui/icons-material/Add';
 import BankItem from "./BankItem";
 import HouseMember from "./HouseMember";
 
-import { UserAuth } from "../../context/AuthContext";
+import { AppContext } from "../../context/Context";
 
 function Account() {
-    const { bankAccounts, setBankAccounts, houseMembers, household, error, setError } = useOutletContext();
-    const { user } = UserAuth
-
+    const { user, bankAccounts, setBankAccounts, houseMembers, setHouseMembers, error, setError } = AppContext();
     const navigate = useNavigate();
-
-    // console.log('Bank Accounts:', bankAccounts)
-    // console.log('Household:', household)
-    // console.log('Household members:', houseMembers)
 
     const accountList = bankAccounts ? bankAccounts?.map((account) => {
         return <BankItem key={account.id} account={account} setBankAccounts={setBankAccounts} setError={setError} />

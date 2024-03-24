@@ -27,6 +27,8 @@ USER_ID = 1
 def index():
     return '<h1>Project Server</h1>'
 
+
+
 ################################################
 ##### ROUTES BASED ON PLAID QUICKSTART #########
 
@@ -42,21 +44,10 @@ from plaid.api import plaid_api
 
 load_dotenv()
 
-# Fill in your Plaid API keys - https://dashboard.plaid.com/account/keys
 PLAID_CLIENT_ID = os.getenv('PLAID_CLIENT_ID')
 PLAID_SECRET = os.getenv('PLAID_SECRET')
-# Use 'sandbox' to test with Plaid's Sandbox environment (username: user_good,
-# password: pass_good)
-# Use `development` to test with live users and credentials and `production`
-# to go live
 PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')
-# PLAID_PRODUCTS is a comma-separated list of products to use when initializing
-# Link. Note that this list must contain 'assets' in order for the app to be
-# able to create and retrieve asset reports.
 PLAID_PRODUCTS = os.getenv('PLAID_PRODUCTS', 'transactions').split(',')
-
-# PLAID_COUNTRY_CODES is a comma-separated list of countries for which users
-# will be able to select institutions from.
 PLAID_COUNTRY_CODES = os.getenv('PLAID_COUNTRY_CODES', 'US').split(',')
 
 
@@ -77,13 +68,6 @@ if PLAID_ENV == 'development':
 if PLAID_ENV == 'production':
     host = plaid.Environment.Production
 
-# Parameters used for the OAuth redirect Link flow.
-#
-# Set PLAID_REDIRECT_URI to 'http://localhost:3000/'
-# The OAuth redirect flow requires an endpoint on the developer's website
-# that the bank website should redirect to. You will need to configure
-# this redirect URI for your client ID through the Plaid developer dashboard
-# at https://dashboard.plaid.com/team/api.
 PLAID_REDIRECT_URI = empty_to_none('PLAID_REDIRECT_URI')
 
 configuration = plaid.Configuration(
@@ -102,13 +86,6 @@ products = []
 for product in PLAID_PRODUCTS:
     products.append(Products(product))
 
-
-# TO DO: Remove this variable.  In all routes, refer to access token saved in plaiditems table instead
-
-# We store the access_token in memory - in production, store it in a secure
-# persistent data store.
-access_token = None
-
 item_id = None
 
 
@@ -118,11 +95,8 @@ def info():
     global item_id 
     response = jsonify({
         'item_id': item_id,
-        'access_token': access_token,
         'products': PLAID_PRODUCTS
     })
-    # print("RESPONSE FROM: /api/info")
-    # print("access_token: ", access_token)
     return response
 
 
@@ -154,9 +128,11 @@ def create_link_token():
 
 @app.route('/api/set_access_token', methods=['POST'])
 def get_access_token():
-    global access_token
+    user = User.query.filter_by(id=USER_ID).first()
+    access_token = ''
+
     global item_id
-    public_token = request.form['public_token']
+    public_token = request.json['public_token']
     try:
         exchange_request = ItemPublicTokenExchangeRequest(
             public_token=public_token)
@@ -165,7 +141,6 @@ def get_access_token():
         item_id = exchange_response['item_id']
 
         # save token and id to database.  MUST ENCRYPT THIS.
-        # CAN THIS BE DONE ASYNC?
         new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id, cursor='', user_id=USER_ID)
         db.session.add(new_plaid_item)
         db.session.commit()
@@ -191,13 +166,7 @@ def get_access_token():
         db.session.add_all(new_account_users)
         db.session.commit()
 
-        # TO DO: access token should not be included in response
-        # send PlaidItem.id instead
-
-        response = jsonify(exchange_response.to_dict())
-        # print("RESPONSE FROM /api/set_access_token")
-        # print(exchange_response.to_dict())
-        return response
+        return make_response({'message': 'account linked successfully'}, 200)
     except plaid.ApiException as e:
         return json.loads(e.body)
 
@@ -244,14 +213,15 @@ def get_transactions():
             
             new_transactions = []
             for transaction in added:
+                account = Account.query.filter_by(account_id=transaction['account_id']).first()
                 new_transaction = Transaction(
-                    account_id = transaction['account_id'],
+                    account_id = account.id,
+                    plaid_account_id = transaction['account_id'],
                     amount = transaction['amount'],
                     authorized_date = transaction['authorized_date'],
-                    merchant_name = transaction['merchant_name'],
                     name = transaction['name'],
-                    personal_finance_category = json.dumps(transaction['personal_finance_category']),
-                    # to retrieve personal_finance_category from transactions table, transform data with json.loads(transaction['personal_finance_category'])
+                    personal_finance_category_primary = transaction['personal_finance_category']['primary'],
+                    personal_finance_category_detail = transaction['personal_finance_category']['detailed'],
                     transaction_id = transaction['transaction_id']
                 )
                 new_transactions.append(new_transaction)
@@ -264,10 +234,6 @@ def get_transactions():
             error_response = format_error(e)
             return jsonify(error_response)
     
-    # Return the 8 most recent transactions
-    # latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
-    # response = jsonify({
-    #     'latest_transactions': latest_transactions})
     response = [transaction.to_dict() for transaction in all_transactions]
     return make_response(response, 200)
 
@@ -333,14 +299,58 @@ api.add_resource(HouseholdMembers, '/api/household/<int:user_id>')
 
 class TransactionsByUser(Resource):
 
-    def get(self, user_id):
-        transactions = db.session.query(Transaction).join(Account, Account.id == Transaction.account_id).join(AccountUser, AccountUser.account_id == Account.id).filter(AccountUser.user_id == user_id).all()
-        response = [transaction.to_dict() for transaction in transactions]
-        return make_response(response, 200)
+    def get(self, id):
+        try:
+            transactions = db.session.query(Transaction).join(
+                Account, Transaction.account_id == Account.id
+                ).join(
+                    AccountUser, Account.id == AccountUser.account_id
+                ).filter(AccountUser.user_id == id).all()
+            
+            if transactions:
+                transaction_list = []
+                for t in transactions:
+                    transaction_object = {
+                        'id': t.id,
+                        'account_id': t.account_id,
+                        'amount': t.amount,
+                        'name': t.name,
+                        'primary_category': t.personal_finance_category_primary,
+                        'detail_category': t.personal_finance_category_detail,
+                    }
+                    transaction_list.append(transaction_object)
 
-api.add_resource(TransactionsByUser, '/api/transactions/<int:user_id>')
+                response = sort_by_primary_category(transaction_list)
+                return make_response(response, 200)
+            else:
+                return make_response({'error': 'No transactions found'}, 404)
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
 
-# projects = db.session.query(Project).join(Role, Project.id == Role.project_id).join(User, Role.user_id == User.id).filter(User.id == id).all()
+api.add_resource(TransactionsByUser, '/api/transactions/<int:id>')
+
+
+def sort_by_primary_category(transactions):
+
+    grouped_by_primary = {}
+
+    for transaction in transactions:
+        category = transaction['primary_category']
+        if category in grouped_by_primary:
+            grouped_by_primary[category]['transactions'].append(transaction)
+            grouped_by_primary[category]['amount'] += transaction['amount']
+        else:
+            grouped_by_primary[category] = {
+                'category': category,
+                'amount': transaction['amount'],
+                'transactions': [transaction]                
+            }
+
+    for category in grouped_by_primary:
+        grouped_by_primary[category]['amount'] = "%0.2f" % (grouped_by_primary[category]['amount'],)
+
+    return [v for k, v in grouped_by_primary.items()]
+
 
 
 ################################################

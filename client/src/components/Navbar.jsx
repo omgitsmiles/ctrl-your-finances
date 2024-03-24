@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import {Box, Button} from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,12 +11,12 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import moneyMagnetIcon from '../assets/moneymagneticon.png'
-import { UserAuth } from '../context/AuthContext';
+import { AppContext } from '../context/Context';
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
-  const {user, logOut} = UserAuth()
+  const navigate = useNavigate();
+  const {user, logOut} = AppContext();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -38,10 +38,22 @@ function ResponsiveAppBar() {
   const handleSignOut = async () => {
     try {
         await logOut()
+        navigate('/')
     } catch (error) {
         console.log(error);
     }
-}
+  }
+
+  function handleMenuClick(event) {
+    const { label } = event.currentTarget.dataset;
+    if (label === 'account' || label === 'dashboard') {
+      navigate(`/${label}`);
+      handleCloseUserMenu();
+    } else if (label === 'logout') {
+      handleSignOut();
+      handleCloseUserMenu();
+    }
+  }
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#009933' }}>
@@ -122,14 +134,11 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem data-label="dashboard" onClick={handleMenuClick}>Dashboard</MenuItem>
+              <MenuItem data-label="account" onClick={handleMenuClick}>Account</MenuItem>
+              <MenuItem data-label="logout" onClick={handleMenuClick}>Log Out</MenuItem>
             </Menu>
           </Box>
-          {user?.displayName ? <Button color='info' onClick={handleSignOut}>Sign Out</Button> : <Button color='info'><Link style={{color: 'white'}} to='/login'>Login</Link></Button>}
 
         </Toolbar>
       </Container>

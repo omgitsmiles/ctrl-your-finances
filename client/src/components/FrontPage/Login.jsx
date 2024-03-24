@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { UserAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 // mui imports
 import GoogleIcon from '@mui/icons-material/Google';
 import { Box, Button, Stack } from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { AppContext } from '../../context/Context';
 
 const Login = () => {
-    const { googleSignIn, user, signInWithEmail } = UserAuth();
+    const { googleSignIn, user, signInWithEmail } = AppContext();
     const navigate = useNavigate();
 
     const [openEmailLogIn, setOpenEmailLogIn] = useState(false);
