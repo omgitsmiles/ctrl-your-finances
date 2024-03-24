@@ -1,6 +1,7 @@
-import * as React from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
+import {Box, Button} from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -10,12 +11,14 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import moneyMagnetIcon from '../assets/moneymagneticon.png'
+import { AppContext } from '../context/Context';
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
+  const {user, logOut} = AppContext();
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -31,6 +34,26 @@ function ResponsiveAppBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleSignOut = async () => {
+    try {
+        await logOut()
+        navigate('/')
+    } catch (error) {
+        console.log(error);
+    }
+  }
+
+  function handleMenuClick(event) {
+    const { label } = event.currentTarget.dataset;
+    if (label === 'account' || label === 'dashboard') {
+      navigate(`/${label}`);
+      handleCloseUserMenu();
+    } else if (label === 'logout') {
+      handleSignOut();
+      handleCloseUserMenu();
+    }
+  }
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#009933' }}>
@@ -111,13 +134,12 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem data-label="dashboard" onClick={handleMenuClick}>Dashboard</MenuItem>
+              <MenuItem data-label="account" onClick={handleMenuClick}>Account</MenuItem>
+              <MenuItem data-label="logout" onClick={handleMenuClick}>Log Out</MenuItem>
             </Menu>
           </Box>
+
         </Toolbar>
       </Container>
     </AppBar>
