@@ -1,8 +1,13 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 import { Button,  Modal, Stack, Box, styled, Typography } from '@mui/material';
 import moneyMagnet from '../../assets/Layer_1.png';
 
+import { AppContext } from '../../context/Context';
+
 const Header = () => {
+    const navigate = useNavigate();
+    const { user } = AppContext();
 
     const CustomBox = styled(Box) (({ theme }) => ({
         minHeight: '70vh',
@@ -32,6 +37,24 @@ const Header = () => {
             paddingRight: theme.spacing(2),
         },
     }));
+
+    const buttonStyle = {
+        mr: 2,
+        px: 4, 
+        py: 1,
+        fontSize: '0.9rem',
+        textTransform: 'capitalize',
+        borderRadius: 0,
+        borderColor: '#14192d',
+        color: '#fff',
+        backgroundColor: '#14192d',
+        "&&:hover": {
+            backgroundColor: "#343a55"
+        },
+        "&&:focus": {
+            backgroundColor: "#343a55"
+        }
+    }
 
     return (
         <>
@@ -74,53 +97,26 @@ const Header = () => {
                     Together, we’re going to make some amazing things!
                 </Typography>
                 <Box sx={{ py: 2 }}>
-                    <Button 
-                    variant='contained'
-                    sx={{
-                        mr: 2,
-                        px: 4, 
-                        py: 1,
-                        fontSize: '0.9rem',
-                        textTransform: 'capitalize',
-                        borderRadius: 0,
-                        borderColor: '#14192d',
-                        color: '#fff',
-                        backgroundColor: '#14192d',
-                        "&&:hover": {
-                            backgroundColor: "#343a55"
-                        },
-                        "&&:focus": {
-                            backgroundColor: "#343a55"
-                        }
-                    }}
-                    >
-                        Sign Up
-                    </Button>
-                    <Button 
-                    // component={} 
-                    // to={'/about'}
-                    variant='outlined'
-                    sx={{
-                        px: 4, 
-                        py: 1,
-                        fontSize:'0.9rem',
-                        textTransform: 'capitalize',
-                        borderRadius: 0,
-                        color: '#fff',
-                        backgroundColor: 'transparent',
-                        borderColor: '#fff',
-                        "&&:hover": {
-                            color: '#343a55',
-                            borderColor: '#343a55',
-                        },
-                        "&&:focus": {
-                            color: '#343a55',
-                            borderColor: '#343a55',
-                        }
-                    }}
-                    >
-                        Log In
-                    </Button>
+                    {!user ? (
+                        <Stack spacing={2} direction="row" justifyContent="center">
+                            <Button 
+                                variant="contained" 
+                                onClick={() => navigate('/signup')}
+                                sx={buttonStyle}
+                            >
+                                Sign Up
+                            </Button>
+                            <Button 
+                                variant="outlined" 
+                                onClick={() => navigate('/login')}
+                                sx={buttonStyle}
+                            >
+                                Log In
+                            </Button>
+                        </Stack>
+                    ) : (
+                        <Button variant="outlined" onClick={() => navigate('/dashboard')}>Dashboard</Button>
+                    )}
                 </Box>
                 <Typography
                 variant='p'
