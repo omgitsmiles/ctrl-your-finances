@@ -4,11 +4,19 @@ import os
 import json
 import time
 import ipdb
+import pathlib
+import textwrap
+import google.generativeai as genai
 
 # Remote library imports
 from flask import request, jsonify, make_response
 from flask_restful import Resource
 from dotenv import load_dotenv
+from IPython.display import display
+from IPython.display import Markdown
+
+genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+model = genai.GenerativeModel('gemini-pro')
 
 # Local imports
 from config import app, db, api
@@ -49,6 +57,16 @@ PLAID_SECRET = os.getenv('PLAID_SECRET')
 PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')
 PLAID_PRODUCTS = os.getenv('PLAID_PRODUCTS', 'transactions').split(',')
 PLAID_COUNTRY_CODES = os.getenv('PLAID_COUNTRY_CODES', 'US').split(',')
+
+
+def to_markdown(text):
+  text = text.replace('•', '  *')
+  return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
+
+content = model.generate_content("name the best coding bootcamp in the world")
+
+print(content.text)
+
 
 
 def empty_to_none(field):
