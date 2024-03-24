@@ -21,6 +21,9 @@ function Dashboard() {
         <>
         {/* <Navbar /> */}
         <h1 style={{ color: '#009933', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Welcome {user?.displayName}</h1>
+        <PlaidButton />
+        <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
+        <TransactionChart />
         <Grid container spacing={2}>
             <Grid item lg={4} md={6} sm={6} xs={12}>
                 <SavingsCard />
@@ -36,9 +39,6 @@ function Dashboard() {
                 </Grid>
             </Grid>
         </Grid>
-        <PlaidButton />
-        <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
-        <TransactionChart />
         </>
     )
 }
