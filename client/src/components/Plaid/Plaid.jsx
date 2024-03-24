@@ -1,11 +1,11 @@
-import PlaidLink from "./PlaidLink"
-import { QuickstartProvider } from "../../context/Context"
+import PlaidButton from "./PlaidButton";
 
 function Plaid() {
+
     return (
-        <QuickstartProvider>
-            <PlaidLink />
-        </QuickstartProvider>
+        <div>
+            <PlaidButton />
+        </div>
     )
 }
 
