@@ -13,6 +13,7 @@ flask-sqlalchemy = "*"
 flask-cors = "*"
 plaid-python = "*"
 python-dotenv = "*"
+ipdb = "*"
 
 [dev-packages]
 

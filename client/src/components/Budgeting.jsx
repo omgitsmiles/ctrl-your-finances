@@ -7,10 +7,9 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import Button from '@mui/material/Button';
-
-
-
 // grab user data and have house account toggle for different access to goal charts
+import { AppContext } from '../context/Context'
+
 
 function Budgeting() {
     const [userGoals, setUserGoals] = useState([]);
@@ -28,6 +27,9 @@ function Budgeting() {
     //     ["Car", 370],
     //   ],
     // });
+
+    const { user } = AppContext()
+    console.log(user)
 
     useEffect(() => {
       // fetch user's goals from backend
@@ -111,7 +113,6 @@ function Budgeting() {
   });
 
 
-  
 
     return (
         <div>

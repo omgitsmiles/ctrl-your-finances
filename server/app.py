@@ -3,6 +3,7 @@
 import os
 import json
 import time
+import ipdb
 
 # Remote library imports
 from flask import request, jsonify, make_response
@@ -13,7 +14,12 @@ from dotenv import load_dotenv
 from config import app, db, api
 
 # Model imports
-from models import User, PlaidItem, Transaction, Goal
+from models import User, Account, AccountUser, PlaidItem, Transaction, Goal, Household
+
+
+# TO DO: Remove user variable, get id from session
+USER_ID = 1
+
 
 # Views go here:
 
@@ -23,8 +29,8 @@ def index():
 
 
 
-
-# PLAID:
+################################################
+##### ROUTES BASED ON PLAID QUICKSTART #########
 
 import plaid
 from plaid.model.products import Products
@@ -32,26 +38,16 @@ from plaid.model.country_code import CountryCode
 from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
 from plaid.model.link_token_create_request import LinkTokenCreateRequest
 from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
+from plaid.model.accounts_get_request import AccountsGetRequest
 from plaid.model.transactions_sync_request import TransactionsSyncRequest
 from plaid.api import plaid_api
 
 load_dotenv()
 
-# Fill in your Plaid API keys - https://dashboard.plaid.com/account/keys
 PLAID_CLIENT_ID = os.getenv('PLAID_CLIENT_ID')
 PLAID_SECRET = os.getenv('PLAID_SECRET')
-# Use 'sandbox' to test with Plaid's Sandbox environment (username: user_good,
-# password: pass_good)
-# Use `development` to test with live users and credentials and `production`
-# to go live
 PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')
-# PLAID_PRODUCTS is a comma-separated list of products to use when initializing
-# Link. Note that this list must contain 'assets' in order for the app to be
-# able to create and retrieve asset reports.
 PLAID_PRODUCTS = os.getenv('PLAID_PRODUCTS', 'transactions').split(',')
-
-# PLAID_COUNTRY_CODES is a comma-separated list of countries for which users
-# will be able to select institutions from.
 PLAID_COUNTRY_CODES = os.getenv('PLAID_COUNTRY_CODES', 'US').split(',')
 
 
@@ -72,13 +68,6 @@ if PLAID_ENV == 'development':
 if PLAID_ENV == 'production':
     host = plaid.Environment.Production
 
-# Parameters used for the OAuth redirect Link flow.
-#
-# Set PLAID_REDIRECT_URI to 'http://localhost:3000/'
-# The OAuth redirect flow requires an endpoint on the developer's website
-# that the bank website should redirect to. You will need to configure
-# this redirect URI for your client ID through the Plaid developer dashboard
-# at https://dashboard.plaid.com/team/api.
 PLAID_REDIRECT_URI = empty_to_none('PLAID_REDIRECT_URI')
 
 configuration = plaid.Configuration(
@@ -97,10 +86,6 @@ products = []
 for product in PLAID_PRODUCTS:
     products.append(Products(product))
 
-# We store the access_token in memory - in production, store it in a secure
-# persistent data store.
-access_token = None
-
 item_id = None
 
 
@@ -110,12 +95,8 @@ def info():
     global item_id 
     response = jsonify({
         'item_id': item_id,
-        'access_token': access_token,
         'products': PLAID_PRODUCTS
     })
-    # print("RESPONSE FROM: /api/info")
-    # print("access_token: ", access_token)
-    # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
     return response
 
 
@@ -135,7 +116,6 @@ def create_link_token():
             request['redirect_uri']=PLAID_REDIRECT_URI
     # create link token
         response = jsonify(client.link_token_create(request).to_dict())
-        # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
         return response
     except plaid.ApiException as e:
         return json.loads(e.body)
@@ -148,9 +128,11 @@ def create_link_token():
 
 @app.route('/api/set_access_token', methods=['POST'])
 def get_access_token():
-    global access_token
+    user = User.query.filter_by(id=USER_ID).first()
+    access_token = ''
+
     global item_id
-    public_token = request.form['public_token']
+    public_token = request.json['public_token']
     try:
         exchange_request = ItemPublicTokenExchangeRequest(
             public_token=public_token)
@@ -159,16 +141,32 @@ def get_access_token():
         item_id = exchange_response['item_id']
 
         # save token and id to database.  MUST ENCRYPT THIS.
-        # CAN THIS BE DONE ASYNC?
-        new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id)
+        new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id, cursor='', user_id=USER_ID)
         db.session.add(new_plaid_item)
         db.session.commit()
 
-        response = jsonify(exchange_response.to_dict())
-        # print("RESPONSE FROM /api/set_access_token")
-        # print(exchange_response.to_dict())
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
-        return response
+        accounts_request = AccountsGetRequest(access_token=access_token)
+        accounts_response = client.accounts_get(accounts_request)
+        accounts = accounts_response['accounts']
+        new_accounts = []
+        for account in accounts:
+            new_account = Account(
+                account_id = account['account_id'],
+                name = account['name'],
+                plaid_item_id = new_plaid_item.id
+            )
+            new_accounts.append(new_account)
+        db.session.add_all(new_accounts)
+        db.session.commit()
+
+        new_account_users = []
+        for account in new_accounts:
+            new_account_user = AccountUser(user_id=USER_ID, account_id=account.id)
+            new_account_users.append(new_account_user)
+        db.session.add_all(new_account_users)
+        db.session.commit()
+
+        return make_response({'message': 'account linked successfully'}, 200)
     except plaid.ApiException as e:
         return json.loads(e.body)
 
@@ -178,51 +176,59 @@ def get_access_token():
 
 @app.route('/api/transactions', methods=['GET'])
 def get_transactions():
-    # Set cursor to empty to receive all historical updates
-    cursor = ''
 
-    # New transaction updates since "cursor"
-    added = []
-    modified = []
-    removed = [] # Removed transaction ids
-    has_more = True
-    try:
-        # Iterate through each page of new transaction updates for item
-        while has_more:
-            request = TransactionsSyncRequest(
-                access_token=access_token,
-                cursor=cursor,
-            )
-            response = client.transactions_sync(request).to_dict()
-            # Add this page of results
-            added.extend(response['added'])
-            modified.extend(response['modified'])
-            removed.extend(response['removed'])
-            has_more = response['has_more']
-            # Update cursor to the next cursor
-            cursor = response['next_cursor']
-            pretty_print_response(response)
+    plaid_items = PlaidItem.query.filter_by(user_id = USER_ID).all()
 
-            # update plaid_items row cursor based on access token
-            plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
-            plaid_item.cursor = cursor
+    all_transactions = []
 
-        # add transactions to database.  CAN THIS BE DONE ASYNC?
-        new_transactions = []
-        for transaction in added:
-            new_transaction = Transaction(
-                user_id = None,
-                plaid_item_id = None,
-                amount = transaction['amount'],
-                authorized_date = transaction['authorized_date'],
-                merchant_name = transaction['merchant_name'],
-                name = transaction['name'],
-                personal_finance_category = '',
-                transaction_id = transaction['transaction_id']
-            )
-            new_transactions.append(new_transaction)
-        db.session.add_all(new_transactions)
-        db.session.commit()
+    for item in plaid_items:
+        cursor = item.cursor
+        access_token = item.access_token
+
+        # New transaction updates since "cursor"
+        added = []
+        modified = []
+        removed = [] # Removed transaction ids
+        has_more = True
+        try:
+            # Iterate through each page of new transaction updates for item
+            while has_more:
+                request = TransactionsSyncRequest(
+                    access_token=access_token,
+                    cursor=cursor,
+                )
+                response = client.transactions_sync(request).to_dict()
+                # Add this page of results
+                added.extend(response['added'])
+                modified.extend(response['modified'])
+                removed.extend(response['removed'])
+                has_more = response['has_more']
+                # Update cursor to the next cursor
+                cursor = response['next_cursor']
+                # pretty_print_response(response)
+
+                # update plaid_items row cursor based on access token
+                plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
+                plaid_item.cursor = cursor
+            
+            new_transactions = []
+            for transaction in added:
+                account = Account.query.filter_by(account_id=transaction['account_id']).first()
+                new_transaction = Transaction(
+                    account_id = account.id,
+                    plaid_account_id = transaction['account_id'],
+                    amount = transaction['amount'],
+                    authorized_date = transaction['authorized_date'],
+                    name = transaction['name'],
+                    personal_finance_category_primary = transaction['personal_finance_category']['primary'],
+                    personal_finance_category_detail = transaction['personal_finance_category']['detailed'],
+                    transaction_id = transaction['transaction_id']
+                )
+                new_transactions.append(new_transaction)
+            all_transactions.extend(new_transactions)
+            
+            db.session.add_all(new_transactions)
+            db.session.commit()
 
         # Return the 8 most recent transactions
         latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
@@ -272,6 +278,147 @@ def goals(user_id):
 def pretty_print_response(response):
     print(json.dumps(response, indent=2, sort_keys=True, default=str))
 
+def format_error(e):
+    response = json.loads(e.body)
+    return {'error': {'status_code': e.status, 'display_message':
+                      response['error_message'], 'error_code': response['error_code'], 'error_type': response['error_type']}}
+
+
+
+
+################################################
+### RETRIEVING ACCOUNTS AND HOUSEHOLD INFO #####
+
+class AccountsByUser(Resource):
+
+    def get(self, user_id):
+        try:
+            user_accounts = db.session.query(Account).join(AccountUser, Account.id == AccountUser.account_id).filter(AccountUser.user_id == USER_ID).all()
+            if user_accounts:
+                accounts = []
+                for account in user_accounts:
+                    response_object = {
+                        'id': account.id,
+                        'name': account.name,
+                        'plaid_item_id': account.plaid_item_id
+                    }
+                    accounts.append(response_object)
+                return make_response(accounts, 200)
+            else:
+                return make_response({'error': 'Unable to retrieve user accounts'}, 404)
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+
+api.add_resource(AccountsByUser, '/api/accounts/<int:user_id>')
+
+
+class HouseholdMembers(Resource):
+
+    def get(self, user_id):
+        try:
+            user = User.query.filter_by(id=user_id).first()
+            household = Household.query.filter_by(id=user.household_id).first()
+            house_members = User.query.filter_by(household_id=household.id).all()
+            if house_members:
+                house_members_list = [member.to_dict() for member in house_members]
+                response = {
+                    'household': household.name,
+                    'members': house_members_list
+                }
+                return make_response(response, 200)
+            else:
+                return make_response({'error': 'Unable to retrieve household member information'})
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+
+api.add_resource(HouseholdMembers, '/api/household/<int:user_id>')
+
+
+class TransactionsByUser(Resource):
+
+    def get(self, id):
+        try:
+            transactions = db.session.query(Transaction).join(
+                Account, Transaction.account_id == Account.id
+                ).join(
+                    AccountUser, Account.id == AccountUser.account_id
+                ).filter(AccountUser.user_id == id).all()
+            
+            if transactions:
+                transaction_list = []
+                for t in transactions:
+                    transaction_object = {
+                        'id': t.id,
+                        'account_id': t.account_id,
+                        'amount': t.amount,
+                        'name': t.name,
+                        'primary_category': t.personal_finance_category_primary,
+                        'detail_category': t.personal_finance_category_detail,
+                    }
+                    transaction_list.append(transaction_object)
+
+                response = sort_by_primary_category(transaction_list)
+                return make_response(response, 200)
+            else:
+                return make_response({'error': 'No transactions found'}, 404)
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+
+api.add_resource(TransactionsByUser, '/api/transactions/<int:id>')
+
+
+def sort_by_primary_category(transactions):
+
+    grouped_by_primary = {}
+
+    for transaction in transactions:
+        category = transaction['primary_category']
+        if category in grouped_by_primary:
+            grouped_by_primary[category]['transactions'].append(transaction)
+            grouped_by_primary[category]['amount'] += transaction['amount']
+        else:
+            grouped_by_primary[category] = {
+                'category': category,
+                'amount': transaction['amount'],
+                'transactions': [transaction]                
+            }
+
+    for category in grouped_by_primary:
+        grouped_by_primary[category]['amount'] = "%0.2f" % (grouped_by_primary[category]['amount'],)
+
+    return [v for k, v in grouped_by_primary.items()]
+
+
+
+################################################
+# MANAGING ACCOUNTS AND HOUSEHOLD PERMISSIONS ##
+
+class PlaidItemById(Resource):
+
+    def delete(self, id):
+        plaid_item = PlaidItem.query.filter_by(id=id).first()
+        if plaid_item:
+            try:
+                db.session.delete(plaid_item)
+                db.session.commit()
+                return make_response({'message': f'Plaid link item {id} deleted'}, 200)
+            except Exception as e:
+                return make_response({'error': str(e)}, 500)
+        else:
+            return make_response({'error': f'Plaid link item {id} not found'}, 404)
+
+api.add_resource(PlaidItemById, '/api/plaiditem/<int:id>')
+
+
+class HouseholdAccounts(Resource):
+
+    def post(self, id):
+        pass
+
+    def delete(self, id):
+        pass
+
+api.add_resource(HouseholdAccounts, '/api/household/accounts/<int:id>')
 
 
 if __name__ == '__main__':
