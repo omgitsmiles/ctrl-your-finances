@@ -142,7 +142,7 @@ function PlaidButton() {
         <Button 
             onClick={() => open()} 
             disabled={!ready}
-            // variant="contained"
+            variant="contain3ed"
             sx={buttonStyle}
         >
             <strong>Link account</strong>
