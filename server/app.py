@@ -36,6 +36,17 @@ def index():
     return '<h1>Project Server</h1>'
 
 
+################################################
+##### GOOGLE GEMINI MARKDOWN & QUICKSTART ######
+
+def to_markdown(text):
+  text = text.replace('•', '  *')
+  return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
+
+# content = model.generate_content("name the best coding bootcamp in the world")
+
+# print(content.text)
+
 
 ################################################
 ##### ROUTES BASED ON PLAID QUICKSTART #########
@@ -57,16 +68,6 @@ PLAID_SECRET = os.getenv('PLAID_SECRET')
 PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')
 PLAID_PRODUCTS = os.getenv('PLAID_PRODUCTS', 'transactions').split(',')
 PLAID_COUNTRY_CODES = os.getenv('PLAID_COUNTRY_CODES', 'US').split(',')
-
-
-def to_markdown(text):
-  text = text.replace('•', '  *')
-  return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
-
-content = model.generate_content("name the best coding bootcamp in the world")
-
-print(content.text)
-
 
 
 def empty_to_none(field):
@@ -400,6 +401,20 @@ class HouseholdAccounts(Resource):
         pass
 
 api.add_resource(HouseholdAccounts, '/api/household/accounts/<int:id>')
+
+##############################
+# AI TEXT PROMPT GENERATION ##
+
+class GenerateAdvice(Resource):
+
+    def post(self):
+        try:
+            content = model.generate_content("based on my spending habits, what is the best way to save money? in 100 words or less.")
+            return make_response(content.text, 200)
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+        
+api.add_resource(GenerateAdvice, '/api/advice')
 
 
 if __name__ == '__main__':
