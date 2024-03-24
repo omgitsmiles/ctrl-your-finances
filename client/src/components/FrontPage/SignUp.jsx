@@ -23,7 +23,7 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    const { createUserWithEmail, googleSignIn, user, setUser } = UserAuth();
+    const { createUserWithEmail, googleSignIn, user, setUser } = AppContext();
 
     const handleGoogleSignIn = async () => {
         try {
