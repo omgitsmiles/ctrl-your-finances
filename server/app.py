@@ -245,7 +245,7 @@ def get_transactions():
 
 
 #fetch user goals
-@app.route('/api/goals/<int:user_id>', methods =['GET', 'POST'])
+@app.route('/api/goals/<user_id>', methods =['GET', 'POST'])
 def goals(user_id):
     # Get goals
     if request.method == 'GET':
