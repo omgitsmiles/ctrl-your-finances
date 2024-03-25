@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "@mui/material";
+import { Modal, Button } from "@mui/material";
 
 const InviteMemberModal = () => {
     return (

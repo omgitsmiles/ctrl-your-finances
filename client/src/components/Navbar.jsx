@@ -56,19 +56,18 @@ function ResponsiveAppBar() {
   }
 
   function stringAvatar(name) {
-  const initials = name
-    .split(' ')
-    .map((part) => part[0]) // Get the first character of each part (first name, last name)
-    .join(''); // Join the initials together
+    const initials = name
+      .split(' ')
+      .map((part) => part[0]) // Get the first character of each part (first name, last name)
+      .join(''); // Join the initials together
 
-  return {
-    children: initials.toUpperCase(), // Ensure initials are capitalized
-  };
-}
+    return {
+      children: initials.toUpperCase(), // Ensure initials are capitalized
+    };
+  }
 
   
   // console.log(typeof user.displayName)
-  console.log(user)
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#009933' }}>
