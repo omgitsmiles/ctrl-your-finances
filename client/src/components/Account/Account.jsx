@@ -1,16 +1,20 @@
 import { useContext, useEffect, useState } from "react"
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { Box, List, Typography, Button, ListItem } from "@mui/material"
+import Input from '@mui/material/Input';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import AddIcon from '@mui/icons-material/Add';
+import Modal from '@mui/material/Modal';
+import ClearIcon from '@mui/icons-material/Clear';
 import { styled } from "@mui/system";
 
 import BankItem from "./BankItem";
 import HouseMember from "./HouseMember";
 import PlaidButton from "../Plaid/PlaidButton";
+import InviteMemberModal from "./InviteMemberModal";
 
 import { AppContext } from "../../context/Context";
 
@@ -52,6 +56,25 @@ function Account() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    const [openInvite, setOpenInvite] = useState(false);
+
+    const handleOpenInvite = () => setOpenInvite(true);
+
+    // invite modal
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: {xs:'70%', sm: '60%', md: '60%', lg: '40%', xl: '30%'},
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        borderRadius: 5,
+        p: 4,
+        color: 'green',
+        fontSize: {xs: '.5rem', sm: '1rem', md: '1.2rem'},
+        };
 
     return (
         <main>
@@ -141,6 +164,7 @@ function Account() {
                         variant='contained'
                         size='medium'
                         startIcon={<AddIcon />}
+                        onClick={handleOpenInvite}
                     >Add a Member</HouseholdButton>
                     <Box
                         sx={{ 
@@ -200,6 +224,81 @@ function Account() {
                 </TabPanel>
             
             </TabContext>
+
+            <Modal
+                open={openInvite}
+                onClose={() => setOpenInvite(false)}
+                aria-labelledby="invite-member-modal-title"
+                aria-describedby="invite-member-modal-description"
+            >
+                <Box sx={style}>
+                    {/* <h2 id="modal-modal-title">Invite a Member</h2> */}
+                    <Button
+                        onClick={() => setOpenInvite(false)}
+                        style={{
+                            position: 'absolute',
+                            top: '0',
+                            right: '0',
+                            marginTop: '1rem',
+                            marginRight: '1rem',
+                            color: 'green',
+                            backgroundColor: 'white',
+                            // fontSize: '1rem',
+                            borderRadius: '5px',
+                            // border: '1px solid green',
+                            fontFamily: 'Poppins',
+                            "&:hover": {
+                                backgroundColor: "green",
+                                color: "white",
+                                
+                            },
+                            "&:focus": {
+                                backgroundColor: "green",
+                                color: "white",
+                                
+                            }
+                        }}
+                    >
+                        <ClearIcon
+                            fontSize="medium"
+                        />
+                    </Button>
+                    <p id="modal-modal-description" style={{fontSize: '1rem'}}>Invite a member to join your house.</p>
+                    <Input 
+                        type="email" 
+                        placeholder="Enter new member's email address" 
+                        sx={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            // margin: '1rem 1rem',
+                            fontSize: '.75rem',
+                            fontFamily: 'Poppins',
+                            borderRadius: '5px',
+                            backgroundColor: '#f0f0f0',
+                            color: 'green',
+                        }}
+                        margin="dense"
+                        onChange={(e) => console.log(e.target.value)}
+                        required
+                    />
+                    <Button 
+                        variant="contained"
+                        style={
+                            {margin: '1rem auto',
+                            display: 'flex',
+                            backgroundColor: 'green',
+                            color: 'white',
+                            fontSize: {xs: '.5rem', sm: '1rem', md: '1.2rem'},
+                            border: '1px solid green',
+                            fontFamily: 'Poppins, sans-serif',
+                            }
+                        }
+                        onClick={() => setOpenInvite(false)}
+                        type="submit"
+                    >Invite</Button>
+                </Box>
+            </Modal>
+
         </main>
     )
 }
