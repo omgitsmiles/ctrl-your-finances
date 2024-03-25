@@ -251,6 +251,41 @@ class Transactions(Resource):
 api.add_resource(Transactions, '/api/transactions/<int:user_id>')
 
 
+
+
+# Get & Add Budget Goals
+
+
+#fetch user goals
+@app.route('/api/goals/<user_id>', methods =['GET', 'POST'])
+def goals(user_id):
+    # Get goals
+    if request.method == 'GET':
+        goals = Goal.query.filter_by(user_id = user_id).all()
+        response = [goal.to_dict() for goal in goals] # makes new list  from goals and for eaach goal in that list, it adds it to this new list
+        # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+        return make_response(response, 200)
+
+    # add a new goal
+    if request.method == 'POST':
+        data = request.json  # Assuming you're sending JSON data
+        new_goal = Goal(
+            user_id=user_id,
+            name=data['name'],
+            saved=data['saved'],
+            target=data['target']
+        )
+        db.session.add(new_goal)
+        db.session.commit()
+        response = new_goal.to_dict()
+        return make_response(response, 200)
+
+
+
+
+
+
+
 def format_error(e):
     response = json.loads(e.body)
     return {'error': {'status_code': e.status, 'display_message':

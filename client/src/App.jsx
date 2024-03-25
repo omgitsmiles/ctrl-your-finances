@@ -7,15 +7,18 @@ import Footer from './components/Footer'
 function App() {
   const location = useLocation();
 
+  
+
   // location.pathname === `/projects/${params.id}/edit`
 
   return (
-    <div>
+    <div className="app-container">
       <ContextProvider>
         {(location.pathname !== '/') && <ResponsiveAppBar />}
         <Outlet />
-        <Footer />
+        {/* <Footer /> */}
       </ContextProvider>
+      <Footer />
     </div>
   )
 }
