@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 00dc4d6e33b4
+Revision ID: 06c75942f020
 Revises: 
-Create Date: 2024-03-24 11:51:34.206643
+Create Date: 2024-03-25 12:19:14.499098
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '00dc4d6e33b4'
+revision = '06c75942f020'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,6 +29,15 @@ def upgrade():
     sa.Column('email', sa.Text(), nullable=False),
     sa.Column('household_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['household_id'], ['households.id'], name=op.f('fk_users_household_id_households')),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('goals',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('name', sa.Text(), nullable=True),
+    sa.Column('saved', sa.Integer(), nullable=True),
+    sa.Column('target', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_goals_user_id_users')),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('plaid_items',
@@ -81,6 +90,7 @@ def downgrade():
     op.drop_table('account_users')
     op.drop_table('accounts')
     op.drop_table('plaid_items')
+    op.drop_table('goals')
     op.drop_table('users')
     op.drop_table('households')
     # ### end Alembic commands ###

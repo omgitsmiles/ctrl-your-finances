@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from config import app, db, api
 
 # Model imports
-from models import User, Account, AccountUser, PlaidItem, Transaction, Household
+from models import User, Account, AccountUser, PlaidItem, Transaction, Household, Goal
 
 
 # TO DO: Remove user variable, get id from session
@@ -236,6 +236,40 @@ def get_transactions():
     
     response = [transaction.to_dict() for transaction in all_transactions]
     return make_response(response, 200)
+
+
+
+
+
+# Get & Add Budget Goals
+
+
+#fetch user goals
+@app.route('/api/goals/<int:user_id>', methods =['GET', 'POST'])
+def goals(user_id):
+    # Get goals
+    if request.method == 'GET':
+        goals = Goal.query.filter_by(user_id = user_id).all()
+        response = [goal.to_dict() for goal in goals] # makes new list  from goals and for eaach goal in that list, it adds it to this new list
+        # response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+        return make_response(response, 200)
+
+    # add a new goal
+    if request.method == 'POST':
+        data = request.json  # Assuming you're sending JSON data
+        new_goal = Goal(
+            user_id=user_id,
+            name=data['name'],
+            saved=data['saved'],
+            target=data['target']
+        )
+        db.session.add(new_goal)
+        db.session.commit()
+        response = new_goal.to_dict()
+        return make_response(response, 200)
+
+
+
 
 
 def pretty_print_response(response):

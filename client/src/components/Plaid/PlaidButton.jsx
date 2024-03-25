@@ -147,7 +147,6 @@ function PlaidButton() {
             disabled={!ready}
             variant="contain3ed"
             sx={buttonStyle}
-            variant='contained'
             size='medium'
             startIcon={<AddIcon />}
         >
