@@ -48,11 +48,6 @@ export const ContextProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser)
-            const userWithId = {
-                name: currentUser.name,
-                email: currentUser.email,
-            }
-            setUserWithId(userWithId)
         })
         return () => {
             unsubscribe()
@@ -66,7 +61,7 @@ export const ContextProvider = ({ children }) => {
     const [houseMembers, setHouseMembers] = useState([]);
     const [household, setHousehold] = useState([]);
     const [transactions, setTransactions] = useState([]);
-    const [userId, setUserId] = useState(null);
+    const [userId, setUserId] = useState('');
     const [error, setError] = useState('');
     
     //// CHANGE THIS WHEN USER SESSION COOKIES ESTABLISHED /////
@@ -75,30 +70,28 @@ export const ContextProvider = ({ children }) => {
     
     useEffect(() => {
         console.log('user Id:',userId)
-        if (user) {
-                const userWithId = () => {
-                        const body = {
-                            name: user.name,
-                            email: user.email,
-                        }
-                        fetch(`http://127.0.0.1:5555/api/user/`, {
-                            method: 'POST',
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(body)
-                        })
-                        .then(resp => {
-                            if (resp.ok) {
-                                resp.json()
-                                .then((userId) => {return userId})
-                            } else {
-                                resp.json()
-                                .then(message => setError(message.error))
-                            }
-                        })
-                };
-                setUserId(userWithId)
+        if (user && (user !== undefined)) {
+            const body = {
+                name: user.displayName,
+                email: user.email,
+            }
+            fetch(`http://127.0.0.1:5555/api/user`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                },
+                // body: JSON.stringify(body)
+                body: `email=${body.email}&name=${body.name}`
+            })
+            .then(resp => {
+                if (resp.ok) {
+                    resp.json()
+                    .then((userWithId) => setUserId(userWithId))
+                } else {
+                    resp.json()
+                    .then(message => setError(message.error))
+                }
+            })
         }
     }, [user])
     
@@ -156,6 +149,7 @@ export const ContextProvider = ({ children }) => {
         setHouseMembers,
         transactions,
         setTransactions,
+        userId,
         error,
         setError,
     }

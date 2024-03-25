@@ -256,50 +256,42 @@ class UserId(Resource):
 
     def options(self):
         response_headers = {
-            'Access-Control-Allow-Origin': 'http://127.0.0.1:5173',
+            'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Max-Age': '86400',  # One day
+            'Access-Control-Max-Age': '600',
         }
         return ('', 204, response_headers)
 
+
     def post(self):
-        data = request.json
-        ipdb.set_trace()
-        email = data['email']
-        ipdb.set_trace()
+
+        name = request.form['name']
+        email = request.form['email']
+
         user = User.query.filter_by(email=email).first()
         if user:
             try:
-                household = Household.query.filter_by(id=user.household_id).first()
+
                 response = {
                     'id': user.id,
                     'name': user.name,
                     'email': user.email,
-                    'household': household.name
                 }
-                response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
                 return make_response(response, 200)
             except Exception as e:
                 return make_response({'error': str(e)}, 500)
-        else:
+        elif name != 'undefined':
             try:
-                new_user = User(name=data['name'], email=data['email'])
+                new_user = User(name=name, email=email)
                 db.session.add(new_user)
                 db.session.commit()
-
-                new_household = Household(name=f"{data['name']}'s Household", users=[new_user])
+                new_household = Household(name=f"{name}'s Household", users=[new_user])
                 db.session.add(new_household)
                 db.session.commit()
 
-                ipdb.set_trace()
-                response = {
-                    'id': new_user.id,
-                    'name': new_user.name,
-                    'email': new_user.email,
-                    'household': new_household.name
-                }
-                response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+                response = f'id={new_user.id}&name={new_user.name}&email={new_user.email}'
+
                 return make_response(response, 200)
             except Exception as e:
                 return make_response({'error': str(e)}, 500)
