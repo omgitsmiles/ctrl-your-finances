@@ -13,7 +13,7 @@ const style = {
     border: '1px solid green',
     width: '400px',
     backgroundColor: '#A0DB8E'
-  };
+};
 
 function BankItem({account, setBankAccounts, setError}) {
     const [checked, setChecked] = useState(false);
