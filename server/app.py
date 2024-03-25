@@ -252,14 +252,23 @@ def format_error(e):
 ################################################
 ### RETRIEVING ACCOUNTS AND HOUSEHOLD INFO #####
 
-class UserFromFirebaseData(Resource):
+class UserId(Resource):
+
+    def options(self):
+        response_headers = {
+            'Access-Control-Allow-Origin': 'http://127.0.0.1:5173',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Max-Age': '86400',  # One day
+        }
+        return ('', 204, response_headers)
 
     def post(self):
         data = request.json
         ipdb.set_trace()
-        uid = data['uid']
+        email = data['email']
         ipdb.set_trace()
-        user = User.query.filter_by(uid=uid).first()
+        user = User.query.filter_by(email=email).first()
         if user:
             try:
                 household = Household.query.filter_by(id=user.household_id).first()
@@ -269,12 +278,13 @@ class UserFromFirebaseData(Resource):
                     'email': user.email,
                     'household': household.name
                 }
+                response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
                 return make_response(response, 200)
             except Exception as e:
                 return make_response({'error': str(e)}, 500)
         else:
             try:
-                new_user = User(name=data['name'], email=data['email'], uid=data['uid'])
+                new_user = User(name=data['name'], email=data['email'])
                 db.session.add(new_user)
                 db.session.commit()
 
@@ -289,11 +299,12 @@ class UserFromFirebaseData(Resource):
                     'email': new_user.email,
                     'household': new_household.name
                 }
+                response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
                 return make_response(response, 200)
             except Exception as e:
                 return make_response({'error': str(e)}, 500)
 
-api.add_resource(UserFromFirebaseData, '/api/user')
+api.add_resource(UserId, '/api/user')
 
 
 class AccountsByUser(Resource):
