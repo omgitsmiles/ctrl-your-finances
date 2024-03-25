@@ -56,12 +56,17 @@ function ResponsiveAppBar() {
   }
 
   function stringAvatar(name) {
-    return {
-      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-    };
-  }
+  const initials = name
+    .split(' ')
+    .map((part) => part[0]) // Get the first character of each part (first name, last name)
+    .join(''); // Join the initials together
 
-  // console.log(user.displayName)
+  return {
+    children: initials.toUpperCase(), // Ensure initials are capitalized
+  };
+}
+
+  
   // console.log(typeof user.displayName)
   console.log(user)
 
