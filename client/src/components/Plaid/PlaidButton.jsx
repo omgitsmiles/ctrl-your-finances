@@ -30,27 +30,26 @@ function PlaidButton() {
     const [loading, setLoading] = useState(true);
     const [newTransactions, setNewTransactions] = useState([])
 
-    // const USER_ID = useEffect(() => {
-    //     if (userId) return userId.id
-    // }, [])
-    const USER_ID = userId ? userId.id : null;
-    console.log("User ID is:",USER_ID)
+    console.log("User ID is:", userId.id)
 
     const onSuccess = async (publicToken) => {
+        console.log('onSuccess called.  User ID is:', userId.id)
         setLoading(true);
         await fetch("http://127.0.0.1:5555/api/set_access_token", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
             },
-            body: `public_token=${publicToken}$id=${USER_ID}`
+            body: `public_token=${publicToken}&id=${userId.id}`,
         });
+        
         await plaidEndpoint('transactions');
-        // navigate('/dashboard')
     };
 
     // Creates a Link token
     const createLinkToken = useCallback(async () => {
+        console.log('createLinkToken called.  User ID is:', userId.id)
+
         // For OAuth, use previously generated Link token
         if (window.location.href.includes("?oauth_state_id=")) {
             const linkToken = localStorage.getItem('link_token');
@@ -71,7 +70,9 @@ function PlaidButton() {
 
     //////////////// FROM Plaid Quickstart Endpoint ////////////
     const plaidEndpoint = async (endpoint) => {
-        const response = await fetch(`http://127.0.0.1:5555/api/${endpoint}/${USER_ID}`, {});
+        console.log('plaidEndpoint called.  User ID is:', userId.id)
+
+        const response = await fetch(`http://127.0.0.1:5555/api/${endpoint}/${userId.id}`, {});
         const data = await response.json();
         if (data.error != null) {
             setError(data.error);

@@ -15,7 +15,6 @@ const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
     const [user, setUser] = useState({});
-    console.log('user',user)
 
     const [userWithId, setUserWithId] = useState({});
 
@@ -64,13 +63,9 @@ export const ContextProvider = ({ children }) => {
     const [userId, setUserId] = useState('');
     const [error, setError] = useState('');
 
-    console.log(userId)
-    
-    //// CHANGE THIS WHEN USER SESSION COOKIES ESTABLISHED /////
-    // const userID = 1
-
     
     useEffect(() => {
+        // retrieve user ID from database
         if (user && (user !== undefined)) {
             const body = {
                 name: user.displayName,
@@ -81,7 +76,6 @@ export const ContextProvider = ({ children }) => {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
                 },
-                // body: JSON.stringify(body)
                 body: `email=${body.email}&name=${body.name}`
             })
             .then(resp => {

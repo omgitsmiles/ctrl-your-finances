@@ -8,7 +8,7 @@ import { AppContext } from "../context/Context"
 
 
 function Dashboard() {
-    const { logOut, user, transactions } = AppContext();
+    const { logOut, user, userId, transactions } = AppContext();
 
     const handleSignOut = async () => {
         try {
@@ -23,7 +23,7 @@ function Dashboard() {
             <div>
                 <h2>Welcome, {user?.displayName}</h2>
             </div>
-            <PlaidButton />
+            {userId && <PlaidButton />}
             <TransactionChart transactionData={transactions} />
             <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
         </main>

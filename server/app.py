@@ -17,10 +17,6 @@ from config import app, db, api
 from models import User, Account, AccountUser, PlaidItem, Transaction, Household
 
 
-# TO DO: Remove user variable, get id from session
-# USER_ID = 1
-
-
 # Views go here:
 
 @app.route('/')
@@ -89,17 +85,6 @@ for product in PLAID_PRODUCTS:
 item_id = None
 
 
-# @app.route('/api/info', methods=['POST'])
-# def info():
-#     global access_token
-#     global item_id 
-#     response = jsonify({
-#         'item_id': item_id,
-#         'products': PLAID_PRODUCTS
-#     })
-#     return response
-
-
 @app.route('/api/create_link_token', methods=['POST'])
 def create_link_token():
     try:
@@ -137,12 +122,12 @@ class SetAccessToken(Resource):
         return ('', 204, response_headers)
 
     # @app.route('/api/set_access_token/<int:user_id>', methods=['POST'])
-    def get():
+    def post(self):
         access_token = ''
-
         global item_id
-        public_token = request.form['public_token']
-        USER_ID = request.form['id']
+        public_token = request.form.get('public_token')
+        USER_ID = request.form.get('id')
+
         try:
             exchange_request = ItemPublicTokenExchangeRequest(
                 public_token=public_token)
@@ -180,78 +165,91 @@ class SetAccessToken(Resource):
         except plaid.ApiException as e:
             return json.loads(e.body)
 
-api.add_resource(SetAccessToken, '/api/set_access_token/<int:user_id>')
+api.add_resource(SetAccessToken, '/api/set_access_token')
 
 
 # Retrieve Transactions for an Item
 # https://plaid.com/docs/#transactions
 
-@app.route('/api/transactions/<int:USER_ID>', methods=['GET'])
-def get_transactions():
+class Transactions(Resource):
 
-    plaid_items = PlaidItem.query.filter_by(user_id = USER_ID).all()
+    def options(self, user_id):
+        response_headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Max-Age': '600',
+        }
+        return ('', 204, response_headers)
 
-    all_transactions = []
+    def get(self, user_id):
 
-    for item in plaid_items:
-        cursor = item.cursor
-        access_token = item.access_token
+        # public_token = request.form.get('public_token')
 
-        # New transaction updates since "cursor"
-        added = []
-        modified = []
-        removed = [] # Removed transaction ids
-        has_more = True
-        try:
-            # Iterate through each page of new transaction updates for item
-            while has_more:
-                request = TransactionsSyncRequest(
-                    access_token=access_token,
-                    cursor=cursor,
-                )
-                response = client.transactions_sync(request).to_dict()
-                # Add this page of results
-                added.extend(response['added'])
-                modified.extend(response['modified'])
-                removed.extend(response['removed'])
-                has_more = response['has_more']
-                # Update cursor to the next cursor
-                cursor = response['next_cursor']
-                # pretty_print_response(response)
+        # user_id = request.form.get('id')
 
-                # update plaid_items row cursor based on access token
-                plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
-                plaid_item.cursor = cursor
-            
-            new_transactions = []
-            for transaction in added:
-                account = Account.query.filter_by(account_id=transaction['account_id']).first()
-                new_transaction = Transaction(
-                    account_id = account.id,
-                    plaid_account_id = transaction['account_id'],
-                    amount = transaction['amount'],
-                    authorized_date = transaction['authorized_date'],
-                    name = transaction['name'],
-                    personal_finance_category_primary = transaction['personal_finance_category']['primary'],
-                    personal_finance_category_detail = transaction['personal_finance_category']['detailed'],
-                    transaction_id = transaction['transaction_id']
-                )
-                new_transactions.append(new_transaction)
-            all_transactions.extend(new_transactions)
-            
-            db.session.add_all(new_transactions)
-            db.session.commit()
+        plaid_items = PlaidItem.query.filter_by(user_id = user_id).all()
 
-        except plaid.ApiException as e:
-            error_response = format_error(e)
-            return jsonify(error_response)
-    
-    response = [transaction.to_dict() for transaction in all_transactions]
-    return make_response(response, 200)
+        all_transactions = []
 
+        for item in plaid_items:
+            cursor = item.cursor
+            access_token = item.access_token
 
-def pretty_print_response(response):
-    print(json.dumps(response, indent=2, sort_keys=True, default=str))
+            # New transaction updates since "cursor"
+            added = []
+            modified = []
+            removed = [] # Removed transaction ids
+            has_more = True
+            try:
+                # Iterate through each page of new transaction updates for item
+                while has_more:
+                    sync_request = TransactionsSyncRequest(
+                        access_token=access_token,
+                        cursor=cursor,
+                    )
+                    response = client.transactions_sync(sync_request).to_dict()
+                    # Add this page of results
+                    added.extend(response['added'])
+                    modified.extend(response['modified'])
+                    removed.extend(response['removed'])
+                    has_more = response['has_more']
+                    # Update cursor to the next cursor
+                    cursor = response['next_cursor']
+                    # pretty_print_response(response)
+
+                    # update plaid_items row cursor based on access token
+                    plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
+                    plaid_item.cursor = cursor
+                
+                new_transactions = []
+                for transaction in added:
+                    account = Account.query.filter_by(account_id=transaction['account_id']).first()
+                    new_transaction = Transaction(
+                        account_id = account.id,
+                        plaid_account_id = transaction['account_id'],
+                        amount = transaction['amount'],
+                        authorized_date = transaction['authorized_date'],
+                        name = transaction['name'],
+                        personal_finance_category_primary = transaction['personal_finance_category']['primary'],
+                        personal_finance_category_detail = transaction['personal_finance_category']['detailed'],
+                        transaction_id = transaction['transaction_id']
+                    )
+                    new_transactions.append(new_transaction)
+                all_transactions.extend(new_transactions)
+                
+                db.session.add_all(new_transactions)
+                db.session.commit()
+
+            except plaid.ApiException as e:
+                error_response = format_error(e)
+                return jsonify(error_response)
+        
+        response = [transaction.to_dict() for transaction in all_transactions]
+        return make_response(response, 200)
+
+api.add_resource(Transactions, '/api/transactions/<int:user_id>')
+
 
 def format_error(e):
     response = json.loads(e.body)
