@@ -10,14 +10,14 @@ const style = {
     alignItems: 'center',
     margin: '4rem',
     padding: '1rem',
-    border: '2px solid green',
-    borderRadius: '10px',
+    border: '1px solid green',
     width: '400px',
     backgroundColor: '#A0DB8E'
   };
 
 function BankItem({account, setBankAccounts, setError}) {
     const [checked, setChecked] = useState(false);
+    const [saveChanges, setSaveChanges] = useState(false);
 
     const [openModal, setOpenModal] = useState(false);
     const handleOpenModal = () => {
@@ -38,6 +38,7 @@ function BankItem({account, setBankAccounts, setError}) {
 
     function handleSwitched(event) {
         setChecked(event.target.checked)
+        setSaveChanges(true)
     }
 
     function handleDelete() {
@@ -129,6 +130,19 @@ function BankItem({account, setBankAccounts, setError}) {
                             <Typography>Household</Typography>
                         </Stack>
                     </FormControl>
+                    <Button
+                        style={{
+                            // backgroundColor: 'white',
+                            color: 'green',
+                            marginLeft: '1rem',
+                            border: 'none',
+                            fontFamily: 'Poppins'
+                        }}
+                        disabled={!saveChanges}
+                        onClick={handleCloseModal}
+                    >
+                        Save Changes
+                    </Button>
                 </Box>
             </Modal>
 

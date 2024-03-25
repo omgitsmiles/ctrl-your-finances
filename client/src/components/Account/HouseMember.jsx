@@ -1,18 +1,23 @@
 import { useState } from 'react';
-import { Box, FormControl, FormControlLabel, ListItem, ListItemButton, ListItemText, Modal, Switch, Typography } from '@mui/material';
+import { Box, FormControl, FormControlLabel, ListItem, ListItemButton, ListItemText, Modal, Switch, Typography, Button } from '@mui/material';
+import { styled } from '@mui/system';  
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    color: 'primary.main'
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center',
+    margin: '4rem',
+    padding: '1rem',
+    border: '1px solid green',
+    width: '400px',
+    backgroundColor: '#A0DB8E'
 };
+
+const LabelStyle = styled(FormControlLabel)(() => ({
+    color: 'white',
+    fontFamily: 'Poppins',
+    fontSize: '1.2rem',
+}));
 
 const initialChecks = {
     accounts: true,
@@ -23,6 +28,7 @@ const initialChecks = {
 function HouseMember({houseMember}) {
     const [checked, setChecked] = useState(initialChecks);
     const [open, setOpen] = useState(false);
+    const [saveChanges, setSaveChanges] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -31,6 +37,8 @@ function HouseMember({houseMember}) {
             ...checked,
             [event.target.name]: event.target.checked,
         });
+        setSaveChanges(true);
+        
     };
 
     return (
@@ -46,17 +54,32 @@ function HouseMember({houseMember}) {
                 onClose={handleClose}
                 aria-labelledby="household member settings"
                 aria-describedby="manage household member permissions"
+                style={{
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center',
+                    fontFamily: 'Poppins'
+                }}
             >
                 <Box sx={style}>
-                    <Typography >Permissions</Typography>
+                    <Typography
+                        style={
+                            {textAlign: 'center',
+                            color: 'green',
+                            fontSize: '1.5rem',
+                            fontFamily: 'Poppins',
+                            margin: '1rem, 1rem'
+                            }}
+                    >{houseMember.name}'s Permissions</Typography>
                     <FormControl>
-                        <FormControlLabel 
+                        <LabelStyle
+                            
                             control={
                                 <Switch checked={checked.accounts} onChange={handleChange} name="accounts" />
                             } 
                             label="Manage Household Accounts" 
                         />
-                        <FormControlLabel 
+                        <LabelStyle 
                             control={
                                 <Switch 
                                     checked={checked.spending} 
@@ -66,7 +89,7 @@ function HouseMember({houseMember}) {
                             } 
                             label="View Spending" 
                         />
-                        <FormControlLabel 
+                        <LabelStyle 
                             control={
                                 <Switch 
                                     checked={checked.goals} 
@@ -77,6 +100,19 @@ function HouseMember({houseMember}) {
                             label="View and Edit Goals" 
                         />
                     </FormControl>
+                    <Button
+                        style={{
+                            // backgroundColor: 'white',
+                            color: 'green',
+                            marginLeft: '1rem',
+                            border: 'none',
+                            fontFamily: 'Poppins'
+                        }}
+                        disabled={!saveChanges}
+                        onClick={handleClose}
+                    >
+                        Save Changes
+                    </Button>
                 </Box>
             </Modal>
         </div>
