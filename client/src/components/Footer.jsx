@@ -10,12 +10,21 @@ import { Box, Container, Grid, Typography } from "@mui/material";
         backgroundColor: "#ededed",
         paddingTop: "1rem",
         paddingBottom: "1rem",
+        // position: "absolute",
+        // bottom: 0,
       }}
     >
       <Container maxWidth="lg">
-        <Grid container direction="column" alignItems="center">
+        <Grid 
+          container 
+          direction="column" 
+          alignItems="center"
+          >
           <Grid item xs={12}>
-            <Typography color="black" variant="h5">
+            <Typography 
+              color="black" 
+              variant="h5"
+              >
               Ctrl-Your-Finances @ Flatiron Hackathon 2024
             </Typography>
           </Grid>

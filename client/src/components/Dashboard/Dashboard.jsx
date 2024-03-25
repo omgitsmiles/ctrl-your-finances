@@ -39,7 +39,7 @@ function Dashboard() {
                     </Grid>
                 </Grid>
             </Grid>
-            <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
+            <Button fullWidth variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
         </>
     )
 }
