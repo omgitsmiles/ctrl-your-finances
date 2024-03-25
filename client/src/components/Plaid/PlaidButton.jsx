@@ -2,24 +2,27 @@ import { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePlaidLink } from "react-plaid-link";
 import { Button } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
 
 import { AppContext } from "../../context/Context";
 
 const buttonStyle = {
-    mr: 2,
-    px: 4, 
-    py: 1,
+    margin: '1rem auto',
+    display: 'flex',
+    backgroundColor: 'green',
+    color: 'white',
     fontSize: '0.9rem',
-    textTransform: 'capitalize',
-    borderRadius: 0,
-    borderColor: '#14192d',
-    color: '#fff',
-    backgroundColor: '#14192d',
+    border: '1px solid green',
+    fontFamily: 'Poppins, sans-serif',
     "&&:hover": {
-        backgroundColor: "#343a55"
+        backgroundColor: "white",
+        color: "green",
+        
     },
     "&&:focus": {
-        backgroundColor: "#343a55"
+        backgroundColor: "white",
+        color: "green",
+        
     }
 }
 
@@ -144,6 +147,9 @@ function PlaidButton() {
             disabled={!ready}
             // variant="contained"
             sx={buttonStyle}
+            variant='contained'
+            size='medium'
+            startIcon={<AddIcon />}
         >
             <strong>Link account</strong>
         </Button>

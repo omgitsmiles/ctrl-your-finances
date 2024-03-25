@@ -2,9 +2,11 @@ import { useContext, useEffect, useState } from "react"
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { Box, List, Typography, Button } from "@mui/material"
 import AddIcon from '@mui/icons-material/Add';
+import { styled } from "@mui/system";
 
 import BankItem from "./BankItem";
 import HouseMember from "./HouseMember";
+import PlaidButton from "../Plaid/PlaidButton";
 
 import { AppContext } from "../../context/Context";
 
@@ -20,6 +22,26 @@ function Account() {
         return <HouseMember key={member.id} houseMember={member} />
     }) : null;
 
+    const HouseholdButton = styled(Button)(() => ({
+        margin: '1rem auto',
+        display: 'flex',
+        backgroundColor: 'green',
+        color: 'white',
+        fontSize: '0.9rem',
+        border: '1px solid green',
+        fontFamily: 'Poppins, sans-serif',
+        "&:hover": {
+            backgroundColor: "white",
+            color: "green",
+            
+        },
+        "&:focus": {
+            backgroundColor: "white",
+            color: "green",
+            
+        }
+    }))
+
     return (
         <>
             <h1
@@ -27,7 +49,8 @@ function Account() {
                 textAlign: 'center', 
                 color: 'green', 
                 fontSize: '2.5rem', 
-                margin: '1rem 0'
+                margin: '1rem 0',
+                fontFamily: 'Playfair Display, serif'
             }}
             >Account Management</h1>
             <Typography
@@ -35,28 +58,29 @@ function Account() {
                 {textAlign: 'center', 
                 color: 'green', 
                 fontSize: '1.5rem', 
-                margin: '1rem 0'}
+                margin: '1rem 0',
+                fontFamily: 'Poppins'}
             }
             >Linked Bank Accounts</Typography>
-            <Button
-                style={{
-                    margin: '1rem auto',
-                    display: 'flex',
-                    backgroundColor: 'green',
-                    color: 'white'
-                }}
-                variant='contained'
-                size='medium'
-                startIcon={<AddIcon />}
-                onClick={() => navigate('/link')}
-            >
+            <PlaidButton>
                 Add an Account
-            </Button>
+            </PlaidButton>
             <Box
-                sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', color: 'primary.main' }}
+                sx={{ 
+                    width: '100%', 
+                    maxWidth: 360, 
+                    // bgcolor: '#bce5af', 
+                    color: 'green' }}
                 aria-label="linked accounts"
             >
-                <List>
+                <List
+                    style={{
+                        padding: '0',
+                        margin: '0',
+                        fontFamily: 'Poppins',
+                        fontSize: '1rem'
+                    }}
+                >
                     {accountList}
                 </List>
             </Box>
@@ -65,20 +89,16 @@ function Account() {
                 {textAlign: 'center', 
                 color: 'green', 
                 fontSize: '1.5rem', 
-                margin: '1rem 0'}
+                margin: '1rem 0',
+                fontFamily: 'Poppins'
+            }
             }
             >Household Members</Typography>
-            <Button
-                style={{
-                    margin: '1rem auto',
-                    display: 'flex',
-                    backgroundColor: 'green',
-                    color: 'white'
-                }}
+            <HouseholdButton
                 variant='contained'
                 size='medium'
                 startIcon={<AddIcon />}
-            >Add a Member</Button>
+            >Add a Member</HouseholdButton>
             <Box
                 sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', color: 'primary.main' }}
                 aria-label="household members"

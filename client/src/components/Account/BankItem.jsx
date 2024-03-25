@@ -74,7 +74,12 @@ function BankItem({account, setBankAccounts, setError}) {
                         onClick={handleOpenConfirmation}
                         aria-label="delete bank account"
                     >
-                        <DeleteForeverIcon />
+                        <DeleteForeverIcon
+                            style={{
+                                color: 'darkRed'
+                                
+                            }}
+                        />
                     </IconButton>
                 </ListItemIcon>
             </ListItem>
