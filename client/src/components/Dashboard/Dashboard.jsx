@@ -18,7 +18,6 @@ function Dashboard() {
         }
     }
     return (
-        
         <>
             <h1 style={{ color: '#009933', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Welcome {user?.displayName}</h1>
             <PlaidButton />
@@ -39,7 +38,9 @@ function Dashboard() {
                     </Grid>
                 </Grid>
             </Grid>
+
             <Button fullWidth variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
+
         </>
     )
 }

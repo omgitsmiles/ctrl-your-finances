@@ -78,7 +78,7 @@ const Header = () => {
                     font: 'Staaliches-Regular',
                     fontWeight: 700,
                     color: '#fff',
-                    paddingTop: 10,
+                    paddingTop: 1,
                 }}
                 >
                     Welcome to Money Magnet!
@@ -94,7 +94,7 @@ const Header = () => {
                     fontWeight: 'bold',
                 }}
                 >
-                    Together, we’re going to make some amazing things!
+                    Empowering Financial Futures: Where AI Drives Strategic Wealth Creation
                 </Typography>
                 <Box sx={{ py: 2 }}>
                     {!user ? (
