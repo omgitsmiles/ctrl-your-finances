@@ -5,6 +5,7 @@ import TransactionChart from './TransactionChart'
 import SavingsCard from './TotalSavingsCard'
 import PlaidButton from '../Plaid/PlaidButton'
 import { AppContext } from "../../context/Context"
+import Budgeting from '../Budgeting';
 
 function Dashboard() {
     const { logOut, user, transactions } = AppContext();
@@ -22,6 +23,7 @@ function Dashboard() {
             <h1 style={{ color: '#009933', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Welcome {user?.displayName}</h1>
             <PlaidButton />
             <TransactionChart />
+            <Budgeting />
             <Grid container spacing={2}>
                 <Grid item lg={4} md={6} sm={6} xs={12}>
                     <SavingsCard />
@@ -37,7 +39,7 @@ function Dashboard() {
                     </Grid>
                 </Grid>
             </Grid>
-            <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
+            <Button fullWidth variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
         </>
     )
 }
