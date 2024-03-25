@@ -1,8 +1,8 @@
 import React from 'react'
 import { Grid, Button } from '@mui/material';
+
 import TransactionChart from './TransactionChart'
 import SavingsCard from './TotalSavingsCard'
-import Navbar from '../Navbar'
 import PlaidButton from '../Plaid/PlaidButton'
 import { AppContext } from "../../context/Context"
 
@@ -19,26 +19,25 @@ function Dashboard() {
     return (
         
         <>
-        {/* <Navbar /> */}
-        <h1 style={{ color: '#009933', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Welcome {user?.displayName}</h1>
-        <PlaidButton />
-        <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
-        <TransactionChart />
-        <Grid container spacing={2}>
-            <Grid item lg={4} md={6} sm={6} xs={12}>
-                <SavingsCard />
-            </Grid>
-            <Grid item lg={4} md={6} sm={6} xs={12}>
-                <SavingsCard />
-            </Grid>
-            <Grid item lg={4} md={6} sm={6} xs={12}>
-                <SavingsCard />
-            </Grid>
-            <Grid container spacing={1} py={2}>
-                <Grid item xs={12} md={8}>
+            <h1 style={{ color: '#009933', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Welcome {user?.displayName}</h1>
+            <PlaidButton />
+            <TransactionChart />
+            <Grid container spacing={2}>
+                <Grid item lg={4} md={6} sm={6} xs={12}>
+                    <SavingsCard />
+                </Grid>
+                <Grid item lg={4} md={6} sm={6} xs={12}>
+                    <SavingsCard />
+                </Grid>
+                <Grid item lg={4} md={6} sm={6} xs={12}>
+                    <SavingsCard />
+                </Grid>
+                <Grid container spacing={1} py={2}>
+                    <Grid item xs={12} md={8}>
+                    </Grid>
                 </Grid>
             </Grid>
-        </Grid>
+            <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
         </>
     )
 }

@@ -2,22 +2,22 @@
 import { useState } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Stack, Switch, Typography } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { styled } from '@mui/system';
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    color: 'primary.main'
-  };
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center',
+    margin: '4rem',
+    padding: '1rem',
+    border: '1px solid green',
+    width: '400px',
+    backgroundColor: '#A0DB8E'
+};
 
 function BankItem({account, setBankAccounts, setError}) {
     const [checked, setChecked] = useState(false);
+    const [saveChanges, setSaveChanges] = useState(false);
 
     const [openModal, setOpenModal] = useState(false);
     const handleOpenModal = () => {
@@ -38,6 +38,7 @@ function BankItem({account, setBankAccounts, setError}) {
 
     function handleSwitched(event) {
         setChecked(event.target.checked)
+        setSaveChanges(true)
     }
 
     function handleDelete() {
@@ -63,19 +64,39 @@ function BankItem({account, setBankAccounts, setError}) {
         })
     }
 
+    const StyledIconButton = styled(IconButton)(() => ({
+        '&:hover': {
+            backgroundColor: '#FDF4F7'
+        }
+    }))
+
     return (
         <div>
-            <ListItem disablePadding >
+            <ListItem
+                sx={
+                    {color: 'green',
+                    borderBottom: 'green 1px solid',
+                    }
+                }
+                disablePadding 
+            >
                 <ListItemButton onClick={handleOpenModal} >
-                    <ListItemText primary={account.name} />
+                    <ListItemText 
+                        
+                        primary={account.name} 
+                    />
                 </ListItemButton>
                 <ListItemIcon>
-                    <IconButton 
+                    <StyledIconButton 
                         onClick={handleOpenConfirmation}
                         aria-label="delete bank account"
                     >
-                        <DeleteForeverIcon />
-                    </IconButton>
+                        <DeleteForeverIcon
+                            style={{
+                                color: '#960018'
+                            }}
+                        />
+                    </StyledIconButton>
                 </ListItemIcon>
             </ListItem>
 
@@ -84,10 +105,31 @@ function BankItem({account, setBankAccounts, setError}) {
                 onClose={handleCloseModal}
                 aria-labelledby="account management"
                 aria-describedby="account management"
+                style={{
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center'}}
             >
                 <Box sx={style}>
-                    <Typography >Manage Account</Typography>
+                    <Typography
+                        style={
+                            {textAlign: 'center',
+                            color: 'green',
+                            fontSize: '1.8rem',
+                            fontFamily: 'Poppins',
+                            margin: '1rem, 1rem'
+                            }}
+                    >Manage Account</Typography>
                     <FormControl>
+                        <p
+                            style={{
+                                fontSize: '1.2rem',
+                                fontFamily: 'Poppins',
+                                textAlign: 'center',
+                                textDecoration: 'underline',
+                                marginTop: '1rem'
+                            }}
+                        >Account Visibility: </p>
                         <Stack direction="row" spacing={1} alignItems="center">
                             <Typography>Private</Typography>
                             <Switch 
@@ -98,6 +140,19 @@ function BankItem({account, setBankAccounts, setError}) {
                             <Typography>Household</Typography>
                         </Stack>
                     </FormControl>
+                    <Button
+                        style={{
+                            // backgroundColor: 'white',
+                            color: 'green',
+                            marginLeft: '1rem',
+                            border: 'none',
+                            fontFamily: 'Poppins'
+                        }}
+                        disabled={!saveChanges}
+                        onClick={handleCloseModal}
+                    >
+                        Save Changes
+                    </Button>
                 </Box>
             </Modal>
 

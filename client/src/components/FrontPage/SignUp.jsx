@@ -9,7 +9,9 @@ import { AppContext } from '../../context/Context';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import GoogleIcon from '@mui/icons-material/Google';
+import { styled } from '@mui/system';
 
     
 const SignUp = () => {
@@ -23,7 +25,7 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    const { createUserWithEmail, googleSignIn, user } = AppContext();
+    const { createUserWithEmail, googleSignIn, user, setUser } = AppContext();
 
     const handleGoogleSignIn = async () => {
         try {
@@ -41,12 +43,28 @@ const SignUp = () => {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // setError('')
         try {
-            await createUserWithEmail(name, email, password);
-            navigate('/dashboard');
+            if (password !== confirmPassword) {
+                setError("Passwords do not match.")
+                return;
+            }
+            await createUserWithEmail(name, email, password, (error) => {
+                if (error) {
+                    let errorMessage = error.message;
+                    if (errorMessage.includes('(auth/weak-password)')) {
+                        errorMessage = "Password should be at least 6 characters.";
+                }
+                setError(errorMessage);
+                console.log("Sign up error:", errorMessage)
+            }
+                else {
+                    navigate('/dashboard');
+                }
+            });
         } catch (error) {
             setError(error.message);
-            console.log(error.message);
+            console.log("Unexpected Error:", error);
         }
     }
 
@@ -55,55 +73,144 @@ const SignUp = () => {
             navigate('/dashboard')
         }
     }, [user])
+
+    const labelStyle = {
+        color: 'green',
+        fontSize: '1.2rem',
+        paddingBottom: '.3rem'
+    }
+
+    const inputStyle = {
+        border: '1.5px solid green',
+        borderRadius: '5px',
+        padding: '.3rem',
+        width: '100%',
+        maxWidth: '150px',
+        minWidth: '150px',
+        backgroundColor: '#bce5af',
+        color: 'green',
+        fontFamily: 'Poppins',
+        fontSize: '.75rem',
+    }
+
+    const ColorButton = styled(Button)(() => ({
+        color: 'green',
+        backgroundColor: 'white',
+        fontFamily: 'Poppins',
+        maxWidth: '250px', 
+        maxHeight: '40px', 
+        minWidth: '250px', 
+        minHeight: '40px',
+        border: '1px solid green',
+        '&:hover': {
+            backgroundColor: 'green',
+            color: 'white',
+        },
+        }));
     
     return (
-        <main>   
+        <main
+            style={{
+                    margin: '1rem auto',
+                    marginBottom: '2rem',
+                }}
+        > 
             {!openEmailSignUp ? (
-
             <Stack 
                 direction="column"
                 justifyContent="center"
                 alignItems="center"
                 spacing={2}
                 sx={{ minWidth: 12 }}
+                
             >
-                    <h1>Sign up</h1>
-                    <Button 
-                    style={{maxWidth: '250px', maxHeight: '40px', minWidth: '250px', minHeight: '40px'}}
-                    size="large" 
-                    variant='outlined' 
-                    startIcon={<AccountCircleIcon />}
-                    onClick={handleEmailClickOpen}
+            <h2
+                style={
+                    {color: 'green',
+                    textAlign: 'center',
+                    fontSize: '3rem',
+                    margin: '.75rem 0',
+                    marginBottom: '.4rem'
+                    }
+                }
+            >
+                Budgeting, Your Way
+            </h2>  
+                
+                <ColorButton startIcon={<AccountCircleIcon />}
+                onClick={handleEmailClickOpen}
+                >
+                    Sign up with email
+                </ColorButton>
+                <ColorButton startIcon={<GoogleIcon/>}
+                onClick={handleGoogleSignIn}
+                >
+                    Continue with Google
+                </ColorButton>
+                <p style={{color: 'green'}}>
+                    Already have an account?{' '}
+                    <Link
+                    component="button"
+                    style={{
+                        color: '#637099'
+                    }}
+                    to="/login" 
                     >
-                        Sign up with email
-                    </Button>
-                    <Button 
-                    style={{maxWidth: '250px', maxHeight: '60px', minWidth: '250px', minHeight: '40px'}}
-                    size="medium" variant='outlined' startIcon={<GoogleIcon/>}
-                    onClick={handleGoogleSignIn}
-                    >
-                        Continue with Google
-                    </Button>
-                    
-                    <p>Already have an account?{' '}
-                        <Link
-                        component="button"
-                        variant="body2"
-                        to="/login" 
-                        >
                         Log in
-                        </Link>
-                    </p>
+                    </Link>
+                </p>
             </Stack>
             ) : (
             <section>
-                <Button onClick={() => {setOpenEmailSignUp(false)}}>
-                    {'<- Back'}
+                <Button 
+                    onClick={() => {setOpenEmailSignUp(false)}}
+                    style={{
+                        backgroundColor: 'white',
+                        color: 'green',
+                        marginTop: '1rem',
+                        marginLeft: '1rem',
+                        border: 'none'
+                    }}
+                >
+                    { <ArrowBackIcon fontSize='large' /> }
                 </Button>
-                <div>
-                    <form onSubmit={handleSubmit}> 
-                        <div>
-                            <label htmlFor="name">
+                <div
+                    style={{
+                        display: 'flex', 
+                        flexDirection: 'column', alignItems: 'center',
+                        margin: '1rem auto',
+                        padding: '1rem',
+                        border: '2px solid green',
+                        borderRadius: '10px',
+                        width: '400px',
+                        backgroundColor: '#A0DB8E'
+                    }}
+                >
+                    <h2
+                        style={{
+                            color: 'green',
+                            textAlign: 'center',
+                            fontSize: '2.7rem',
+                            margin: '.5rem 0',
+                            marginBottom: '0rem'
+                        }}
+                    >Sign Up</h2>
+                    <form 
+                        style={{
+                            display: 'flex', flexDirection: 'column', alignItems: 'center',
+                        }}
+                        onSubmit={handleSubmit}
+                    > 
+                        <div
+                            style={{
+                                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                                paddingTop: '.5rem'
+                            }}
+                        >
+                            <label 
+                                htmlFor="name"
+                                style={labelStyle}
+                            >
                                 Name
                             </label>
                             <input
@@ -113,12 +220,21 @@ const SignUp = () => {
                                 onChange={(e) => setName(e.target.value)}
                                 required
                                 placeholder="Name"
+                                style={inputStyle}
                             />
-                            <label htmlFor="email-address">
+                        </div>
+                        <div
+                            style={{
+                                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                                paddingTop: '.5rem'
+                        }}
+                        >
+                            <label      
+                                htmlFor="email-address"
+                                style={labelStyle}
+                            >
                                 Email address
                             </label>
-                        </div>
-                        <div>
                             <input
                                 type="email"
                                 label="Email address"
@@ -126,10 +242,19 @@ const SignUp = () => {
                                 onChange={(e) => setEmail(e.target.value)}  
                                 required
                                 placeholder="Email address" 
+                                style={inputStyle}
                             />
                         </div>
-                        <div>
-                            <label htmlFor="password">
+                        <div
+                            style={{
+                                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                                paddingTop: '.5rem'
+                            }}
+                        >
+                            <label 
+                                htmlFor="password"
+                                style={labelStyle}
+                            >
                                 Password
                             </label>
                             <input
@@ -138,11 +263,20 @@ const SignUp = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)} 
                                 required 
-                                placeholder="Password"              
+                                placeholder="Password"
+                                style={inputStyle}
                             />
                         </div>  
-                        <div>
-                            <label htmlFor="confirm-password">
+                        <div
+                            style={{
+                                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                                paddingTop: '.5rem'
+                            }}
+                        >
+                            <label 
+                                htmlFor="confirm-password"
+                                style={labelStyle}
+                            >
                             Confirm Password
                             </label>
                             <input
@@ -152,17 +286,34 @@ const SignUp = () => {
                                 onChange={(e) => setConfirmPassword(e.target.value)} 
                                 required 
                                 placeholder="Confirm Password"
+                                style={inputStyle}
                             />
                         </div>      
-                        <button>  
+                        <Button
+                            style={{
+                                margin: '1rem auto',
+                                display: 'flex',
+                                backgroundColor: 'green',
+                                color: 'white'
+                            }}
+                            variant='contained'
+                            size='large'
+                        >  
                             Sign up
-                        </button>
+                        </Button>
                     </form>
-                    <p>
+                    {error && <p style={{color: 'red'}}>{error}</p>}
+                    <p style={{
+                        color: 'green',
+                        fontSize: '.9rem',
+                        marginTop: '.5rem'
+                    }}>
                         Already have an account?{' '}
                         <Link
                         component="button"
-                        variant="body2"
+                        style={{
+                            color: '#637099'
+                        }}
                         to="/login" 
                         >
                         Log in
