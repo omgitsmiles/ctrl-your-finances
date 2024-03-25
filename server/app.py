@@ -89,15 +89,15 @@ for product in PLAID_PRODUCTS:
 item_id = None
 
 
-@app.route('/api/info', methods=['POST'])
-def info():
-    global access_token
-    global item_id 
-    response = jsonify({
-        'item_id': item_id,
-        'products': PLAID_PRODUCTS
-    })
-    return response
+# @app.route('/api/info', methods=['POST'])
+# def info():
+#     global access_token
+#     global item_id 
+#     response = jsonify({
+#         'item_id': item_id,
+#         'products': PLAID_PRODUCTS
+#     })
+#     return response
 
 
 @app.route('/api/create_link_token', methods=['POST'])
@@ -252,36 +252,48 @@ def format_error(e):
 ################################################
 ### RETRIEVING ACCOUNTS AND HOUSEHOLD INFO #####
 
-class UserByUID(Resource):
+class UserFromFirebaseData(Resource):
 
-    def post(self, uid):
-        user = User.query.filter_by(uid=uid).first()
+    def post(self):
+        data = request.json
         ipdb.set_trace()
+        uid = data['uid']
+        ipdb.set_trace()
+        user = User.query.filter_by(uid=uid).first()
         if user:
-            response = {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                household_id: user.household_id
-            }
-            return make_response(response, 200)
-        else:
-            data = request.json
             try:
-                new_user = User(name=data['name'], email=data['email'], uid=data['uid'], household=f"{data['name']}'s Household'")
+                household = Household.query.filter_by(id=user.household_id).first()
+                response = {
+                    'id': user.id,
+                    'name': user.name,
+                    'email': user.email,
+                    'household': household.name
+                }
+                return make_response(response, 200)
+            except Exception as e:
+                return make_response({'error': str(e)}, 500)
+        else:
+            try:
+                new_user = User(name=data['name'], email=data['email'], uid=data['uid'])
                 db.session.add(new_user)
                 db.session.commit()
+
+                new_household = Household(name=f"{data['name']}'s Household", users=[new_user])
+                db.session.add(new_household)
+                db.session.commit()
+
+                ipdb.set_trace()
                 response = {
-                    id: new_user.id,
-                    name: new_user.name,
-                    email: new_user.email,
-                    household_id: new_user.household_id
+                    'id': new_user.id,
+                    'name': new_user.name,
+                    'email': new_user.email,
+                    'household': new_household.name
                 }
                 return make_response(response, 200)
             except Exception as e:
                 return make_response({'error': str(e)}, 500)
 
-api.add_resource(UserByUID, '/api/users/<uid>')
+api.add_resource(UserFromFirebaseData, '/api/user')
 
 
 class AccountsByUser(Resource):
