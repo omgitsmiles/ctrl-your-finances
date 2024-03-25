@@ -19,7 +19,6 @@ function Dashboard() {
     return (
         
         <>
-        {/* <Navbar /> */}
         <h1 style={{ color: '#009933', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Welcome {user?.displayName}</h1>
         <PlaidButton />
         <Button variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
