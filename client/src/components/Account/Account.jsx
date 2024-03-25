@@ -77,8 +77,19 @@ function Account() {
             >Account Management</h1>
             </div>
             <TabContext value={value}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <TabList onChange={handleChange} aria-label="account management tabs" centered>
+                <Box sx={{ 
+                    borderBottom: 1, 
+                    borderColor: 'divider',
+                    display: 'flex',
+                    justifyContent: 'center', 
+                }}>
+                    <TabList 
+                        onChange={handleChange} 
+                        aria-label="account management tabs" 
+                        centered
+                        variant="scrollable"
+                        scrollButtons="auto"
+                    >
                         <Tab label="Bank Accounts" value="1" />
                         <Tab label="Household Members" value="2" />
                         <Tab label="Account Settings" value="3" />
