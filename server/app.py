@@ -18,7 +18,7 @@ from models import User, Account, AccountUser, PlaidItem, Transaction, Household
 
 
 # TO DO: Remove user variable, get id from session
-USER_ID = 1
+# USER_ID = 1
 
 
 # Views go here:
@@ -125,56 +125,68 @@ def create_link_token():
 # an API access_token
 # https://plaid.com/docs/#exchange-token-flow
 
+class SetAccessToken(Resource):
 
-@app.route('/api/set_access_token', methods=['POST'])
-def get_access_token():
-    user = User.query.filter_by(id=USER_ID).first()
-    access_token = ''
+    def options(self):
+        response_headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Max-Age': '600',
+        }
+        return ('', 204, response_headers)
 
-    global item_id
-    public_token = request.json['public_token']
-    try:
-        exchange_request = ItemPublicTokenExchangeRequest(
-            public_token=public_token)
-        exchange_response = client.item_public_token_exchange(exchange_request)
-        access_token = exchange_response['access_token']
-        item_id = exchange_response['item_id']
+    # @app.route('/api/set_access_token/<int:user_id>', methods=['POST'])
+    def get():
+        access_token = ''
 
-        # save token and id to database.  MUST ENCRYPT THIS.
-        new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id, cursor='', user_id=USER_ID)
-        db.session.add(new_plaid_item)
-        db.session.commit()
+        global item_id
+        public_token = request.form['public_token']
+        USER_ID = request.form['id']
+        try:
+            exchange_request = ItemPublicTokenExchangeRequest(
+                public_token=public_token)
+            exchange_response = client.item_public_token_exchange(exchange_request)
+            access_token = exchange_response['access_token']
+            item_id = exchange_response['item_id']
 
-        accounts_request = AccountsGetRequest(access_token=access_token)
-        accounts_response = client.accounts_get(accounts_request)
-        accounts = accounts_response['accounts']
-        new_accounts = []
-        for account in accounts:
-            new_account = Account(
-                account_id = account['account_id'],
-                name = account['name'],
-                plaid_item_id = new_plaid_item.id
-            )
-            new_accounts.append(new_account)
-        db.session.add_all(new_accounts)
-        db.session.commit()
+            # save token and id to database.  MUST ENCRYPT THIS.
+            new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id, cursor='', user_id=USER_ID)
+            db.session.add(new_plaid_item)
+            db.session.commit()
 
-        new_account_users = []
-        for account in new_accounts:
-            new_account_user = AccountUser(user_id=USER_ID, account_id=account.id)
-            new_account_users.append(new_account_user)
-        db.session.add_all(new_account_users)
-        db.session.commit()
+            accounts_request = AccountsGetRequest(access_token=access_token)
+            accounts_response = client.accounts_get(accounts_request)
+            accounts = accounts_response['accounts']
+            new_accounts = []
+            for account in accounts:
+                new_account = Account(
+                    account_id = account['account_id'],
+                    name = account['name'],
+                    plaid_item_id = new_plaid_item.id
+                )
+                new_accounts.append(new_account)
+            db.session.add_all(new_accounts)
+            db.session.commit()
 
-        return make_response({'message': 'account linked successfully'}, 200)
-    except plaid.ApiException as e:
-        return json.loads(e.body)
+            new_account_users = []
+            for account in new_accounts:
+                new_account_user = AccountUser(user_id=USER_ID, account_id=account.id)
+                new_account_users.append(new_account_user)
+            db.session.add_all(new_account_users)
+            db.session.commit()
+
+            return make_response({'message': 'account linked successfully'}, 200)
+        except plaid.ApiException as e:
+            return json.loads(e.body)
+
+api.add_resource(SetAccessToken, '/api/set_access_token/<int:user_id>')
 
 
 # Retrieve Transactions for an Item
 # https://plaid.com/docs/#transactions
 
-@app.route('/api/transactions', methods=['GET'])
+@app.route('/api/transactions/<int:USER_ID>', methods=['GET'])
 def get_transactions():
 
     plaid_items = PlaidItem.query.filter_by(user_id = USER_ID).all()
@@ -303,7 +315,7 @@ class AccountsByUser(Resource):
 
     def get(self, user_id):
         try:
-            user_accounts = db.session.query(Account).join(AccountUser, Account.id == AccountUser.account_id).filter(AccountUser.user_id == USER_ID).all()
+            user_accounts = db.session.query(Account).join(AccountUser, Account.id == AccountUser.account_id).filter(AccountUser.user_id == user_id).all()
             if user_accounts:
                 accounts = []
                 for account in user_accounts:

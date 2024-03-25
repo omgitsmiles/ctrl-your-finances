@@ -63,13 +63,14 @@ export const ContextProvider = ({ children }) => {
     const [transactions, setTransactions] = useState([]);
     const [userId, setUserId] = useState('');
     const [error, setError] = useState('');
+
+    console.log(userId)
     
     //// CHANGE THIS WHEN USER SESSION COOKIES ESTABLISHED /////
-    const userID = 1
+    // const userID = 1
 
     
     useEffect(() => {
-        console.log('user Id:',userId)
         if (user && (user !== undefined)) {
             const body = {
                 name: user.displayName,
@@ -97,43 +98,45 @@ export const ContextProvider = ({ children }) => {
     
     useEffect(() => {
         // retrieve user accounts info
-        fetch(`http://127.0.0.1:5555/api/accounts/${userID}`)
-        .then(resp => {
-            if (resp.ok) {
-                resp.json()
-                .then(accounts => setBankAccounts(accounts))
-            } else {
-                resp.json()
-                .then(message => setError(message.error))
-            }
-        })
-    
-        // retrieve household member info
-        fetch(`http://127.0.0.1:5555/api/household/${userID}`)
-        .then(resp => {
-            if (resp.ok) {
-                resp.json()
-                .then(houseData => {
-                setHouseMembers(houseData['members'])
-                setHousehold(houseData['household'])
-                })
-            } else {
-                resp.json()
-                .then(message => setError(message.error))
-            }
-        })
-    
-        // retrieve transactions
-        fetch(`http://127.0.0.1:5555/api/transactions/${userID}`)
-        .then(resp => {
-            if (resp.ok) {
-                resp.json()
-                .then(data => setTransactions(data))
-            } else {
-                resp.json()
-                .then(message => setError(message.error))
-            }
-        })
+        if (user) {
+            fetch(`http://127.0.0.1:5555/api/accounts/${userId.id}`)
+            .then(resp => {
+                if (resp.ok) {
+                    resp.json()
+                    .then(accounts => setBankAccounts(accounts))
+                } else {
+                    resp.json()
+                    .then(message => setError(message.error))
+                }
+            })
+        
+            // retrieve household member info
+            fetch(`http://127.0.0.1:5555/api/household/${userId.id}`)
+            .then(resp => {
+                if (resp.ok) {
+                    resp.json()
+                    .then(houseData => {
+                    setHouseMembers(houseData['members'])
+                    setHousehold(houseData['household'])
+                    })
+                } else {
+                    resp.json()
+                    .then(message => setError(message.error))
+                }
+            })
+        
+            // retrieve transactions
+            fetch(`http://127.0.0.1:5555/api/transactions/${userId.id}`)
+            .then(resp => {
+                if (resp.ok) {
+                    resp.json()
+                    .then(data => setTransactions(data))
+                } else {
+                    resp.json()
+                    .then(message => setError(message.error))
+                }
+            })
+        }
     }, [])
 
 

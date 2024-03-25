@@ -25,23 +25,29 @@ const buttonStyle = {
 
 function PlaidButton() {
     const navigate = useNavigate();
-    const {transactions, setTransactions} = AppContext();
+    const {userId, transactions, setTransactions} = AppContext();
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
     const [newTransactions, setNewTransactions] = useState([])
 
-    const onSuccess = useCallback(async (publicToken) => {
+    // const USER_ID = useEffect(() => {
+    //     if (userId) return userId.id
+    // }, [])
+    const USER_ID = userId ? userId.id : null;
+    console.log("User ID is:",USER_ID)
+
+    const onSuccess = async (publicToken) => {
         setLoading(true);
         await fetch("http://127.0.0.1:5555/api/set_access_token", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
             },
-            body: JSON.stringify({ public_token: publicToken }),
+            body: `public_token=${publicToken}$id=${USER_ID}`
         });
         await plaidEndpoint('transactions');
         // navigate('/dashboard')
-    }, []);
+    };
 
     // Creates a Link token
     const createLinkToken = useCallback(async () => {
@@ -65,7 +71,7 @@ function PlaidButton() {
 
     //////////////// FROM Plaid Quickstart Endpoint ////////////
     const plaidEndpoint = async (endpoint) => {
-        const response = await fetch(`http://127.0.0.1:5555/api/${endpoint}`, {});
+        const response = await fetch(`http://127.0.0.1:5555/api/${endpoint}/${USER_ID}`, {});
         const data = await response.json();
         if (data.error != null) {
             setError(data.error);
