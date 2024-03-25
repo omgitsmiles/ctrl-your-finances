@@ -7,6 +7,8 @@ import Footer from './components/Footer'
 function App() {
   const location = useLocation();
 
+  
+
   // location.pathname === `/projects/${params.id}/edit`
 
   return (

@@ -59,7 +59,11 @@ function ResponsiveAppBar() {
     <AppBar position="sticky" sx={{ backgroundColor: '#009933' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          <Button
+            onClick={() => navigate('/')}
+          >
             <img src={moneyMagnetIcon} alt="moneyMagnetIcon" style={{ width: "40px", height: "40px" }} />
+          </Button>
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                 <IconButton
                     size="large"
