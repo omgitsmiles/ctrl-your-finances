@@ -72,9 +72,19 @@ function BankItem({account, setBankAccounts, setError}) {
 
     return (
         <div>
-            <ListItem disablePadding >
+            <ListItem
+                sx={
+                    {color: 'green',
+                    borderBottom: 'green 1px solid',
+                    }
+                }
+                disablePadding 
+            >
                 <ListItemButton onClick={handleOpenModal} >
-                    <ListItemText primary={account.name} />
+                    <ListItemText 
+                        
+                        primary={account.name} 
+                    />
                 </ListItemButton>
                 <ListItemIcon>
                     <StyledIconButton 

@@ -44,23 +44,36 @@ function Account() {
 
     return (
         <>
+            <div 
+            style={{
+                display: 'flex', 
+                justifyContent: 'center'
+            }}
+            >
             <h1
             style={{
                 textAlign: 'center', 
                 color: 'green', 
                 fontSize: '2.5rem', 
-                margin: '1rem 0',
-                fontFamily: 'Playfair Display, serif'
+                margin: '1rem',
+                fontFamily: 'Playfair Display, serif',
+                backgroundColor: '#bce5af',
+                padding: '1rem',
+                borderRadius: '15px',
+                boxShadow: '2px 2px 8px 2px #888888',
+                width: '75%',
             }}
             >Account Management</h1>
+            </div>
             <Typography
             style={
                 {textAlign: 'center', 
                 color: 'green', 
-                fontSize: '1.5rem', 
+                fontSize: '1.8rem', 
                 margin: '1rem 0',
-                fontFamily: 'Poppins'}
-            }
+                fontFamily: 'Poppins',
+                textDecoration: 'underline',
+            }}
             >Linked Bank Accounts</Typography>
             <PlaidButton>
                 Add an Account
@@ -70,17 +83,11 @@ function Account() {
                     width: '100%', 
                     maxWidth: 360, 
                     // bgcolor: '#bce5af', 
-                    color: 'green' }}
+                    color: 'green',
+                    fontFamily: 'Poppins'}}
                 aria-label="linked accounts"
             >
-                <List
-                    style={{
-                        padding: '0',
-                        margin: '0',
-                        fontFamily: 'Poppins',
-                        fontSize: '1rem'
-                    }}
-                >
+                <List>
                     {accountList}
                 </List>
             </Box>
@@ -88,9 +95,10 @@ function Account() {
             style={
                 {textAlign: 'center', 
                 color: 'green', 
-                fontSize: '1.5rem', 
+                fontSize: '1.8rem', 
                 margin: '1rem 0',
-                fontFamily: 'Poppins'
+                fontFamily: 'Poppins',
+                textDecoration: 'underline',
             }
             }
             >Household Members</Typography>
@@ -100,10 +108,21 @@ function Account() {
                 startIcon={<AddIcon />}
             >Add a Member</HouseholdButton>
             <Box
-                sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', color: 'primary.main' }}
+                sx={{ 
+                    width: '100%', 
+                    maxWidth: 360, 
+                    // bgcolor: '#bce5af', 
+                    color: 'green' }}
                 aria-label="household members"
             >
-                <List>
+                <List
+                    style={{
+                        padding: '0',
+                        margin: '0',
+                        fontFamily: 'Poppins',
+                        fontSize: '1rem',
+                    }}
+                >
                     {householdList}
                 </List>
             </Box>

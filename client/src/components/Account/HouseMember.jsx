@@ -1,5 +1,18 @@
 import { useState } from 'react';
-import { Box, FormControl, FormControlLabel, ListItem, ListItemButton, ListItemText, Modal, Switch, Typography, Button } from '@mui/material';
+import { 
+    Box, 
+    FormControl, 
+    FormControlLabel, 
+    ListItem, 
+    ListItemButton, 
+    ListItemText, 
+    ListItemIcon,
+    IconButton,
+    Modal, 
+    Switch, 
+    Typography, 
+    Button } from '@mui/material';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { styled } from '@mui/system';  
 
 const style = {
@@ -41,12 +54,36 @@ function HouseMember({houseMember}) {
         
     };
 
+    const StyledIconButton = styled(IconButton)(() => ({
+        '&:hover': {
+            backgroundColor: '#FDF4F7'
+        }
+    }))
+
     return (
         <div>
-            <ListItem disablePadding>
+            <ListItem 
+                sx={
+                    {color: 'green',
+                    borderBottom: 'green 1px solid',
+                    }
+                }
+                disablePadding
+            >
                 <ListItemButton onClick={handleOpen} >
                     <ListItemText primary={houseMember.name} />
                 </ListItemButton>
+                <ListItemIcon>
+                    <StyledIconButton 
+                        aria-label="delete household member"
+                    >
+                        <DeleteForeverIcon
+                            style={{
+                                color: '#960018'
+                            }}
+                        />
+                    </StyledIconButton>
+                </ListItemIcon>
             </ListItem>
 
             <Modal
