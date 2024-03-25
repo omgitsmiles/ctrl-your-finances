@@ -409,8 +409,13 @@ class GenerateAdvice(Resource):
 
     def post(self):
         try:
-            content = model.generate_content("based on my spending habits, what is the best way to save money? in 100 words or less.")
-            return make_response(content.text, 200)
+            request_data = request.get_json()
+            ##PRE-RENDERED PROMPT##
+            # content = model.generate_content('give me financial advice.')
+            
+            ##USER-GENERATED PROMPT##
+            content = model.generate_content(request_data['prompt'])
+            return make_response({'content': content.text}, 200)
         except Exception as e:
             return make_response({'error': str(e)}, 500)
         
