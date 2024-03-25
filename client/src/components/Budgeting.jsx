@@ -37,12 +37,14 @@ function Budgeting() {
 
 
     // TO DO: change fetch URLs to accept user id from state
+    const { user } = AppContext()
+    console.log(user)
 
 
     const fetchUserGoals = async () => {
       try {
         // Make API call to fetch users goals
-        const response = await fetch("http://127.0.0.1:5555/api/goals/1", {
+        const response = await fetch("http://127.0.0.1:5555/api/goals/${user.uid}", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -68,7 +70,7 @@ function Budgeting() {
     const addGoal = async () => {
       try {
         // Make API call to users goals
-        const response = await fetch("http://127.0.0.1:5555/api/goals/1", {
+        const response = await fetch("http://127.0.0.1:5555/api/goals/${user.uid}", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -198,7 +200,7 @@ function Budgeting() {
             </form>
              )}
           </Box>
-
+          {userGoals ? 
           <Chart
               chartType="BarChart"
               width="100%"
@@ -206,6 +208,7 @@ function Budgeting() {
               diffdata={chartData}
               options={options}
           />
+          : null}
         </div>
     )
 }

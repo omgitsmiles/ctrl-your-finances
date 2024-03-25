@@ -12,12 +12,13 @@ function App() {
   // location.pathname === `/projects/${params.id}/edit`
 
   return (
-    <div>
+    <div className="app-container">
       <ContextProvider>
         {(location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/login') && <ResponsiveAppBar />}
         <Outlet />
-        <Footer />
+        {/* <Footer /> */}
       </ContextProvider>
+      <Footer />
     </div>
   )
 }
