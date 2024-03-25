@@ -1,6 +1,6 @@
 import Account from "../components/Account/Account";
 import Budgeting from "../components/Budgeting";
-import Dashboard from "../components/Dashboard";
+import Dashboard from "../components/Dashboard/Dashboard";
 import Finances from "../components/Finances";
 import FrontPage from "../components/FrontPage/FrontPage";
 import ErrorPage from "../components/ErrorPage"; 

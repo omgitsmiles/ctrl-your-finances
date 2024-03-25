@@ -3,8 +3,8 @@ import { Chart } from "react-google-charts";
 import { useLocation } from 'react-router-dom';
 
 import CustomCard from './CustomCard';
-import Navbar from './Navbar';
-import { AppContext } from '../context/Context';
+import Navbar from '../Navbar';
+import { AppContext } from '../../context/Context';
 
 const options = {
   title: "Your Spending",
@@ -55,21 +55,21 @@ const TransactionChart = () => {
 
   // console.log("New Data:", newData)
 
-  return (
-    <>
-      <CustomCard sx={{ alignItems: 'center', justifyContent: 'center' }}> 
-        <h1>Transactions</h1>
-          <Chart
-            chartType="PieChart"
-            width="100%"
-            height="500px"
-            data={[["Category", "Amount"], ...newData]}
-            options={options}
-            chartEvents={chartEvents}
-          />
-      </CustomCard>
-    </>
-  )
+    return (
+        <>
+        <CustomCard> 
+          <h1>Transactions</h1>
+            <Chart
+              chartType="PieChart"
+              width="100%"
+              height="500px"
+              data={[["Task", "Amount"], ...newData]}
+              options={options}
+              chartEvents={chartEvents}
+            />
+        </CustomCard>
+        </>
+    )
 }
 
 export default TransactionChart
