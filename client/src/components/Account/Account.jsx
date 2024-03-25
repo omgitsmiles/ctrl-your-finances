@@ -86,7 +86,7 @@ function Account() {
                     <TabList 
                         onChange={handleChange} 
                         aria-label="account management tabs" 
-                        centered
+                        
                         variant="scrollable"
                         scrollButtons="auto"
                     >

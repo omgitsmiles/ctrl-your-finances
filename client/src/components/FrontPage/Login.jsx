@@ -32,6 +32,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('')
+        console.log('clicked')
         try {
             await signInWithEmail(email, password, (error) => {
                 if (error) {
@@ -47,6 +48,7 @@ const Login = () => {
             })
         } catch (error) {
             setError(error.message)
+            console.log("Sign in error:", error.message)
         }
     }
     useEffect(() => {
@@ -234,6 +236,7 @@ const Login = () => {
                             }}
                             variant='contained'
                             size='medium'
+                            type='submit'
                         >  
                             Sign in
                         </Button>

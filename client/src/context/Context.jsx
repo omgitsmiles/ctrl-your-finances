@@ -14,7 +14,7 @@ import { auth } from "../firebase";
 const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState(null);
 
     const googleSignIn = () => {
         const provider = new GoogleAuthProvider();

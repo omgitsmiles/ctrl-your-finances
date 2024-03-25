@@ -298,6 +298,7 @@ const SignUp = () => {
                             }}
                             variant='contained'
                             size='large'
+                            type='submit'
                         >  
                             Sign up
                         </Button>
