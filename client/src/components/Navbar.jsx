@@ -55,11 +55,30 @@ function ResponsiveAppBar() {
     }
   }
 
+  function stringAvatar(name) {
+  const initials = name
+    .split(' ')
+    .map((part) => part[0]) // Get the first character of each part (first name, last name)
+    .join(''); // Join the initials together
+
+  return {
+    children: initials.toUpperCase(), // Ensure initials are capitalized
+  };
+}
+
+  
+  // console.log(typeof user.displayName)
+  console.log(user)
+
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#009933' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          <Button
+            onClick={() => navigate('/')}
+          >
             <img src={moneyMagnetIcon} alt="moneyMagnetIcon" style={{ width: "40px", height: "40px" }} />
+          </Button>
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                 <IconButton
                     size="large"
@@ -70,7 +89,7 @@ function ResponsiveAppBar() {
                     color="inherit"
                 >
                 </IconButton>
-                <Menu
+                {/* <Menu
                     id="menu-appbar"
                     anchorEl={anchorElNav}
                     anchorOrigin={{
@@ -88,7 +107,7 @@ function ResponsiveAppBar() {
                         display: { xs: 'block', md: 'none' },
                     }}
                 >
-                </Menu>
+                </Menu> */}
             </Box>
             <Typography
                 variant="h5"
@@ -112,33 +131,41 @@ function ResponsiveAppBar() {
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={user?.displayName} src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              <MenuItem data-label="dashboard" onClick={handleMenuClick}>Dashboard</MenuItem>
-              <MenuItem data-label="account" onClick={handleMenuClick}>Account</MenuItem>
-              <MenuItem data-label="logout" onClick={handleMenuClick}>Log Out</MenuItem>
-            </Menu>
-          </Box>
+          {user ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  {
+                    user?.photoURL ? (
+                      <Avatar alt={user?.displayName} src={user.photoURL} />
+                    ) : (
+                      <Avatar {...stringAvatar(user?.displayName)} />
+                    )
+                  }
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem data-label="dashboard" onClick={handleMenuClick}>Dashboard</MenuItem>
+                <MenuItem data-label="account" onClick={handleMenuClick}>Account</MenuItem>
+                <MenuItem data-label="logout" onClick={handleMenuClick}>Log Out</MenuItem>
+              </Menu>
+            </Box>
+          ) : (<></>)}
 
         </Toolbar>
       </Container>
