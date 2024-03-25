@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="app-container">
       <ContextProvider>
-        {(location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/login') && <ResponsiveAppBar />}
+        {(location.pathname !== '/') && <ResponsiveAppBar />}
         <Outlet />
         {/* <Footer /> */}
       </ContextProvider>
