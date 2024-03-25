@@ -32,7 +32,7 @@ const CustomCard = forwardRef(
         {...others}
         sx={{
           border: 'none',
-          borderColor: theme.palette.primary[200] + 25,
+          borderColor: theme.palette.primary[900] + 25,
           ':hover': {
             boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)'
           },
