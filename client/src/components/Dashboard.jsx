@@ -21,7 +21,9 @@ function Dashboard() {
     return (
         <main>
             <div>
-                <h2>Welcome, {user?.displayName}</h2>
+                <h2
+                style={{color: 'green', textAlign: 'center', fontSize: '2.5rem', margin: '1rem 0'}}
+                >Welcome, {user?.displayName}</h2>
             </div>
             <PlaidButton />
             <TransactionChart transactionData={transactions} />
