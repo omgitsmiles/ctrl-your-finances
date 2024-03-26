@@ -6,7 +6,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import Button from '@mui/material/Button';
+import { Button, Stack } from '@mui/material';
 import { AppContext } from '../context/Context'
 
 
@@ -81,6 +81,7 @@ function Budgeting() {
           setSavedMoney(0);
           setTargetAmount(0);
           // fetchUserGoals();
+          setShowForm(false)
           setUserGoals((currentGoals) => [...currentGoals, data])
         }else {
           console.error("Failed to add goal");
@@ -109,7 +110,12 @@ function Budgeting() {
   });
 
 
-  
+  function handleCancelGoal() {
+    setGoalName("");
+    setSavedMoney(0);
+    setTargetAmount(0);
+    setShowForm(false)
+  }  
 
     return (
         <div>
@@ -183,15 +189,28 @@ function Budgeting() {
                   />
               </FormControl>
               
-              <Button
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+                sx={{ minWidth: 12 }}
+              >
+                <Button
+                  variant="Contained"
+                  style={{ backgroundColor: "#009933", marginTop: '10px', maxWidth: '40%', minWidth: '40%' }}
+                  onClick={handleCancelGoal}
+                >
+                  Cancel
+                </Button>
+                <Button
                   type="submit"
                   variant="contained"
-                  size="large"
-                  style={{ backgroundColor: "#009933", marginTop: '10px' }}
-                  fullWidth
-              >
+                  style={{ backgroundColor: "#009933", marginTop: '10px', maxWidth: '40%', minWidth: '40%' }}
+                >
                   Add Goal
-              </Button>
+                </Button>
+              </Stack>
             </form>
              )}
           </Box>
