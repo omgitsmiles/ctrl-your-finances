@@ -14,52 +14,44 @@ import { AppContext } from '../context/Context'
 // grab user data and have house account toggle for different access to goal charts
 
 function Budgeting() {
-    const [userGoals, setUserGoals] = useState([]);
+    // const [userGoals, setUserGoals] = useState([]);
     const [goalName, setGoalName] = useState("");
     const [savedMoney, setSavedMoney] = useState(0);
     const [targetAmount, setTargetAmount] = useState(0);
     const [showForm, setShowForm] = useState(false);
-    // const [data, setData] = useState({
-    //   old: [
-    //     ["Name", "Goal"],
-    //     ["Car", 1250],
-    //   ],
-    //   new: [
-    //     ["Name", "Money Saved"],
-    //     ["Car", 370],
-    //   ],
-    // });
-
-    useEffect(() => {
-      // fetch user's goals from backend
-      fetchUserGoals();
-    },[])
+    
+    
+    // useEffect(() => {
+      //   // fetch user's goals from backend
+      //   fetchUserGoals();
+      // },[])
+      
+      
+    const { userId, userGoals, setUserGoals } = AppContext()
+    console.log('user goals:',userGoals)
 
 
-    const { userId } = AppContext()
-
-
-    const fetchUserGoals = async () => {
-      try {
-        // Make API call to fetch users goals
-        const response = await fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // Will there need to be authorization token or admin allowances?
-            // "Authorization": `Admin ${admin}`
-          }
-        });
-        if (response.ok) {
-          const data = await response.json()
-          setUserGoals(data)
-        } else {
-          console.error("failed fetch error", error)
-        }
-      } catch (error){
-        console.error("error fetching user goals:", error)
-      }
-    };
+    // const fetchUserGoals = async () => {
+    //   try {
+    //     // Make API call to fetch users goals
+    //     const response = await fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
+    //       method: "GET",
+    //       headers: {
+    //         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+    //         // Will there need to be authorization token or admin allowances?
+    //         // "Authorization": `Admin ${admin}`
+    //       }
+    //     });
+    //     if (response.ok) {
+    //       const data = await response.json()
+    //       setUserGoals(data)
+    //     } else {
+    //       console.error("failed fetch error", error)
+    //     }
+    //   } catch (error){
+    //     console.error("error fetching user goals:", error)
+    //   }
+    // };
 
 
 
@@ -71,15 +63,16 @@ function Budgeting() {
         const response = await fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
             // Will there need to be authorization token or admin allowances?
             // "Authorization": `Admin ${admin}`
           },
-          body: JSON.stringify({
-            name: goalName,
-            saved: savedMoney,
-            target: targetAmount
-          })
+          body: `name=${goalName}&saved=${savedMoney}&target=${targetAmount}`
+          // body: JSON.stringify({
+          //   name: goalName,
+          //   saved: savedMoney,
+          //   target: targetAmount
+          // })
         });
         if (response.ok) {
           const data = await response.json();
@@ -87,7 +80,8 @@ function Budgeting() {
           setGoalName("");
           setSavedMoney(0);
           setTargetAmount(0);
-          fetchUserGoals();
+          // fetchUserGoals();
+          setUserGoals((currentGoals) => [...currentGoals, data])
         }else {
           console.error("Failed to add goal");
         }
@@ -201,7 +195,7 @@ function Budgeting() {
             </form>
              )}
           </Box>
-          {userGoals ? 
+          {(userGoals.length > 0) ? 
           <Chart
               chartType="BarChart"
               width="100%"

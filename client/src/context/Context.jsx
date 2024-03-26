@@ -112,6 +112,7 @@ export const ContextProvider = ({ children }) => {
     const [houseMembers, setHouseMembers] = useState([]);
     const [household, setHousehold] = useState([]);
     const [transactions, setTransactions] = useState([]);
+    const [userGoals, setUserGoals] = useState([]);
     const [userId, setUserId] = useState('');
     const [error, setError] = useState('');
 
@@ -189,6 +190,26 @@ export const ContextProvider = ({ children }) => {
             }
         })
 
+        // retrieve goals
+        try {
+            // Make API call to fetch users goals
+            const response = fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                // Will there need to be authorization token or admin allowances?
+                // "Authorization": `Admin ${admin}`
+              }
+            });
+            if (response.ok) {
+              const data = response.json()
+              setUserGoals(data)
+            } else {
+              console.error("failed fetch error", error)
+            }
+          } catch (error){
+            console.error("error fetching user goals:", error)
+          }
     }
 
     // useEffect(() => {
@@ -212,6 +233,8 @@ export const ContextProvider = ({ children }) => {
         setHouseMembers,
         transactions,
         setTransactions,
+        userGoals,
+        setUserGoals,
         userId,
         error,
         setError,
