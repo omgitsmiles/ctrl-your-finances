@@ -15,6 +15,7 @@ plaid-python = "*"
 python-dotenv = "*"
 ipdb = "*"
 cryptography = "*"
+firebase-admin = "*"
 
 [dev-packages]
 
