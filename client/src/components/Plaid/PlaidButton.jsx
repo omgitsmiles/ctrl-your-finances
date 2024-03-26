@@ -61,7 +61,7 @@ function PlaidButton() {
             const response = await fetch("http://127.0.0.1:5555/api/create_link_token", {
             method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
             },
             });
             const data = await response.json();

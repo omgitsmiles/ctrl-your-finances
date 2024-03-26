@@ -85,26 +85,37 @@ for product in PLAID_PRODUCTS:
 item_id = None
 
 
-@app.route('/api/create_link_token', methods=['POST'])
-def create_link_token():
-    try:
-        request = LinkTokenCreateRequest(
-            products=products,
-            client_name="Plaid Quickstart",
-            country_codes=list(map(lambda x: CountryCode(x), PLAID_COUNTRY_CODES)),
-            language='en',
-            user=LinkTokenCreateRequestUser(
-                client_user_id=str(time.time())
-            )
-        )
-        if PLAID_REDIRECT_URI!=None:
-            request['redirect_uri']=PLAID_REDIRECT_URI
-    # create link token
-        response = jsonify(client.link_token_create(request).to_dict())
-        return response
-    except plaid.ApiException as e:
-        return json.loads(e.body)
+class CreateLinkToken(Resource):
 
+    def options(self):
+        response_headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Max-Age': '600',
+        }
+        return ('', 204, response_headers)
+
+    def post(self):
+        try:
+            request = LinkTokenCreateRequest(
+                products=products,
+                client_name="Plaid Quickstart",
+                country_codes=list(map(lambda x: CountryCode(x), PLAID_COUNTRY_CODES)),
+                language='en',
+                user=LinkTokenCreateRequestUser(
+                    client_user_id=str(time.time())
+                )
+            )
+            if PLAID_REDIRECT_URI!=None:
+                request['redirect_uri']=PLAID_REDIRECT_URI
+        # create link token
+            response = jsonify(client.link_token_create(request).to_dict())
+            return response
+        except plaid.ApiException as e:
+            return json.loads(e.body)
+
+api.add_resource(CreateLinkToken, '/api/create_link_token')
 
 # Exchange token flow - exchange a Link public_token for
 # an API access_token
