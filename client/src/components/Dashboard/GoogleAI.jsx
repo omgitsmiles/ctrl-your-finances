@@ -17,7 +17,7 @@ const GoogleAI = () => {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8"',
                 },
-                body: `prompt=using_${transactionArray}_find_ways_to_save_money`,
+                body: `prompt=using_${transactionArray}_find_ways_to_save_money_in_100_words`,
             });
             const data = await response.json();
             setAdvice(data.content)
@@ -25,8 +25,6 @@ const GoogleAI = () => {
             console.error(error);
         }
     }
-
-    console.log(advice, transactions)
 
     const buttonStyle = {
         margin: '1rem auto',
@@ -68,10 +66,10 @@ const GoogleAI = () => {
         }}>
         {advice ? <Typewriter
         options={{
-            strings: [advice],
+            delay: 0,
+            strings: advice,
             autoStart: true,
             loop: false,
-            // pauseFor: 1000000,
         }}
         /> : null}
         </Box>
