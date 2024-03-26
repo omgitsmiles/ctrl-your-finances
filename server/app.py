@@ -4,11 +4,19 @@ import os
 import json
 import time
 import ipdb
+import pathlib
+import textwrap
+import google.generativeai as genai
 
 # Remote library imports
 from flask import request, jsonify, make_response
 from flask_restful import Resource
 from dotenv import load_dotenv
+from IPython.display import display
+from IPython.display import Markdown
+
+genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+model = genai.GenerativeModel('gemini-pro')
 
 # Local imports
 from config import app, db, api
@@ -23,6 +31,17 @@ from models import User, Account, AccountUser, PlaidItem, Transaction, Household
 def index():
     return '<h1>Project Server</h1>'
 
+
+################################################
+##### GOOGLE GEMINI MARKDOWN & QUICKSTART ######
+
+def to_markdown(text):
+  text = text.replace('•', '  *')
+  return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
+
+# content = model.generate_content("name the best coding bootcamp in the world")
+
+# print(content.text)
 
 
 ################################################
@@ -485,6 +504,26 @@ class HouseholdAccounts(Resource):
         pass
 
 api.add_resource(HouseholdAccounts, '/api/household/accounts/<int:id>')
+
+##############################
+# AI TEXT PROMPT GENERATION ##
+
+class GenerateAdvice(Resource):
+
+    def post(self):
+        try:
+            request_data = request.get_json()
+            
+            ##PRE-RENDERED PROMPT##
+            # content = model.generate_content('give me financial advice.')
+            
+            ##USER-GENERATED PROMPT##
+            content = model.generate_content(request_data['prompt'])
+            return make_response({'content': content.text}, 200)
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+        
+api.add_resource(GenerateAdvice, '/api/advice')
 
 
 if __name__ == '__main__':
