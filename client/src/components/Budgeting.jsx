@@ -39,7 +39,7 @@ function Budgeting() {
 
     // TO DO: change fetch URLs to accept user id from state
     const { user } = AppContext()
-    console.log(user)
+    // console.log(user)
 
 
     const fetchUserGoals = async () => {

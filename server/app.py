@@ -443,7 +443,7 @@ class TransactionsByUser(Resource):
         except Exception as e:
             return make_response({'error': str(e)}, 500)
 
-api.add_resource(TransactionsByUser, '/api/transactions/<int:id>')
+api.add_resource(TransactionsByUser, '/api/transactionhistory/<int:id>')
 
 
 def sort_by_primary_category(transactions):
