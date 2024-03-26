@@ -22,8 +22,6 @@ const GoogleAI = () => {
         }
     }
 
-    console.log(advice)
-
   return (
     <>
     <Button variant="contained" color="success"
@@ -50,10 +48,10 @@ const GoogleAI = () => {
         }}>
         {advice ? <Typewriter
         options={{
-            strings: [advice],
+            delay: 0,
+            strings: advice,
             autoStart: true,
             loop: false,
-            pauseFor: 1000000,
         }}
         /> : null}
         </Box>
