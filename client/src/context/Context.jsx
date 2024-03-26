@@ -18,7 +18,9 @@ const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    console.log('User:', user)
+
+    // const [userWithId, setUserWithId] = useState({});
+      
     const googleSignIn = () => {
         const provider = new GoogleAuthProvider();
         signInWithPopup(auth, provider);
@@ -103,23 +105,49 @@ export const ContextProvider = ({ children }) => {
         }
     }, [])
 
-
-
+    
     //// STATE FOR USER ACCOUNTS, HOUSEHOLD MEMBERS, AND TRANSACTIONS ////
     
     const [bankAccounts, setBankAccounts] = useState([]);
     const [houseMembers, setHouseMembers] = useState([]);
     const [household, setHousehold] = useState([]);
     const [transactions, setTransactions] = useState([]);
+    const [userId, setUserId] = useState('');
     const [error, setError] = useState('');
-    
-    
-    //// CHANGE THIS WHEN USER SESSION COOKIES ESTABLISHED /////
-    const userID = 1
+
     
     useEffect(() => {
-        // retrieve user accounts info
-        fetch(`http://127.0.0.1:5555/api/accounts/${userID}`)
+        // retrieve user ID from database
+        if (user && (user !== undefined)) {
+            const body = {
+                name: user.displayName,
+                email: user.email,
+            }
+            fetch(`http://127.0.0.1:5555/api/user`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                },
+                body: `email=${body.email}&name=${body.name}`
+            })
+            .then(resp => {
+                if (resp.ok) {
+                    resp.json()
+                    .then((userWithId) => {
+                        setUserId(userWithId)
+                        getDatabaseInfo(userWithId)
+                    })
+                } else {
+                    resp.json()
+                    .then(message => setError(message.error))
+                }
+            })
+        }
+    }, [user])
+
+    
+    function getDatabaseInfo(userId) {
+        fetch(`http://127.0.0.1:5555/api/accounts/${userId.id}`)
         .then(resp => {
             if (resp.ok) {
                 resp.json()
@@ -131,7 +159,7 @@ export const ContextProvider = ({ children }) => {
         })
     
         // retrieve household member info
-        fetch(`http://127.0.0.1:5555/api/household/${userID}`)
+        fetch(`http://127.0.0.1:5555/api/household/${userId.id}`)
         .then(resp => {
             if (resp.ok) {
                 resp.json()
@@ -146,17 +174,28 @@ export const ContextProvider = ({ children }) => {
         })
     
         // retrieve transactions
-        fetch(`http://127.0.0.1:5555/api/transactions/${userID}`)
+        fetch(`http://127.0.0.1:5555/api/transactionhistory/${userId.id}`)
         .then(resp => {
+            // console.log('transactions response received')
             if (resp.ok) {
                 resp.json()
-                .then(data => setTransactions(data))
+                .then(data => {
+                    // console.log(data)
+                    setTransactions(data)
+                })
             } else {
                 resp.json()
                 .then(message => setError(message.error))
             }
         })
-    }, [])
+
+    }
+
+    // useEffect(() => {
+    //     // retrieve user accounts info
+    //     if (userId) {
+    //     }
+    // }, [userId])
 
 
     const context = {
@@ -173,6 +212,7 @@ export const ContextProvider = ({ children }) => {
         setHouseMembers,
         transactions,
         setTransactions,
+        userId,
         error,
         setError,
         isSignInLink

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 06c75942f020
+Revision ID: 86709d6404a1
 Revises: 
-Create Date: 2024-03-25 12:19:14.499098
+Create Date: 2024-03-26 08:32:27.379066
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '06c75942f020'
+revision = '86709d6404a1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,6 +27,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.Text(), nullable=False),
     sa.Column('email', sa.Text(), nullable=False),
+    sa.Column('uid', sa.Text(), nullable=True),
     sa.Column('household_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['household_id'], ['households.id'], name=op.f('fk_users_household_id_households')),
     sa.PrimaryKeyConstraint('id')
@@ -42,7 +43,7 @@ def upgrade():
     )
     op.create_table('plaid_items',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('access_token', sa.Text(), nullable=True),
+    sa.Column('access_token', sa.BLOB(), nullable=True),
     sa.Column('item_id', sa.Text(), nullable=True),
     sa.Column('cursor', sa.Text(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),

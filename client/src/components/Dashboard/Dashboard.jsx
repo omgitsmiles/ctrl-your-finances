@@ -1,8 +1,7 @@
 import React from 'react'
 import { Grid, Button, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-
+import GoogleAI from './GoogleAI';
 import TransactionChart from './TransactionChart'
 import SavingsCard from './TotalSavingsCard'
 import PlaidButton from '../Plaid/PlaidButton'
@@ -54,6 +53,7 @@ function Dashboard() {
                 </Typography>
             </ThemeProvider>
             <PlaidButton />
+            <GoogleAI />
             <TransactionChart />
             <Budgeting />
             <Grid container spacing={2}>
