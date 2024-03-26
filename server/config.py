@@ -24,9 +24,10 @@ db.init_app(app)
 # Instantiate REST API
 api = Api(app)
 
-# Instantiate CORS
-CORS(app, origins=['http://127.0.0.1:5173'])
-
 # Instantiate Fernet
 key = bytes(os.getenv('FERNET_KEY'), 'UTF-8')
 cipher_suite = Fernet(key)
+
+# Instantiate CORS
+CORS(app, origins=['http://localhost:5173'])
+

@@ -127,7 +127,10 @@ function Budgeting() {
             padding: '20px', 
             border: '1px solid #ccc', 
             borderRadius: '5px',
-            maxWidth: '500px', 
+            maxWidth: '500px',
+            flexGrow: 1,
+            margin: 'auto',
+            marginTop: '20px' 
             }}
           >
             <h1 style={{fontFamily: 'Poppins', color: '#009933'}}>BUDGETING GOALS</h1>
