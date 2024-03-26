@@ -128,7 +128,6 @@ def get_access_token():
         access_token = exchange_response['access_token']
         item_id = exchange_response['item_id']
 
-        # save token and id to database.  MUST ENCRYPT THIS.
         _access_token = cipher_suite.encrypt(bytes(access_token, 'utf-8'))
         new_plaid_item = PlaidItem(access_token=_access_token, item_id=item_id, cursor='', user_id=USER_ID)
         db.session.add(new_plaid_item)
@@ -196,9 +195,6 @@ def get_transactions():
                 cursor = response['next_cursor']
                 # pretty_print_response(response)
 
-                # update plaid_items row cursor based on access token
-                # plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
-                # plaid_item.cursor = cursor
                 item.cursor = cursor
             
             new_transactions = []

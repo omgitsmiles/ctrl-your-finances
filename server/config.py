@@ -5,6 +5,7 @@ from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from cryptography.fernet import Fernet
+import os
 
 # Instantiate app, set attributes
 app = Flask(__name__)
@@ -27,5 +28,5 @@ api = Api(app)
 CORS(app, origins=['http://127.0.0.1:5173'])
 
 # Instantiate Fernet
-from fernet_key import key
+key = bytes(os.getenv('FERNET_KEY'), 'UTF-8')
 cipher_suite = Fernet(key)
