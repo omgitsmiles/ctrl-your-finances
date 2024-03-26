@@ -68,7 +68,7 @@ function ResponsiveAppBar() {
 
   
   // console.log(typeof user.displayName)
-  console.log(user)
+  // console.log(user)
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#009933' }}>

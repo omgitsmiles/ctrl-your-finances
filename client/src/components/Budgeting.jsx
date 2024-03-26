@@ -14,6 +14,7 @@ import { AppContext } from '../context/Context'
 // grab user data and have house account toggle for different access to goal charts
 
 function Budgeting() {
+    const { userId } = AppContext();
     const [userGoals, setUserGoals] = useState([]);
     const [goalName, setGoalName] = useState("");
     const [savedMoney, setSavedMoney] = useState(0);
@@ -38,13 +39,13 @@ function Budgeting() {
 
     // TO DO: change fetch URLs to accept user id from state
     const { user } = AppContext()
-    console.log(user)
+    // console.log(user)
 
 
     const fetchUserGoals = async () => {
       try {
         // Make API call to fetch users goals
-        const response = await fetch("http://127.0.0.1:5555/api/goals/${user.uid}", {
+        const response = await fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -70,7 +71,7 @@ function Budgeting() {
     const addGoal = async () => {
       try {
         // Make API call to users goals
-        const response = await fetch("http://127.0.0.1:5555/api/goals/${user.uid}", {
+        const response = await fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

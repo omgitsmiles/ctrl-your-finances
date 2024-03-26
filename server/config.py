@@ -4,6 +4,8 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from cryptography.fernet import Fernet
+import os
 
 # Instantiate app, set attributes
 app = Flask(__name__)
@@ -22,5 +24,10 @@ db.init_app(app)
 # Instantiate REST API
 api = Api(app)
 
+# Instantiate Fernet
+key = bytes(os.getenv('FERNET_KEY'), 'UTF-8')
+cipher_suite = Fernet(key)
+
 # Instantiate CORS
 CORS(app, origins=['http://localhost:5173'])
+
