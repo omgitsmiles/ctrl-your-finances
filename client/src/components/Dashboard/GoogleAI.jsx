@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Button } from '@mui/material'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Typewriter from 'typewriter-effect';
 
 const GoogleAI = () => {
+    const [advice, setAdvice] = useState('');
 
     const generateAIResponse = async () => {
         try {
@@ -15,11 +16,13 @@ const GoogleAI = () => {
                 body: `prompt=is_this_thing_working`,
             });
             const data = await response.json();
-            console.log(data);
+            setAdvice(data.content)
         } catch (error) {
             console.error(error);
         }
     }
+
+    console.log(advice)
 
   return (
     <>
@@ -40,18 +43,18 @@ const GoogleAI = () => {
             display: 'flex',
             margin: '1rem auto',
             padding: '20px', 
-            border: '1px solid #ccc', 
+            // border: '1px solid #ccc', 
             borderRadius: '5px',
             maxWidth: '500px', 
             color: '#009933',
         }}>
-        <Typewriter
+        {advice ? <Typewriter
         options={{
-            strings: ['Hello', 'World'],
+            strings: [advice],
             autoStart: true,
             loop: false,
         }}
-        />
+        /> : null}
         </Box>
     </>
   )
