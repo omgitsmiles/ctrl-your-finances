@@ -2,9 +2,13 @@ import React, { useState } from 'react'
 import { Box, Button } from '@mui/material'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Typewriter from 'typewriter-effect';
+import { AppContext } from '../../context/Context';
 
 const GoogleAI = () => {
     const [advice, setAdvice] = useState('');
+    const { transactions } = AppContext();
+    const transactionArray = transactions.map((transaction) => `${transaction.category}: ${transaction.amount}`);
+    console.log(transactionArray)
 
     const generateAIResponse = async () => {
         try {
@@ -13,7 +17,7 @@ const GoogleAI = () => {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8"',
                 },
-                body: `prompt=is_this_thing_working`,
+                body: `prompt=using_${transactionArray}_find_ways_to_save_money`,
             });
             const data = await response.json();
             setAdvice(data.content)
@@ -22,7 +26,7 @@ const GoogleAI = () => {
         }
     }
 
-    console.log(advice)
+    console.log(advice, transactions)
 
   return (
     <>
@@ -53,7 +57,7 @@ const GoogleAI = () => {
             strings: [advice],
             autoStart: true,
             loop: false,
-            pauseFor: 1000000,
+            // pauseFor: 1000000,
         }}
         /> : null}
         </Box>
