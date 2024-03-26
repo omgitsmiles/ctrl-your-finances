@@ -152,7 +152,7 @@ function PlaidButton() {
         <Button 
             onClick={() => open()} 
             disabled={!ready}
-            variant="contain3ed"
+            variant="contained"
             sx={buttonStyle}
             size='medium'
             startIcon={<AddIcon />}
@@ -160,7 +160,7 @@ function PlaidButton() {
             <strong>Link account</strong>
         </Button>
     </div>
-  );
+    );
 }
 
 export default PlaidButton;

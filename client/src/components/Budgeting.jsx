@@ -28,27 +28,27 @@ function Budgeting() {
       
 
 
-    // const fetchUserGoals = async () => {
-    //   try {
-    //     // Make API call to fetch users goals
-    //     const response = await fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
-    //       method: "GET",
-    //       headers: {
-    //         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-    //         // Will there need to be authorization token or admin allowances?
-    //         // "Authorization": `Admin ${admin}`
-    //       }
-    //     });
-    //     if (response.ok) {
-    //       const data = await response.json()
-    //       setUserGoals(data)
-    //     } else {
-    //       console.error("failed fetch error", error)
-    //     }
-    //   } catch (error){
-    //     console.error("error fetching user goals:", error)
-    //   }
-    // };
+    const fetchUserGoals = async () => {
+      try {
+        // Make API call to fetch users goals
+        const response = await fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // Will there need to be authorization token or admin allowances?
+            // "Authorization": `Admin ${admin}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json()
+          setUserGoals(data)
+        } else {
+          console.error("failed fetch error", error)
+        }
+      } catch (error){
+        console.error("error fetching user goals:", error)
+      }
+    };
 
 
 
@@ -106,6 +106,25 @@ function Budgeting() {
       chartData.new.push([goal.name, goal.saved]);
   });
 
+  const buttonStyle = {
+      margin: '1rem auto',
+      display: 'flex',
+      backgroundColor: 'green',
+      color: 'white',
+      fontSize: '0.9rem',
+      border: '1px solid green',
+      fontFamily: 'Poppins, sans-serif',
+      "&&:hover": {
+          backgroundColor: "white",
+          color: "green",
+          
+      },
+      "&&:focus": {
+          backgroundColor: "white",
+          color: "green",
+          
+      }
+  }
 
   function handleCancelGoal() {
     setGoalName("");
@@ -118,8 +137,7 @@ function Budgeting() {
         <div>
           <Box
             sx={{
-            padding: '20px', 
-            border: '1px solid #ccc', 
+            padding: '20px',  
             borderRadius: '5px',
             maxWidth: '500px',
             flexGrow: 1,
@@ -127,20 +145,41 @@ function Budgeting() {
             marginTop: '20px' 
             }}
           >
-            <h1 style={{fontFamily: 'Poppins', color: '#009933'}}>BUDGETING GOALS</h1>
-            <h2 style={{ fontFamily: 'Poppins', color: '#32004C' }}>Set Your Financial Goals</h2>
+            <h2 
+            style={{
+              fontFamily: 'Poppins', 
+              color: '#009933',
+              textAlign: 'center',
+              marginBottom: '.5rem',
+              textDecoration: 'underline'
+            }}>BUDGETING GOALS</h2>
+            <h3 
+            style={{ 
+              fontFamily: 'Poppins', 
+              color: '#32004C',
+              marginTop: '.5rem',
+              marginBottom: '.5rem',
+              }}>Set Your Financial Goals</h3>
             <p style={{ fontFamily: 'Poppins', color: '#32004C' }}>Start your journey towards financial well-being today. Define clear, achievable goals that align with your aspirations and values.</p>
 
             {!showForm && (
+              <Box
+              sx={
+                {
+                  display: 'flex',
+                  justifyContent: 'center'
+                }
+              }
+              >
               <Button 
               variant="contained"
-              size="large"
-              style={{ backgroundColor: "#009933", marginTop: '10px' }}
-              fullWidth
+              sx={buttonStyle}
               onClick={() => setShowForm(true)}
               >
                 Add Goal
               </Button>
+
+              </Box>
             )}
             {showForm && (
             <form
@@ -190,26 +229,26 @@ function Budgeting() {
                 direction="row"
                 justifyContent="center"
                 alignItems="center"
-                spacing={2}
-                sx={{ minWidth: 12 }}
+                spacing={1}
+                sx={{
+                  minWidth: 12 }}
               >
                 <Button
                   variant="Contained"
-                  style={{ backgroundColor: "#009933", marginTop: '10px', maxWidth: '40%', minWidth: '40%' }}
+                  style={{ backgroundColor: "#009933", marginTop: '10px', maxWidth: '40%', minWidth: '40%', color: 'white'}}
                   onClick={handleCancelGoal}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  variant="contained"
-                  style={{ backgroundColor: "#009933", marginTop: '10px', maxWidth: '40%', minWidth: '40%' }}
-                >
+                  style={{ backgroundColor: "#009933", marginTop: '10px', maxWidth: '40%', minWidth: '40%', color: 'white'}}
+              >
                   Add Goal
                 </Button>
               </Stack>
             </form>
-             )}
+            )}
           </Box>
           {(userGoals.length > 0) ? 
           <Chart

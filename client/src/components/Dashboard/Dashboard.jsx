@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Button, Typography } from '@mui/material';
+import { Grid, Button, Typography, Box } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import GoogleAI from './GoogleAI';
 import TransactionChart from './TransactionChart'
@@ -40,21 +40,49 @@ function Dashboard() {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <Typography 
-                variant="h4"
-                style={{ 
-                    color: '#009933',
-                    textAlign: 'center',
-                    fontFamily: 'Playfair Display, serif',
-                    margin: '1rem',
-                    
-                    }}>
-                    Welcome, {user?.displayName}
-                </Typography>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography 
+                    variant="h4"
+                    style={{ 
+                        color: '#009933',
+                        textAlign: 'center',
+                        fontFamily: 'Playfair Display, serif',
+                        marginTop: '1rem',
+                        marginBottom: '0rem',
+                        fontSize: '2.9rem'
+                        }}>
+                        Welcome Back, 
+                    </Typography>
+                    <Typography
+                        variant="h4"
+                        style={{
+                            color: '#009933',
+                        textAlign: 'center',
+                        fontFamily: 'Playfair Display, serif',
+                        marginTop: '0rem',
+                        padding: '0rem',
+                        marginBottom: '1rem',
+                        fontSize: '2.9rem'
+                        }
+                        }
+                        
+                    >   
+                        {user?.displayName}
+                    </Typography>
+                </Box>
             </ThemeProvider>
-            <PlaidButton />
-            <GoogleAI />
-            <TransactionChart />
+            
+                <PlaidButton />
+                <GoogleAI />
+            
+            <TransactionChart /> 
             <Budgeting />
             <Grid container spacing={2}>
                 <Grid item lg={4} md={6} sm={6} xs={12}>
@@ -71,9 +99,6 @@ function Dashboard() {
                     </Grid>
                 </Grid>
             </Grid>
-
-            <Button fullWidth variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
-
         </>
     )
 }

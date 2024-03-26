@@ -30,12 +30,12 @@ const TransactionChart = () => {
 
   const newData = transactions ? transactions.map((categoryGroup) => {
       const category = categoryGroup.category
-      const formated_category = category?.replace(/_/g, " ").replace(/\w\S*/g,
+      const formatted_category = category?.replace(/_/g, " ").replace(/\w\S*/g,
         function (txt) {
             return txt.charAt(0).toUpperCase() +
                 txt.substr(1).toLowerCase();
         })
-      return [formated_category, Number.parseFloat(categoryGroup.amount)]
+      return [formatted_category, Number.parseFloat(categoryGroup.amount)]
   }).filter(([_, amount]) => amount >= 0) : null;
 
   const chartEvents = [
@@ -52,11 +52,21 @@ const TransactionChart = () => {
       }
     }
   ]
+    console.log("Transactions:", transactions)
+    console.log("New Data:", newData)
 
     return (
       <>
+        {newData && newData != 0 ? 
         <CustomCard> 
-          <h1>Transactions</h1>
+          <h1
+            style={{
+              color: '#009933',
+              fontFamily: 'Poppins, sans-serif',
+              textAlign: 'center',
+              margin: '1rem'
+            }}
+          >Transactions</h1>
             <Chart
               chartType="PieChart"
               width="100%"
@@ -66,8 +76,51 @@ const TransactionChart = () => {
               chartEvents={chartEvents}
             />
         </CustomCard>
+        : <h2
+          style={{
+            color: '#009933',
+            fontFamily: 'Poppins, sans-serif',
+            textAlign: 'center',
+            margin: '1rem',
+            marginBottom: '0rem'
+          }}
+        >
+          Link your bank accounts to start tracking your spending
+        </h2>}
+        
+
       </>
     )
 }
 
 export default TransactionChart
+
+// {newData && newData != 0 ? 
+        // <CustomCard> 
+        //   <h1
+        //     style={{
+        //       color: '#009933',
+        //       fontFamily: 'Poppins, sans-serif',
+        //       textAlign: 'center',
+        //       margin: '1rem'
+        //     }}
+        //   >Transactions</h1>
+        //     <Chart
+        //       chartType="PieChart"
+        //       width="100%"
+        //       height="500px"
+        //       data={[["Task", "Amount"], ...newData]}
+        //       options={options}
+        //       chartEvents={chartEvents}
+        //     />
+        // </CustomCard>
+        // : <h2
+        //   style={{
+        //     color: '#009933',
+        //     fontFamily: 'Poppins, sans-serif',
+        //     textAlign: 'center',
+        //     margin: '1rem'
+        //   }}
+        // >
+        //   Link Your Bank Accounts to Start Tracking Your Data
+        // </h2>}
