@@ -72,8 +72,6 @@ function ResponsiveAppBar() {
   }
   }
 
-  
-  // console.log(typeof user.displayName)
 
   return (
     <AppBar position="sticky" 

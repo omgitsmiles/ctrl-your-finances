@@ -1,7 +1,7 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from config import db, metadata
+from config import db
 
 
 class User(db.Model, SerializerMixin):
@@ -10,6 +10,7 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False)
+    uid = db.Column(db.Text) ## Will store encrypted Firebase UID
     household_id = db.Column(db.Integer, db.ForeignKey('households.id'))
 
     account_user = db.relationship('AccountUser', back_populates='users')
@@ -60,7 +61,7 @@ class PlaidItem(db.Model, SerializerMixin):
     __tablename__ = 'plaid_items'
 
     id = db.Column(db.Integer, primary_key=True)
-    access_token = db.Column(db.Text)
+    access_token = db.Column(db.BLOB)
     item_id = db.Column(db.Text)
     cursor = db.Column(db.Text) # received from transactions/get, used to set the starting point for the next transactions update
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
