@@ -53,6 +53,7 @@ const GoogleAI = () => {
             strings: [advice],
             autoStart: true,
             loop: false,
+            pauseFor: 1000000,
         }}
         /> : null}
         </Box>
