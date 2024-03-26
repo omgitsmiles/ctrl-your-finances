@@ -24,27 +24,41 @@ const GoogleAI = () => {
 
     console.log(advice)
 
+    const buttonStyle = {
+        margin: '1rem auto',
+        display: 'flex',
+        backgroundColor: 'green',
+        color: 'white',
+        fontSize: '0.9rem',
+        border: '1px solid green',
+        fontFamily: 'Poppins, sans-serif',
+        "&&:hover": {
+            backgroundColor: "white",
+            color: "green",
+            
+        },
+        "&&:focus": {
+            backgroundColor: "white",
+            color: "green",
+            
+        }
+    }
+
+
   return (
     <>
     <Button variant="contained" color="success"
         onClick={generateAIResponse}
-        sx={{
-            margin: '1rem auto',
-            display: 'flex',
-            backgroundColor: 'green',
-            color: 'white',
-            fontSize: '0.9rem',
-            border: '1px solid green',
-            fontFamily: 'Poppins, sans-serif',
-        }}
+        sx={
+            buttonStyle
+        }
         startIcon={<AutoAwesomeIcon />}>Generate AI Advice</Button>
 
         <Box sx={{
             display: 'flex',
             margin: '1rem auto',
-            padding: '20px', 
-            // border: '1px solid #ccc', 
-            borderRadius: '5px',
+            padding: '10px',
+            paddingBlock: '0px', 
             maxWidth: '500px', 
             color: '#009933',
         }}>
@@ -58,7 +72,7 @@ const GoogleAI = () => {
         /> : null}
         </Box>
     </>
-  )
+)
 }
 
 export default GoogleAI

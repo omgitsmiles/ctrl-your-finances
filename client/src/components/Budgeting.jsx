@@ -19,16 +19,7 @@ function Budgeting() {
     const [savedMoney, setSavedMoney] = useState(0);
     const [targetAmount, setTargetAmount] = useState(0);
     const [showForm, setShowForm] = useState(false);
-    // const [data, setData] = useState({
-    //   old: [
-    //     ["Name", "Goal"],
-    //     ["Car", 1250],
-    //   ],
-    //   new: [
-    //     ["Name", "Money Saved"],
-    //     ["Car", 370],
-    //   ],
-    // });
+  
 
     useEffect(() => {
       // fetch user's goals from backend
@@ -60,8 +51,6 @@ function Budgeting() {
         console.error("error fetching user goals:", error)
       }
     };
-
-
 
 
     //add new goals to user db
@@ -114,15 +103,32 @@ function Budgeting() {
       chartData.new.push([goal.name, goal.saved]);
   });
 
-
+  const buttonStyle = {
+      margin: '1rem auto',
+      display: 'flex',
+      backgroundColor: 'green',
+      color: 'white',
+      fontSize: '0.9rem',
+      border: '1px solid green',
+      fontFamily: 'Poppins, sans-serif',
+      "&&:hover": {
+          backgroundColor: "white",
+          color: "green",
+          
+      },
+      "&&:focus": {
+          backgroundColor: "white",
+          color: "green",
+          
+      }
+  }
   
 
     return (
         <div>
           <Box
             sx={{
-            padding: '20px', 
-            border: '1px solid #ccc', 
+            padding: '20px',  
             borderRadius: '5px',
             maxWidth: '500px',
             flexGrow: 1,
@@ -130,20 +136,41 @@ function Budgeting() {
             marginTop: '20px' 
             }}
           >
-            <h1 style={{fontFamily: 'Poppins', color: '#009933'}}>BUDGETING GOALS</h1>
-            <h2 style={{ fontFamily: 'Poppins', color: '#32004C' }}>Set Your Financial Goals</h2>
+            <h2 
+            style={{
+              fontFamily: 'Poppins', 
+              color: '#009933',
+              textAlign: 'center',
+              marginBottom: '.5rem',
+              textDecoration: 'underline'
+            }}>BUDGETING GOALS</h2>
+            <h3 
+            style={{ 
+              fontFamily: 'Poppins', 
+              color: '#32004C',
+              marginTop: '.5rem',
+              marginBottom: '.5rem',
+              }}>Set Your Financial Goals</h3>
             <p style={{ fontFamily: 'Poppins', color: '#32004C' }}>Start your journey towards financial well-being today. Define clear, achievable goals that align with your aspirations and values.</p>
 
             {!showForm && (
+              <Box
+              sx={
+                {
+                  display: 'flex',
+                  justifyContent: 'center'
+                }
+              }
+              >
               <Button 
               variant="contained"
-              size="large"
-              style={{ backgroundColor: "#009933", marginTop: '10px' }}
-              fullWidth
+              sx={buttonStyle}
               onClick={() => setShowForm(true)}
               >
                 Add Goal
               </Button>
+
+              </Box>
             )}
             {showForm && (
             <form
@@ -191,15 +218,12 @@ function Budgeting() {
               
               <Button
                   type="submit"
-                  variant="contained"
-                  size="large"
-                  style={{ backgroundColor: "#009933", marginTop: '10px' }}
-                  fullWidth
+                  sx={buttonStyle}
               >
                   Add Goal
               </Button>
             </form>
-             )}
+            )}
           </Box>
           {userGoals ? 
           <Chart
