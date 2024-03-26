@@ -510,15 +510,25 @@ api.add_resource(HouseholdAccounts, '/api/household/accounts/<int:id>')
 
 class GenerateAdvice(Resource):
 
+    def options(self):
+        response_headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Max-Age': '600',
+        }
+        return ('', 204, response_headers)
+
     def post(self):
         try:
-            request_data = request.get_json()
-            
+            request_data = request.form.get('prompt')
+            print(request_data)
             ##PRE-RENDERED PROMPT##
             # content = model.generate_content('give me financial advice.')
             
             ##USER-GENERATED PROMPT##
-            content = model.generate_content(request_data['prompt'])
+            content = model.generate_content(request_data)
+            print(content.text)
             return make_response({'content': content.text}, 200)
         except Exception as e:
             return make_response({'error': str(e)}, 500)

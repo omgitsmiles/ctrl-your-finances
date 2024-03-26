@@ -1,6 +1,6 @@
 import React from 'react'
 import { Grid, Button } from '@mui/material';
-
+import GoogleAI from './GoogleAI';
 import TransactionChart from './TransactionChart'
 import SavingsCard from './TotalSavingsCard'
 import PlaidButton from '../Plaid/PlaidButton'
@@ -21,6 +21,7 @@ function Dashboard() {
         <>
             <h1 style={{ color: '#009933', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Welcome {user?.displayName}</h1>
             <PlaidButton />
+            <GoogleAI />
             <TransactionChart />
             <Budgeting />
             <Grid container spacing={2}>
