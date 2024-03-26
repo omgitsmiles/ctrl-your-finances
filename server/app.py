@@ -172,9 +172,7 @@ def get_transactions():
 
     for item in plaid_items:
         cursor = item.cursor
-        # print(item.access_token)
-        access_token = cipher_suite.decrypt(item.access_token)
-        # print(access_token)
+        access_token = cipher_suite.decrypt(item.access_token).decode("utf-8")
 
         # New transaction updates since "cursor"
         added = []

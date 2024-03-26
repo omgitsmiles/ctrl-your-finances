@@ -60,9 +60,9 @@ class PlaidItem(db.Model, SerializerMixin):
     __tablename__ = 'plaid_items'
 
     id = db.Column(db.Integer, primary_key=True)
-    access_token = db.Column(db.Text)
+    access_token = db.Column(db.BLOB)
     item_id = db.Column(db.Text)
-    cursor = db.Column(db.BLOB) # received from transactions/get, used to set the starting point for the next transactions update
+    cursor = db.Column(db.Text) # received from transactions/get, used to set the starting point for the next transactions update
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     accounts = db.relationship('Account', back_populates='plaid_item', cascade='all, delete-orphan')
