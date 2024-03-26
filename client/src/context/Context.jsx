@@ -191,32 +191,22 @@ export const ContextProvider = ({ children }) => {
         })
 
         // retrieve goals
-        try {
-            // Make API call to fetch users goals
-            const response = fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-                // Will there need to be authorization token or admin allowances?
-                // "Authorization": `Admin ${admin}`
-              }
-            });
-            if (response.ok) {
-              const data = response.json()
-              setUserGoals(data)
+        fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`)
+        .then(resp => {
+            // console.log('transactions response received')
+            if (resp.ok) {
+                resp.json()
+                .then(data => {
+                    // console.log(data)
+                    setUserGoals(data)
+                })
             } else {
-              console.error("failed fetch error", error)
+                resp.json()
+                .then(message => setError(message.error))
             }
-          } catch (error){
-            console.error("error fetching user goals:", error)
-          }
+        })
     }
 
-    // useEffect(() => {
-    //     // retrieve user accounts info
-    //     if (userId) {
-    //     }
-    // }, [userId])
 
 
     const context = {

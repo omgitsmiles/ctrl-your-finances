@@ -14,12 +14,11 @@ import { AppContext } from '../context/Context'
 // grab user data and have house account toggle for different access to goal charts
 
 function Budgeting() {
-    // const [userGoals, setUserGoals] = useState([]);
+    const { userId, userGoals, setUserGoals } = AppContext()
     const [goalName, setGoalName] = useState("");
     const [savedMoney, setSavedMoney] = useState(0);
     const [targetAmount, setTargetAmount] = useState(0);
     const [showForm, setShowForm] = useState(false);
-    
     
     // useEffect(() => {
       //   // fetch user's goals from backend
@@ -27,8 +26,6 @@ function Budgeting() {
       // },[])
       
       
-    const { userId, userGoals, setUserGoals } = AppContext()
-    console.log('user goals:',userGoals)
 
 
     // const fetchUserGoals = async () => {
