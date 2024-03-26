@@ -6,7 +6,7 @@ import time
 import ipdb
 import pathlib
 import textwrap
-import google.generativeai as genai
+# import google.generativeai as genai
 
 # Remote library imports
 from flask import request, jsonify, make_response
@@ -15,8 +15,8 @@ from dotenv import load_dotenv
 from IPython.display import display
 from IPython.display import Markdown
 
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-model = genai.GenerativeModel('gemini-pro')
+# genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+# model = genai.GenerativeModel('gemini-pro')
 
 # Local imports
 from config import app, db, api, cipher_suite
@@ -287,34 +287,56 @@ api.add_resource(Transactions, '/api/transactions/<int:user_id>')
 
 
 #fetch user goals
-@app.route('/api/goals/<user_id>', methods =['GET', 'POST'])
-def goals(user_id):
-    # Get goals
-    if request.method == 'GET':
+class Goals(Resource):
+
+    def options(self, user_id):
+        response_headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Max-Age': '600',
+        }
+        return ('', 204, response_headers)
+
+    def get(self, user_id):
+        # Get goals
         goals = Goal.query.filter_by(user_id = user_id).all()
         response = [goal.to_dict() for goal in goals] 
         return make_response(response, 200)
 
+    def post(self, user_id):
     # add a new goal
-    if request.method == 'POST':
-        data = request.json
+        # data = request.json
+        name = request.form.get('name')
+        saved = request.form.get('saved')
+        target = request.form.get('target')
+
+        # new_goal = Goal(
+        #     user_id=user_id,
+        #     name=data['name'],
+        #     saved=data['saved'],
+        #     target=data['target']
+        # )
         new_goal = Goal(
             user_id=user_id,
-            name=data['name'],
-            saved=data['saved'],
-            target=data['target']
+            name=name,
+            saved=saved,
+            target=target
         )
+
         db.session.add(new_goal)
         db.session.commit()
         response = new_goal.to_dict()
         return make_response(response, 200)
 
+api.add_resource(Goals, '/api/goals/<int:user_id>')
+
+
 
 def format_error(e):
     response = json.loads(e.body)
     return {'error': {'status_code': e.status, 'display_message':
-                      response['error_message'], 'error_code': response['error_code'], 'error_type': response['error_type']}}
-
+                    response['error_message'], 'error_code': response['error_code'], 'error_type': response['error_type']}}
 
 
 

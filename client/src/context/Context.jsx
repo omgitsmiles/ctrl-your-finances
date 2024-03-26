@@ -112,6 +112,7 @@ export const ContextProvider = ({ children }) => {
     const [houseMembers, setHouseMembers] = useState([]);
     const [household, setHousehold] = useState([]);
     const [transactions, setTransactions] = useState([]);
+    const [userGoals, setUserGoals] = useState([]);
     const [userId, setUserId] = useState('');
     const [error, setError] = useState('');
 
@@ -189,13 +190,23 @@ export const ContextProvider = ({ children }) => {
             }
         })
 
+        // retrieve goals
+        fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`)
+        .then(resp => {
+            // console.log('transactions response received')
+            if (resp.ok) {
+                resp.json()
+                .then(data => {
+                    // console.log(data)
+                    setUserGoals(data)
+                })
+            } else {
+                resp.json()
+                .then(message => setError(message.error))
+            }
+        })
     }
 
-    // useEffect(() => {
-    //     // retrieve user accounts info
-    //     if (userId) {
-    //     }
-    // }, [userId])
 
 
     const context = {
@@ -212,6 +223,8 @@ export const ContextProvider = ({ children }) => {
         setHouseMembers,
         transactions,
         setTransactions,
+        userGoals,
+        setUserGoals,
         userId,
         error,
         setError,
