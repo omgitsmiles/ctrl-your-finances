@@ -6,7 +6,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import Button from '@mui/material/Button';
+import { Button, Stack } from '@mui/material';
 import { AppContext } from '../context/Context'
 
 
@@ -14,20 +14,18 @@ import { AppContext } from '../context/Context'
 // grab user data and have house account toggle for different access to goal charts
 
 function Budgeting() {
-    const [userGoals, setUserGoals] = useState([]);
+    const { userId, userGoals, setUserGoals } = AppContext()
     const [goalName, setGoalName] = useState("");
     const [savedMoney, setSavedMoney] = useState(0);
     const [targetAmount, setTargetAmount] = useState(0);
     const [showForm, setShowForm] = useState(false);
-  
-
-    useEffect(() => {
-      // fetch user's goals from backend
-      fetchUserGoals();
-    },[])
-
-
-    const { userId } = AppContext()
+    
+    // useEffect(() => {
+      //   // fetch user's goals from backend
+      //   fetchUserGoals();
+      // },[])
+      
+      
 
 
     const fetchUserGoals = async () => {
@@ -53,6 +51,8 @@ function Budgeting() {
     };
 
 
+
+
     //add new goals to user db
     const addGoal = async () => {
       try {
@@ -60,15 +60,16 @@ function Budgeting() {
         const response = await fetch(`http://127.0.0.1:5555/api/goals/${userId.id}`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
             // Will there need to be authorization token or admin allowances?
             // "Authorization": `Admin ${admin}`
           },
-          body: JSON.stringify({
-            name: goalName,
-            saved: savedMoney,
-            target: targetAmount
-          })
+          body: `name=${goalName}&saved=${savedMoney}&target=${targetAmount}`
+          // body: JSON.stringify({
+          //   name: goalName,
+          //   saved: savedMoney,
+          //   target: targetAmount
+          // })
         });
         if (response.ok) {
           const data = await response.json();
@@ -76,7 +77,9 @@ function Budgeting() {
           setGoalName("");
           setSavedMoney(0);
           setTargetAmount(0);
-          fetchUserGoals();
+          // fetchUserGoals();
+          setShowForm(false)
+          setUserGoals((currentGoals) => [...currentGoals, data])
         }else {
           console.error("Failed to add goal");
         }
@@ -122,7 +125,13 @@ function Budgeting() {
           
       }
   }
-  
+
+  function handleCancelGoal() {
+    setGoalName("");
+    setSavedMoney(0);
+    setTargetAmount(0);
+    setShowForm(false)
+  }  
 
     return (
         <div>
@@ -216,16 +225,31 @@ function Budgeting() {
                   />
               </FormControl>
               
-              <Button
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+                sx={{ minWidth: 12 }}
+              >
+                <Button
+                  variant="Contained"
+                  style={buttonStyle}
+                  onClick={handleCancelGoal}
+                >
+                  Cancel
+                </Button>
+                <Button
                   type="submit"
                   sx={buttonStyle}
               >
                   Add Goal
-              </Button>
+                </Button>
+              </Stack>
             </form>
             )}
           </Box>
-          {userGoals ? 
+          {(userGoals.length > 0) ? 
           <Chart
               chartType="BarChart"
               width="100%"

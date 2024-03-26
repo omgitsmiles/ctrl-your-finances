@@ -102,7 +102,7 @@ class Goal(db.Model,SerializerMixin):
 
     user = db.relationship('User', back_populates='goals')
 
-    serialize_rules = ('-users.goals',)
+    serialize_rules = ('-user',)
 
 
 class Household(db.Model, SerializerMixin):
