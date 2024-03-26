@@ -410,6 +410,7 @@ class GenerateAdvice(Resource):
     def post(self):
         try:
             request_data = request.get_json()
+            
             ##PRE-RENDERED PROMPT##
             # content = model.generate_content('give me financial advice.')
             
