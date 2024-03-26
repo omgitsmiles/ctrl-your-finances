@@ -55,8 +55,7 @@ const TransactionChart = () => {
 
     return (
       <>
-      {transactions.length < 0 ?  
-          <CustomCard> 
+        <CustomCard> 
           <h1>Transactions</h1>
             <Chart
               chartType="PieChart"
@@ -67,15 +66,7 @@ const TransactionChart = () => {
               chartEvents={chartEvents}
             />
         </CustomCard>
-        : <h1 style={{
-          color: '#009933',
-          textAlign: 'center',
-          marginTop: '50px',
-          fontSize: '1.5rem',
-          fontFamily: 'Staatliches',
-          }}
-          >Link your plaid account to view transactions...</h1>}
-        </>
+      </>
     )
 }
 
