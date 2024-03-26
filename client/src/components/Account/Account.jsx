@@ -19,8 +19,21 @@ import InviteMemberModal from "./InviteMemberModal";
 import { AppContext } from "../../context/Context";
 
 function Account() {
-    const { user, bankAccounts, setBankAccounts, houseMembers, setHouseMembers, error, setError } = AppContext();
+    const { user, bankAccounts, setBankAccounts, houseMembers, setHouseMembers, error, setError, signInWithLink } = AppContext();
     const navigate = useNavigate();
+
+    const [email, setEmail] = useState('');
+
+    const handleSendEmailLink = async () => {
+        
+        try {
+            await signInWithLink(email)
+            setOpenInvite(false)
+            console.log('Email sent')
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const accountList = bankAccounts ? bankAccounts?.map((account) => {
         return <BankItem key={account.id} account={account} setBankAccounts={setBankAccounts} setError={setError} />
@@ -278,7 +291,8 @@ function Account() {
                             color: 'green',
                         }}
                         margin="dense"
-                        onChange={(e) => console.log(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                         required
                     />
                     <Button 
@@ -293,7 +307,7 @@ function Account() {
                             fontFamily: 'Poppins, sans-serif',
                             }
                         }
-                        onClick={() => setOpenInvite(false)}
+                        onClick={handleSendEmailLink}
                         type="submit"
                     >Invite</Button>
                 </Box>

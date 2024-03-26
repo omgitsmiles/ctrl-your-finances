@@ -7,7 +7,10 @@ import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    updateProfile
+    updateProfile,
+    sendSignInLinkToEmail,
+    isSignInWithEmailLink,
+    signInWithEmailLink
 } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -15,11 +18,11 @@ const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-
+    console.log('User:', user)
     const googleSignIn = () => {
         const provider = new GoogleAuthProvider();
-        // signInWithPopup(auth, provider);
-        signInWithRedirect(auth, provider);
+        signInWithPopup(auth, provider);
+        // signInWithRedirect(auth, provider);
     }
 
     const createUserWithEmail = async (name, email, password, callback) => {
@@ -45,6 +48,47 @@ export const ContextProvider = ({ children }) => {
             callback(error)
         }
     }
+
+    // email sign up link
+    //  TODO figure out how to remove api key from url
+    const actionCodeSettings = {
+        url: 'http://127.0.0.1:5173/email-link?apiKey=AIzaSyA8qMrHZyJVActzD0qhPme5mGGyxHFIT6w&oobCode=tRwv3QUFXkqxikY3Ao8fcu4liXZjHvwUpMLRGhrFxVUAAAGOeFx89Q&mode=signIn&lang=en',
+        handleCodeInApp: true,
+    }
+
+    const signInWithLink = async (email) => {
+        sendSignInLinkToEmail(auth, email, actionCodeSettings)
+        .then(() => {
+            window.localStorage.setItem('emailForSignIn', email)
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log('Error code:', errorCode)
+            console.log('Error message:', errorMessage)
+        })
+    }
+
+    const isSignInLink = async (displayName) => {
+        if (isSignInWithEmailLink(auth, window.location.href)) {
+            let email = window.localStorage.getItem('emailForSignIn')
+            if (!email) {
+                email = window.prompt('Please provide your email for confirmation')
+            }
+            signInWithEmailLink(auth, email, window.location.href)
+            updateProfile(auth.currentUser, {
+                displayName: displayName
+            })
+            .then((result) => {
+                window.localStorage.removeItem('emailForSignIn')
+                console.log('Result:', result)
+            })
+            .catch((error) => {
+                console.log('Error:', error)
+            })
+        }
+    }
+
 
     const logOut = () => {
         signOut(auth)
@@ -121,6 +165,8 @@ export const ContextProvider = ({ children }) => {
         user,
         createUserWithEmail,
         signInWithEmail,
+        signInWithLink,
+        isSignInLink,
         bankAccounts,
         setBankAccounts,
         houseMembers,
@@ -129,6 +175,7 @@ export const ContextProvider = ({ children }) => {
         setTransactions,
         error,
         setError,
+        isSignInLink
     }
 
 

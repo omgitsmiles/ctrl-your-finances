@@ -6,6 +6,7 @@ import FrontPage from "../components/FrontPage/FrontPage";
 import ErrorPage from "../components/ErrorPage"; 
 import Login from "../components/FrontPage/Login";
 import SignUp from "../components/FrontPage/SignUp";
+import EmailLink from "../components/EmailLink";
 import Protected from "../components/Protected";
 import App from "../App";
 import Plaid from "../components/Plaid/Plaid";
@@ -28,6 +29,10 @@ export const routes = [
             {
                 path: "/signup",
                 element: <SignUp />,
+            },
+            {
+                path: "/email-link",
+                element: <EmailLink />,
             },
             {
                 path: "/account",
