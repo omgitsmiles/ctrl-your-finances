@@ -29,5 +29,5 @@ key = bytes(os.getenv('FERNET_KEY'), 'UTF-8')
 cipher_suite = Fernet(key)
 
 # Instantiate CORS
-CORS(app, origins=['http://localhost:5173'])
+CORS(app)
 
