@@ -11,7 +11,7 @@ from flask_restful import Resource
 from dotenv import load_dotenv
 
 # Local imports
-from config import app, db, api
+from config import app, db, api, cipher_suite
 
 # Model imports
 from models import User, Account, AccountUser, PlaidItem, Transaction, Household, Goal
@@ -88,18 +88,6 @@ for product in PLAID_PRODUCTS:
 
 item_id = None
 
-
-@app.route('/api/info', methods=['POST'])
-def info():
-    global access_token
-    global item_id 
-    response = jsonify({
-        'item_id': item_id,
-        'products': PLAID_PRODUCTS
-    })
-    return response
-
-
 @app.route('/api/create_link_token', methods=['POST'])
 def create_link_token():
     try:
@@ -141,7 +129,8 @@ def get_access_token():
         item_id = exchange_response['item_id']
 
         # save token and id to database.  MUST ENCRYPT THIS.
-        new_plaid_item = PlaidItem(access_token=access_token, item_id=item_id, cursor='', user_id=USER_ID)
+        _access_token = cipher_suite.encrypt(bytes(access_token, 'utf-8'))
+        new_plaid_item = PlaidItem(access_token=_access_token, item_id=item_id, cursor='', user_id=USER_ID)
         db.session.add(new_plaid_item)
         db.session.commit()
 
@@ -183,7 +172,9 @@ def get_transactions():
 
     for item in plaid_items:
         cursor = item.cursor
-        access_token = item.access_token
+        # print(item.access_token)
+        access_token = cipher_suite.decrypt(item.access_token)
+        # print(access_token)
 
         # New transaction updates since "cursor"
         added = []
@@ -208,8 +199,9 @@ def get_transactions():
                 # pretty_print_response(response)
 
                 # update plaid_items row cursor based on access token
-                plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
-                plaid_item.cursor = cursor
+                # plaid_item = PlaidItem.query.filter_by(access_token=access_token).first()
+                # plaid_item.cursor = cursor
+                item.cursor = cursor
             
             new_transactions = []
             for transaction in added:

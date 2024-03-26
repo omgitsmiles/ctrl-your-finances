@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from cryptography.fernet import Fernet
 
 # Instantiate app, set attributes
 app = Flask(__name__)
@@ -24,3 +25,7 @@ api = Api(app)
 
 # Instantiate CORS
 CORS(app, origins=['http://127.0.0.1:5173'])
+
+# Instantiate Fernet
+from fernet_key import key
+cipher_suite = Fernet(key)

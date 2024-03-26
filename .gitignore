@@ -81,6 +81,8 @@ misc
 .env.development.local
 .env.test.local
 .env.production.local
+fernet_key.py
+
 
 npm-debug.log
 yarn-debug.log*
