@@ -229,19 +229,20 @@ function Budgeting() {
                 direction="row"
                 justifyContent="center"
                 alignItems="center"
-                spacing={2}
-                sx={{ minWidth: 12 }}
+                spacing={1}
+                sx={{
+                  minWidth: 12 }}
               >
                 <Button
                   variant="Contained"
-                  style={buttonStyle}
+                  style={{ backgroundColor: "#009933", marginTop: '10px', maxWidth: '40%', minWidth: '40%', color: 'white'}}
                   onClick={handleCancelGoal}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  sx={buttonStyle}
+                  style={{ backgroundColor: "#009933", marginTop: '10px', maxWidth: '40%', minWidth: '40%', color: 'white'}}
               >
                   Add Goal
                 </Button>
