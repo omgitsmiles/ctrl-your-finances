@@ -1,8 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Button,  Modal, Stack, Box, styled, Typography } from '@mui/material';
+import { Button,  Modal, Stack, Box, Typography } from '@mui/material';
 import moneyMagnet from '../../assets/Layer_1.png';
-
+import { styled } from '@mui/system';
 import { AppContext } from '../../context/Context';
 
 const Header = () => {
@@ -38,27 +38,42 @@ const Header = () => {
         },
     }));
 
-    const buttonStyle = {
-        mr: 2,
-        px: 4, 
-        py: 1,
-        fontSize: '0.9rem',
+    const ColorButton = styled(Button)(() => ({
+        color: 'green',
+        backgroundColor: 'white',
+        fontFamily: 'Poppins',
+        maxWidth: '200px', 
+        maxHeight: '50px', 
+        minWidth: '200px', 
+        minHeight: '50px',
+        border: '1px solid green',
+        fontSize: '1.4rem',
         textTransform: 'capitalize',
-        borderRadius: 0,
-        borderColor: '#14192d',
-        color: '#fff',
-        backgroundColor: '#14192d',
-        "&&:hover": {
-            backgroundColor: "#343a55"
+        '&:hover': {
+            backgroundColor: 'green',
+            color: 'white',
         },
-        "&&:focus": {
-            backgroundColor: "#343a55"
-        }
-    }
+        paddingLeft: '1rem',
+        paddingRight: '1rem',
+        maxWidth: {xs: '180px'},
+        maxHeight: {xs: '30px'},
+        minWidth: {xs: '180px'},
+        minHeight: {xs: '30px'},
+        }));
+
 
     return (
         <>
-    <CustomBox component='header'>
+    <CustomBox 
+    component='header'
+    sx={{
+        padding: 2,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    }
+    }
+    >
             <img
                 src={moneyMagnet}
                 alt="headerImg"
@@ -70,15 +85,28 @@ const Header = () => {
                 />
             <BoxText 
             component='section'
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 2,
+                flex: 1,
+                padding: 3,
+                marginRight: 2,
+            }}
             >
                 <Typography
                 variant='h2'
                 component= 'h1'
                 sx={{
-                    font: 'Staaliches-Regular',
-                    fontWeight: 700,
+                    fontFamily: 'Playfair Display, serif',
+                    fontWeight: 500,
                     color: '#fff',
-                    paddingTop: 1,
+                    paddingTop: 0,
+                    textAlign: 'center',
+                    marginBottom: '1rem',
+                    fontSize: '3rem',
                 }}
                 >
                     Welcome to Money Magnet!
@@ -88,51 +116,80 @@ const Header = () => {
                 variant='p'
                 component='p'
                 sx={{
-                    py: 1,
+                    py: 0,
                     lineHeight: 1.6,
                     color: '#fff',
-                    fontWeight: 'bold',
+                    fontWeight: 500,
+                    letterSpacing: 2,
+                    textAlign: 'center',
+                    fontSize: '1.5rem',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: {'xs': '1.2rem'}
                 }}
                 >
                     Empowering Financial Futures: Where AI Drives Strategic Wealth Creation
                 </Typography>
-                <Box sx={{ py: 2 }}>
-                    {!user ? (
-                        <Stack spacing={2} direction="row" justifyContent="center">
-                            <Button 
-                                variant="contained" 
-                                onClick={() => navigate('/signup')}
-                                sx={buttonStyle}
-                            >
-                                Sign Up
-                            </Button>
-                            <Button 
-                                variant="outlined" 
-                                onClick={() => navigate('/login')}
-                                sx={buttonStyle}
-                            >
-                                Log In
-                            </Button>
-                        </Stack>
-                    ) : (
-                        <Button variant="outlined" onClick={() => navigate('/dashboard')}>Dashboard</Button>
-                    )}
-                </Box>
+
+
                 <Typography
                 variant='p'
                 component='p'
                 sx={{
-                    py: 3,
+                    py: 2,
                     lineHeight: 1.6,
                     color: '#fff',
+                    fontSize: '1.2rem',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: {'xs': '1rem'},
+                    letterSpacing: .5,
                 }}
                 >
                     At Money Magnet, we firmly believe that exceptional financial planning and budgeting go beyond numbers; it's a reflection of purpose, strategy, and the ability to leave a lasting impact on your financial future. Our brand guidelines serve as your compass as we navigate through our creative philosophy, principles, and visual identity.
                 </Typography>
+                <Box sx={{ 
+                    py: 2, 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 2,
+                    
+                    alignItems: 'center',
+                    }}>
+                    {!user ? (
+                        <Stack sx={
+                            {
+                                display: 'flex',
+                                justifyContent: 'center',
+                                gap: 3,
+                                alignItems: 'center',
+                                width: '100%',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                flex: 1,
+                                padding: 0
+                            }
+                        
+                        }>
+                            <ColorButton 
+                                onClick={() => navigate('/signup')}
+                            
+                            >
+                                Sign Up
+                            </ColorButton>
+                            <ColorButton  
+                                onClick={() => navigate('/login')}
+                            
+                            >
+                                Log In
+                            </ColorButton>
+                        </Stack>
+                    ) : (
+                        <ColorButton onClick={() => navigate('/dashboard')}>Dashboard</ColorButton>
+                    )}
+                </Box>
             </BoxText>
         </CustomBox>
         </>
-  )
+    )
 }
 
 export default Header
