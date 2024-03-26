@@ -56,22 +56,28 @@ function ResponsiveAppBar() {
   }
 
   function stringAvatar(name) {
-  const initials = name
-    .split(' ')
-    .map((part) => part[0]) // Get the first character of each part (first name, last name)
-    .join(''); // Join the initials together
-
-  return {
-    children: initials.toUpperCase(), // Ensure initials are capitalized
-  };
-}
-
+    if (name){
+      const initials = name
+        .split(' ')
+        .map((part) => part[0]) // Get the first character of each part (first name, last name)
+        .join(''); // Join the initials together
   
-  // console.log(typeof user.displayName)
-  // console.log(user)
+      return {
+        children: initials.toUpperCase(), // Ensure initials are capitalized
+      };
+    } else {
+      return {
+        children: 'MM'
+    }
+  }
+  }
+
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: '#009933' }}>
+    <AppBar position="sticky" 
+    sx={{ 
+      backgroundColor: '#009933', 
+    }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Button
@@ -79,65 +85,59 @@ function ResponsiveAppBar() {
           >
             <img src={moneyMagnetIcon} alt="moneyMagnetIcon" style={{ width: "40px", height: "40px" }} />
           </Button>
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleOpenNavMenu}
-                    color="inherit"
-                >
-                </IconButton>
-                {/* <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorElNav}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'left',
-                    }}
-                    open={Boolean(anchorElNav)}
-                    onClose={handleCloseNavMenu}
-                    sx={{
-                        display: { xs: 'block', md: 'none' },
-                    }}
-                >
-                </Menu> */}
-            </Box>
+          <Box
+            sx={
+              {
+                display: { xs: 'flex', md: 'flex', lg: 'flex' },
+                flexGrow: 1,
+                justifyContent: 'center',
+                width: '75%'
+              }
+            }
+          >
             <Typography
                 variant="h5"
-                noWrap
+                // noWrap
                 component="a"
                 href="#app-bar-with-responsive-menu"
                 sx={{
-                    mr: 2,
-                    display: { xs: 'flex', md: 'none' },
+                    // mr: 2,
+                    display: { xs: 'flex', md: 'flex', lg: 'flex'},
                     flexGrow: 1,
                     fontFamily: 'monospace',
                     fontWeight: 700,
                     letterSpacing: '.3rem',
                     color: 'inherit',
                     textDecoration: 'none',
-                    
+                    justifyContent: 'center',
+                    fontSize: { xs: '1rem', sm: '1.5rem', md: '40px', lg: '60px'}
                 }}
             >
                 Money Magnet
             </Typography>
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           </Box>
+            {/* <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          </Box> */}
 
           {user ? (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <IconButton onClick={handleOpenUserMenu} 
+                sx={{ 
+                  padding: 0,
+                  width: { xs: '30px', sm:'40px', md: '50px', lg: '60px', xl: '70px'},
+                  height: { xs: '30px', sm:'40px', md: '50px', lg: '60px', xl: '70px'},
+                  }}>
                   {
                     user?.photoURL ? (
-                      <Avatar alt={user?.displayName} src={user.photoURL} />
+                      <Avatar 
+                      alt={user?.displayName} 
+                      src={user.photoURL} 
+                      sx={{
+                      width: '100%',
+                      height: '100%',
+                      }}
+                      />
                     ) : (
                       <Avatar {...stringAvatar(user?.displayName)} />
                     )
