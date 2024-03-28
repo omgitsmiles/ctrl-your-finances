@@ -6,7 +6,7 @@ import time
 import ipdb
 import pathlib
 import textwrap
-# import google.generativeai as genai
+import google.generativeai as genai
 
 # Remote library imports
 from flask import request, jsonify, make_response
@@ -15,8 +15,8 @@ from dotenv import load_dotenv
 from IPython.display import display
 from IPython.display import Markdown
 
-# genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-# model = genai.GenerativeModel('gemini-pro')
+genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+model = genai.GenerativeModel('gemini-pro')
 
 # Local imports
 from config import app, db, api, cipher_suite

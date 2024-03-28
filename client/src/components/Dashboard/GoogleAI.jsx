@@ -3,30 +3,33 @@ import { Box, Button } from '@mui/material'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Typewriter from 'typewriter-effect';
 import { AppContext } from '../../context/Context';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const GoogleAI = () => {
     const [advice, setAdvice] = useState('');
+    const [loading, setLoading] = useState(false);
     const { transactions } = AppContext();
     const transactionArray = transactions.map((transaction) => `${transaction.category}: ${transaction.amount}`);
     console.log(transactionArray)
 
     const generateAIResponse = async () => {
+        setLoading(true);
         try {
             const response = await fetch('http://localhost:5555/api/advice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8"',
                 },
-                body: `prompt=using_${transactionArray}_find_ways_to_save_money`,
+                body: `prompt=using_${transactionArray}_find_ways_to_save_money_in_100_words`,
             });
             const data = await response.json();
             setAdvice(data.content)
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     }
-
-    console.log(advice, transactions)
 
     const buttonStyle = {
         margin: '1rem auto',
@@ -51,12 +54,27 @@ const GoogleAI = () => {
 
   return (
     <>
-    <Button variant="contained" color="success"
-        onClick={generateAIResponse}
-        sx={
-            buttonStyle
-        }
-        startIcon={<AutoAwesomeIcon />}>Generate AI Advice</Button>
+            {loading ? (
+                <LoadingButton
+                    variant="contained"
+                    color="success"
+                    loading
+                    sx={buttonStyle}
+                    startIcon={<AutoAwesomeIcon />}
+                >
+                    Generating...
+                </LoadingButton>
+            ) : (
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={generateAIResponse}
+                    sx={buttonStyle}
+                    startIcon={<AutoAwesomeIcon />}
+                >
+                    Generate AI Advice
+                </Button>
+            )}
 
         <Box sx={{
             display: 'flex',
@@ -68,10 +86,10 @@ const GoogleAI = () => {
         }}>
         {advice ? <Typewriter
         options={{
-            strings: [advice],
+            delay: 0,
+            strings: advice,
             autoStart: true,
             loop: false,
-            // pauseFor: 1000000,
         }}
         /> : null}
         </Box>
